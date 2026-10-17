@@ -96,3 +96,46 @@ Billing:
 - GraphQL HTTP endpoint returns FORBIDDEN for everything incl __typename (WS-only; WS handshake 403 from non-browser TLS — user must test `wss://www.perplexity.ai/rest/perplexity_ask/graphql/ws?account=<uuid>` account-param trust in browser/Burp)
 - api.perplexity.ai OAuth: DCR open (client registered 201). Consent screen enforced. Test redirect_uri validation tricks in Burp.
 - Edge WAF bypass for /rest/*: Sec-Fetch-Dest/Mode/Site trio (any non-browser client). Bot mitigation only.
+
+## SESSION 1 FINAL STATE
+### Test harness (reusable)
+- /scripts/pplx_session.py — curl-backed session helper (passes WAF; use which=plain|org)
+- WAF recipe: UA + Sec-Fetch-Dest:empty + Sec-Fetch-Mode:cors + Sec-Fetch-Site:same-origin + session cookie
+- Cookies: /scripts/cookie_plain.txt (zeno0), /scripts/cookie_org.txt (zeno0+org)
+
+### Surfaces verified SECURE (do not re-test)
+- /rest/organizations/{org_id}/* cross-org (403 USER_NOT_IN_ORG)
+- /rest/enterprise/organization/{org_uuid}/* cross-org (403)
+- x-pplx-account header session binding (401 mismatch)
+- Collection: get_collection/view enforcement, update_contributor_permission (only READER/WRITER self), remove_user as WRITER (403)
+- Threads: update_thread_access requires write token (CONTEXT NOT WRITABLE)
+- Enterprise invite cross-org (400 USER_NOT_IN_ORGANIZATION)
+- OAuth authorize: consent screen enforced (no auto-consent)
+
+### CONFIRMED BUG #1 (P3-class on personal spaces; verify enterprise variant)
+Space WRITOR-level contributor flips private space to PUBLIC_READ → anonymous read verified end-to-end.
+PUT /rest/collections/{uuid}/access {"updated_access":4} as permission=2 (WRITER, non-owner) → 200.
+READER(1) blocked, OWNER(4) intended. Enforcement gap at WRITER level. Restored after test.
+
+### PRIORITY TARGETS FOR BURP TESTING (ranked)
+1. ENTERPRISE SPACES variant of Bug #1: need MEMBER-role account in enterprise org → PUT /rest/collections/{uuid}/access with {"updated_access":2|3|4} as WRITER on an ORG space. If org space → public = P2.
+2. GraphQL WS: wss://www.perplexity.ai/rest/perplexity_ask/graphql/ws?account=<other-account-uuid> — test account-param trust in browser (HTTP variant denies all; WS needs browser CF cookies)
+3. Connector-service execution authz: POST /rest/connector-service/connectors/{source_id}/tools/{tool_name}/execute — cross-source/cross-user tool execution (enterprise connectors = program focus)
+4. Automations sharing: create automation (POST /rest/automations), share to member, test IDOR on /rest/automations/{id}/runs + run-now as shared READER
+5. OAuth DCR redirect_uri validation: api.perplexity.ai/oauth/register with https-variant/localhost/custom-scheme redirect_uris → then /oauth/authorize
+6. Computer tasks: POST /rest/computer/tasks/{task_id}/display/session + control/acquire with x-desktop-viewer-session header — cross-account task VM access (needs active task)
+7. Files IDOR: upload file (POST /rest/uploads/create_upload_url {content_type, file_size}), then /rest/collections/{other-uuid}/project_files/download_url + /rest/file-repository/download
+8. SSO setup portal token: POST /rest/enterprise/organization/sso/generate-sso-setup-portal-link → portal_link apiToken — check expiry/scope/entropy (admin-intended, verify reuse/expiry)
+9. Assets (Perplexity Pages): create asset, test /rest/assets/{id}/access + published-share flow as contributor
+10. /rest/spaces/{space_uuid}/ms-teams-bindings/bind + confirm — cross-space binding authz
+
+### Infrastructure discoveries
+- enterprise-setup.perplexity.ai (SSO setup portal; /init?apiToken=... — live)
+- pplx-next-static-public.perplexity.ai (open static host, 1948 assets)
+- pplx-static-sourcemaps.perplexity.ai (CF Access locked)
+- console-testing.i.perplexity.ai, staging.perplexity.ai, testing.perplexity.ai (CF Access locked)
+- omni-insights.perplexity.ai (own login)
+- ppl-ai-public.s3.amazonaws.com (public bucket ref)
+- r2cdn.perplexity.ai (R2 file CDN)
+- api.perplexity.ai OAuth AS: DCR open, consent enforced, CIMD supported, PKCE S256 only
+- GraphQL: HTTP /rest/perplexity_ask/graphql denies all (WS-only), WS has ?account= param
