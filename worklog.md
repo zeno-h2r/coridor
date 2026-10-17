@@ -139,3 +139,81 @@ READER(1) blocked, OWNER(4) intended. Enforcement gap at WRITER level. Restored 
 - r2cdn.perplexity.ai (R2 file CDN)
 - api.perplexity.ai OAuth AS: DCR open, consent enforced, CIMD supported, PKCE S256 only
 - GraphQL: HTTP /rest/perplexity_ask/graphql denies all (WS-only), WS has ?account= param
+# SESSION 2 — 2026-10-17 (UTC+8, continued same day)
+
+## Recon COMPLETED (Super Z terminal)
+- Full SPA chunk corpus: 1949/2077 assets downloaded from pplx-next-static-public
+  (129 = stale refs 404). Source: www.perplexity.ai/service-worker.js (343KB, WAF-allowed).
+- 811 unique API endpoints extracted (api-paths.json, endpoint-inventory.txt).
+- Keyword feature map: sso 372 | connector 325 | role 265 | file 228 | space 199 |
+  billing 160 | admin 78 | scim 11 | export 10 (keyword-map.json).
+- Infra: edge.perplexity.ai (issues pplx.edge-vid/sid), frontend-cdn (serves _next),
+  r2cdn, trust, console.perplexity.ai, suggest WS; staging/testing = CF Access (untouched).
+- api.perplexity.ai openapi spec pulled (19 paths): /v1/skills/{id}/download,
+  /v1/agent/{id}/files/{file_id}/content, /v1|v2/analytics/computer/usage (per-member).
+- Sourcemaps (pplx-static-sourcemaps, 1879 chunk refs) = CF Access locked. No finding.
+- docs.perplexity.ai: llms.txt + openapi.json archived locally.
+
+## Test harness (Session 2, current)
+- scripts/pplx_session.py which=red|org|plain path=... [method=] [body=] [raw=yes]
+- WAF recipe: UA + Sec-Fetch-Dest:empty + Sec-Fetch-Mode:cors + Sec-Fetch-Site:same-origin.
+  NOTE: plain/org cookie files were header-format → converted to Netscape (fix_cookies.py).
+  LESSON: unauthenticated calls can return app-style 403 {"detail":"Forbidden"} — always
+  verify session identity (GET /api/user) before interpreting 403s.
+- Sessions all VALID: plain=zeno0(ADMIN orgA 54120d9e, owner), org=zeno0+org(ADMIN orgB
+  0f134007), red=zeno0+test(MEMBER orgA, org_user_uuid 5670b028-1942-43c3-ab2b-cbf7555f56f1).
+- Org A "hacking" roster: ADMIN fa908814(zeno0); MEMBERs 1d34c649(kroushuchiha),
+  47df07ea(xgoon+admin), 84ca6ecc(ymym), 5670b028(zeno0+test). 5 seats, SELF_SERVE, WorkOS.
+- Permission enum (spa-metadata chunk): NONE=0 READER=1 WRITER=2 OWNER=4 EDITOR=5
+  OWNER_DEFAULT_BOOKMARKS=6 INVITED_READER=11 INVITED_WRITER=12.
+
+## RE-TEST #1 on current build — CONFIRMED + EXPANDED
+Personal space "test" (1276cc5a-85a0-444c-b001-3354a3dfdc8a, owner zeno052s=plain):
+1. [red READER] self-escalate POST update_contributor_permission {email,permission:2} → 403 (blocked ✓)
+2. [red READER] PUT access {"updated_access":4} → failed GENERIC_FAILED (blocked ✓)
+3. [plain owner] grant WRITER via same endpoint → 200, red user_permission=2
+4. [red WRITER non-owner] PUT access {"updated_access":4} → 200 completed, access=4  ← BUG
+5. External unrelated account [org, not in orgA, not contributor]:
+   - GET get_collection → 200 FULL space metadata
+   - GET list_collection_threads → 200 thread list (uuids, modes, timestamps)
+   - GET /rest/collections/{uuid}/project_files/tree → 200 FILE TREE
+   - GET /rest/thread/{thread_uuid} → 200 FULL THREAD CONTENT  ← impact beyond session 1
+   - Anonymous curl: VIEW_COLLECTION_NOT_ALLOWED (anon gated; any-authenticated-user reads)
+6. Restored: access=1, red back to READER(1). ✓
+
+## NEW FINDING #2 — Enterprise Space variant (unauthorized modification, in-scope)
+Org A policy: public_collection_sharing_allowed=false.
+1. [plain ADMIN] POST create_collection {"title","description","access":1,"organization_uuid":
+   54120d9e-...} → org space 39f3f219-f56f-46eb-a60e-6833526e0072 created (access=1, org-owned).
+2. [plain] POST /rest/collections/share {collection_uuid, targets:[{type:email,...}]} → shared;
+   red became WRITER(2) directly (share to org member = instant, no accept step).
+3. [red MEMBER+WRITER, non-owner] PUT access {"updated_access":4} → **200 completed, access=4**
+   ← Member modified Enterprise Space general access DESPITE org policy forbidding public
+   sharing. State persisted (owner view confirms access=4).
+4. View gate: external+anon reads blocked on org space (unlike personal) → inconsistent state:
+   UI shows public, view layer restricts. Still = unauthorized modification of Enterprise
+   Space settings by non-admin member (program in-scope: "Modification of Enterprise Spaces
+   or user content without proper authorization").
+5. Restored access=1 then DELETED test org space. ✓
+
+## Reporting posture (draft)
+- Finding A (personal spaces): WRITER→public flip + any-authenticated-user read of space,
+  threads, thread content, file tree. Repro'd on current build. Suggest: Broken Access
+  Control / P2-class under www.perplexity.ai scope.
+- Finding B (org spaces): member-level unauthorized general-access modification despite org
+  policy + inconsistent enforcement state. In-scope "Enterprise Spaces modification".
+  Impact magnitude lower (view-gated) — pair with Finding A as same root cause.
+- Root cause: PUT /rest/collections/{uuid}/access lacks owner-only check for WRITER
+  contributors; org-policy gate applied at VIEW layer only, not at WRITE layer.
+
+## NEXT TARGETS (unchanged priority, now all terminal-driven)
+1. ~~Enterprise space variant~~ DONE (Finding B)
+2. GraphQL WS ?account= trust (needs browser WS - user)
+3. Connector tool execute authz: POST /rest/connector-service/connectors/{sid}/tools/{t}/execute
+4. Automations sharing IDOR (runs + run-now as READER)
+5. OAuth DCR redirect_uri validation (api.perplexity.ai)
+6. Computer tasks session/control cross-account
+7. Files IDOR: uploads/create_upload_url + project_files/download_url
+8. SSO setup portal link token scope/expiry
+9. Assets/Pages contributor flows
+10. ms-teams/slack space bindings bind+confirm authz
