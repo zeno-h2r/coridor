@@ -2,7 +2,7 @@
 - Program: Dynamic Labs Managed Bug Bounty (Bugcrowd)
 - Researcher: zeno0 (zeno0@bugcrowdninja.com)
 - Scope: app.dynamic.xyz (dashboard + backend app.dynamicauth.com/api/v0)
-- Started: 2026-10-25 22:40 UTC — Last updated: 2026-10-25 23:35 UTC
+- Started: 2026-10-25 22:40 UTC — Last updated: 2026-10-25 23:50 UTC
 
 ## CONFIRMED FINDING #1 (P3, borderline P2)
 ### Step-up authentication NOT enforced on webhook signing secret reveal → signed webhook forgery chain
@@ -68,7 +68,10 @@
 19. Admin actions: list OK on victim org; approve flow needs 2nd member
 
 ## Next Actions
-1. Submit Finding #1 (evidence complete)
+1. ✅ DONE (2026-10-25 23:50 UTC): BUG-001 report written → `reports/BUG-001-webhook-secret-stepup-bypass.md` in this repo; ready to paste into Bugcrowd submission form
 2. After B re-login: accept invite → viewer-role includeSecret test (severity escalation path) + admin-action self-approve test + full write-access-as-viewer sweep
 3. User-assisted: one real wallets/signin capture (Burp), OAuth link on test account (→ /oauthAccounts/{id}/accessToken test), step-up OTP for wallet:export chain
 4. Deferred: full WalletKit MPC client ceremony; lazy chunks; exchange/onramp config secrets
+
+## Report Log
+- 2026-10-25 23:50 UTC — BUG-001 report authored and committed to repo (`reports/BUG-001-webhook-secret-stepup-bypass.md`). Re-verified live before writing: Test 1 plain-JWT reveal 200 (23:46:48Z), Test 2 garbage elevated-token 200 (23:46:57Z), control list endpoint omits secret, HMAC(rawBody) exact match vs captured x-dynamic-signature-256 + forged signature generated (hmac_verify_fresh.txt). Severity P3 (argued P2). Artifacts: recon/reverify_t1_234648.txt, recon/reverify_t2_234657.txt, recon/hmac_verify_fresh.txt.
