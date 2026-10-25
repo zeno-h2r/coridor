@@ -2,67 +2,73 @@
 - Program: Dynamic Labs Managed Bug Bounty (Bugcrowd)
 - Researcher: zeno0 (zeno0@bugcrowdninja.com)
 - Scope: app.dynamic.xyz (dashboard + backend app.dynamicauth.com/api/v0)
-- Started: 2026-10-25 22:40 UTC — Last updated: 2026-10-25 23:25 UTC
+- Started: 2026-10-25 22:40 UTC — Last updated: 2026-10-25 23:35 UTC
+
+## CONFIRMED FINDING #1 (P3, borderline P2)
+### Step-up authentication NOT enforced on webhook signing secret reveal → signed webhook forgery chain
+- Endpoint: GET /api/v0/environments/{environmentId}/webhooks/{webhookId}?includeSecret=true
+- Host: app.dynamicauth.com (same via app.dynamic.xyz/api/v0)
+- Spec (public-api.yaml, parameters/includeSecret): "Requires step-up authentication: a valid elevated access token with the `console:webhook_secret:reveal` scope, minted for the calling user, must be sent in the `x-dyn-elevated-access-token` header **or the request is rejected with 403**."
+- Reality:
+  1. GET with ONLY the regular session JWT → 200 + `"secret":"dyn_Qfvm49E4cdO0AewRTjk{PAGBhx2t[RNpVMqajPTaQaq4Yme[f12LQka9"`
+  2. Same with `x-dyn-elevated-access-token: garbage-invalid-token` → 200 + secret (header completely unvalidated)
+  3. Captured legit webhook delivery: x-dynamic-signature-256: sha256=38260fc64e8a6ade544387e47d7b27946b1dff9545516e0effcae1eae60339b9 over raw body
+  4. HMAC-SHA256(leaked_secret, rawBody) == captured signature → EXACT MATCH → secret is the real signing key
+  5. Forged payload signed with leaked secret produces a signature indistinguishable from genuine Dynamic webhooks
+- Impact chain: stolen/compromised admin session (the exact threat step-up protects against) → secret reveal with NO re-auth → forge arbitrary user.created / wallet.linked / transaction events with valid HMAC → customer backends that verify signatures (the secret's entire purpose) trust forged events (auto-fulfillment, crediting, KYC hooks, access grants)
+- Contrast proving unintended behavior: captcha secretKey is correctly masked (hasSecretKey:true, never returned); list endpoint ignores includeSecret — only the detail endpoint leaks
+- Feature context: "Step-Up Auth for Key Export" shipped Apr 2026; console:webhook_secret:reveal scope exists in TokenScope enum specifically for this action
+- Evidence artifacts: /home/z/my-project/recon/ (webhook.site inbox 72e683f6-959e-4264-8aa8-82f389ed746d, deliveries captured 2026-10-25T23:27:35Z ping + 23:27:51Z user.created)
+- Test env (own): sandbox 7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6, webhook 721f79c5-572e-4d64-869d-680268d164b4
+- Open sub-test: viewer/developer role → same includeSecret call (needs 2nd member; invite pending — B must re-login and accept invite 91e1b785-484e-4e8a-8512-afdfbbf2ba01)
 
 ## Test Accounts
 - Account A "victim zeno": zeno0+org@bugcrowdninja.com — user c8792188-3451-41ae-bab4-7b3725fac172
   - org e6be9ca6-0af0-49fc-a257-9c0efac1687f (owner), project ee8bf803-7dc5-443d-9e97-765fb84e5d3b, sandbox env 7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6
-  - JWT ACTIVE (do not revoke)
+  - JWT ACTIVE — do not revoke
 - Account B "attacker zeno": zeno0@bugcrowdninja.com — user 80327e1e-25b9-4b52-bba4-d2a49498d5f3
-  - org 06f46da7-b49a-4619-a85b-fbb4ded68d6f (owner), project 24ceb9dd-79f3-43d3-ba73-a3cc48fe0163
-  - envs: sandbox 9a820c93-0abe-4abc-9a89-6ada66c5968c, live a1b8ad35-ad55-4f44-8a7c-7a767126e124
-  - JWT REVOKED during session-invalidation testing (2026-10-25 ~23:23 UTC) — NEEDS RE-LOGIN
-- Dashboard meta environment for both users: fb6dd9d1-09f5-43c3-8a8c-eab6e44c37f9
+  - org 06f46da7-b49a-4619-a85b-fbb4ded68d6f (owner), envs 9a820c93 (sandbox), a1b8ad35 (live)
+  - JWT REVOKED during invalidation testing ~23:23 UTC — NEEDS RE-LOGIN
+- Pending invite: 91e1b785-484e-4e8a-8512-afdfbbf2ba01 (B → viewer on victim org) awaiting B's acceptance
+- Webhook on victim sandbox → https://webhook.site/72e683f6-959e-4264-8aa8-82f389ed746d
+- Test user created on victim sandbox: eaacc556-2e96-4bcd-90cb-e183f83ed7aa (whtrigger+x1@example.com)
 
-## API Tokens (attacker sandbox env 9a820c93, created for testing)
-- dyn_lPS2FBaGhA2SFkzbuIDq7H0eYgwlb9hioqrtZugEB21mP4IiRb2XyLK0 — scopes [all.read] id 7267a552-9dbd-4d74-aa30-9f03256fd24b
-- dyn_jmPdZLfdvmAeoT63xixDFzgxg6Zw086BSEl7XqPKidPSkoCh8j3YQaP9 — scopes [flow.write]
+## API Tokens (attacker sandbox env 9a820c93)
+- dyn_lPS2FBaGhA2SFkzbuIDq7H0eYgwlb9hioqrtZugEB21mP4IiRb2XyLK0 [all.read]
+- dyn_jmPdZLfdvmAeoT63xixDFzgxg6Zw086BSEl7XqPKidPSkoCh8j3YQaP9 [flow.write]
+- users.write token for victim sandbox stored in recon/users_write_token.txt
 
 ## Architecture Notes
-- Dashboard: Angular SPA at app.dynamic.xyz; API same-origin /api/v0 proxy + https://app.dynamicauth.com/api/v0
-- Backend: Fastify + zod; validation errors reveal expected schemas (param validation runs BEFORE authz on several routes)
-- JWTs: RS256 kid 65aebd86, aud app.dynamicauth.com, iss auth.dynamicauth.com/{envId}, 24h access + 30d refreshExp, scope user:basic, carries session_public_key
-- Full public OpenAPI spec EXPOSED: https://app.dynamic.xyz/api-docs/public-api.yaml (525 ops; Server tag = dyn_ token auth + x-dyn-server-signing-proof for sensitive ops)
-- Device attestation: ECDSA P-256, client-generated key, signs ONLY the nonce string (headers x-dynamic-device-nonce/publickey/signed-nonce). Anti-bot layer only — accepts arbitrary self-generated keys (by design)
-- Nonce endpoints: /nonce (SIWE), /nonces (device, "auth"-prefixed)
-- Docs render as markdown: append .md to any docs.dynamic.xyz page; llms.txt index available
-- SDK client @dynamic-labs/sdk-api-core@0.128.0 contains all request/response models
-- SIWE builder: module in vendor-00152608 (DL export); no statement configured on own envs
+- Dashboard: Angular SPA at app.dynamic.xyz; API same-origin /api/v0 + app.dynamicauth.com/api/v0; Fastify+zod
+- Full public OpenAPI spec: https://app.dynamic.xyz/api-docs/public-api.yaml (525 ops); docs render as .md
+- JWTs: RS256 kid 65aebd86, 24h access + 30d refreshExp, session_public_key carried
+- Device attestation: ECDSA P-256 P1363 hex, signs ONLY nonce string; accepts self-generated keys (anti-bot only); implemented in scripts/device_auth.js
+- Nonces: /nonce (SIWE, single-use confirmed), /nonces (device, "auth"-prefixed)
+- Secrets handling: captcha secretKey write-only (correct); webhook secret plaintext via includeSecret (BROKEN gate)
 
-## Tests Executed & Results (updated)
-| # | Test | Result | Status |
-|---|------|--------|--------|
-| 1 | Cross-tenant IDOR sweep attacker(B) vs victim(A) ids: 20 endpoints (org/project/env/member/users/keys/origins/webhooks/exports/lookup/visitors/events) | ALL 403 opaque "not found" | NO ISSUE |
-| 2 | Dashboard JWT on other envs' SDK endpoints (/session, /refresh, settings) | 403 "JWT environment has no access to requested environment" | NO ISSUE |
-| 3 | getBAMutateAccessEnvIdsFromJWT | 60s scoped JWT, env list server-derived, no client input | NO ISSUE |
-| 4 | SIWE signin message template hunt (12 variants: statements, domains, timestamps, resources, request-id, trailing newline) | All "Message validation failed"; nonce confirmed SINGLE-USE (reuse → "Could not validate nonce") | BLOCKED — need real captured request |
-| 5 | wallets/verify without session | 401 auth required (link-flow, not anon) | BY DESIGN |
-| 6 | users/check (email availability oracle) on dashboard env fb6dd9d1 with user JWT | {available:false} for registered email, true otherwise — user enumeration oracle for ANY authenticated dashboard user | P4/P5 — LOGGED, NOT SUBMITTING (below bar) |
-| 7 | stepUp/check {scope:"wallet:export"} | Returns credentials list + isRequired:true — flow exists; OTP gated | NEEDS OTP INBOX |
-| 8 | sessionKey with arbitrary ed25519 key | 422 invalid_session_public_key "Security verification failed" | NO ISSUE |
-| 9 | V3 wallet create (waas/create) | SSE MPC ceremony starts, room created, requires client MPC join to complete | BLOCKED (needs WalletKit ceremony) |
-| 10 | Env API token creation (own env) | Works: POST /environments/{env}/tokens returns plaintext dyn_ token; live env restricted ("Unauthorized: Live environment restricted" for origins + tokens on live) | BY DESIGN |
-| 11 | dyn_ token cross-env use (sandbox token → live env /server/users) | 403 "Token does not have access to this environment" | NO ISSUE |
-| 12 | dyn_ token scope enforcement (all.read → POST flow/payment) | 403 "Insufficient scope permissions" (validation runs first, but authz enforced) | NO ISSUE |
-| 13 | Flow/Payment-links on own env | "Flow is not enabled for this environment. Please contact support" — feature-gated | BLOCKED |
-| 14 | Server endpoints without x-dyn-server-signing-proof | 401 "Authentication through the x-dyn-server-signing-proof header is not enabled for this environment" (except flow/fees/balances which is bearer-only) | BY DESIGN |
-| 15 | Device attestation implementation (ECDSA P-256 P1363, hex) + POST /sdk/env/refresh | 200 — refresh works with self-generated device key; same sid returned; 24h window; refreshExp unchanged | BY DESIGN (anti-bot only) |
-| 16 | PUT /sessions/{sid}/revoke with own sid (dashboard env user) | 403 "This resource is unavailable or does not exist" (env-admin-only route) | NO ISSUE |
-| 17 | POST /sdk/{env}/revoke (self) | 204; old JWT 401 immediately; refresh post-revoke → 401 "Session is no longer active" | NO ISSUE — invalidation solid |
-| 18 | Cross-user session revoke (A→B sid) | 403, B session intact (pre-revoke-test) | NO ISSUE |
-| 19 | globalWallets/settings with foreign Origin | 403 "Custom hostname does not belong to this project environment"; without Origin → 403 "No origin header present" | NO ISSUE |
-| 20 | InternalUserFields endpoints (createUser/bulkCreateUser accept email+emailVerifiedAt+wallets+oauthAccounts) | bearerAuth env-admin; cross-env 403 confirmed; own-env use excluded by program | NO ISSUE (excluded) |
-| 21 | testReadOnlyPrismaService, kms/reEncrypt, waas/backfill*, third-party webhook receivers (stripe/sendgrid/resend/turnkey/lithic/aiprise) | 404 at both /api/v0 bases | INTERNAL ONLY |
-| 22 | zendesk/login | 404 "Zendesk SSO is not enabled for this organization" | ORG-GATED |
-| 23 | authToken endpoint (type param) | no type → "Cannot GET" (different legacy layer); type=mpc → same; route half-migrated | ODDITY, no impact |
+## Completed Tests (summary — all NO ISSUE unless noted)
+1. Cross-tenant IDOR sweep (20 endpoints, B vs A ids): all 403 opaque
+2. Dashboard JWT cross-env SDK: 403 env-boundary
+3. getBAMutateAccessEnvIdsFromJWT: server-derived, 60s TTL
+4. SIWE signin template hunt (12 variants): blocked on message validation; nonce single-use confirmed
+5. users/check email oracle on dashboard env: P4/P5, not submitting
+6. stepUp/check {scope:wallet:export}: isRequired true, OTP-gated (needs inbox)
+7. sessionKey arbitrary key: 422 rejected
+8. V3 waas/create: SSE ceremony starts, needs client MPC join
+9. dyn_ token: cross-env 403; all.read → flow create 403 scope enforced
+10. Flow/Payment-links: support-gated on own env
+11. /server/*: x-dyn-server-signing-proof gated (env-flagged)
+12. Refresh rotation: same sid, 24h extension; post-revoke refresh 401 "Session is no longer active" — invalidation SOLID
+13. Sessions: /sessions/{id}/revoke env-admin-only; cross-user 403; /sdk/revoke works + propagates
+14. globalWallets: Origin + custom-hostname scoped
+15. createUser/bulkCreate (InternalUserFields): env-admin bearerAuth only
+16. Webhook receivers (stripe/sendgrid/etc.), testReadOnlyPrismaService, kms/reEncrypt: 404 internal-only
+17. scan/websiteUrl: isMalicious bool (3rd-party lookup, no fetch evidence; OAST probe ssrf-probe-1 fired — user to check Collaborator)
+18. Captcha settings: secret masked
+19. Admin actions: list OK on victim org; approve flow needs 2nd member
 
-## Key Unresolved / Next
-1. B needs re-login (session revoked during testing) — then: invite-flow role boundary test (A invites B as viewer/developer to victim org; test write-access as viewer, invite acceptance as existing user without email click)
-2. OTP-dependent flows need inbox access: step-up (wallet:export), email change, emailVerifications
-3. SIWE signin: needs one real captured wallets/signin request (user can capture in Burp from any dapp using Dynamic)
-4. OAuth accessToken endpoint (/oauthAccounts/{id}/accessToken): needs OAuth-linked account — user to link Google on a test account
-5. Waas MPC client ceremony: would enable full wallet-level IDOR testing
-6. Lazy-loaded chunks not yet all downloaded (12 chunk ids pending) — low priority
-
-## Findings
-(none confirmed yet — no P1/P2/P3)
+## Next Actions
+1. Submit Finding #1 (evidence complete)
+2. After B re-login: accept invite → viewer-role includeSecret test (severity escalation path) + admin-action self-approve test + full write-access-as-viewer sweep
+3. User-assisted: one real wallets/signin capture (Burp), OAuth link on test account (→ /oauthAccounts/{id}/accessToken test), step-up OTP for wallet:export chain
+4. Deferred: full WalletKit MPC client ceremony; lazy chunks; exchange/onramp config secrets
