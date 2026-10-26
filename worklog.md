@@ -423,3 +423,21 @@ Work Log:
 
 Stage Summary:
 - Round 9 complete: browser-SDK mining (206 paths) + 130+ probes across 5 credential contexts × 6 bug classes (IDOR, XSS, SSRF, scope-esc, OAuth-chain, custody-ceremony). ZERO new P1/P2, zero new P3. All 6 hypothesis chains CLOSED with evidence: (1) sessionKey PoP-arm 422, (2) OAuth state store env-scoped + origin gate strict + state XSS schema-blocked, (3) API-token scopes enforced, (4) server-held wallets uncreatable (ceremony crash), (5) backup-token recover scope-gated, (6) realtime channels env-scoped. Server JWT broad /sdk acceptance re-confirmed but user-scoping holds everywhere. BUG-004 (P3) remains the only filed finding. Parked-capability items unchanged: globalWallets origin bypass (needs own domain), user-session matrix (needs live user session/OTP relay)
+
+---
+Task ID: idor24 / round10-spec-none-routes-and-mint-forgery
+Agent: main (zeno0 session)
+Task: "keep work" — continue P1/P2 hunt: spec sec:(none) routes, narrow-scope token abuse, mint body forgery, server-signing-proof mode
+
+Work Log:
+- [SPEC sec:(none) ROUTES — DEPLOYED SECURE] POST /server/{env}/waas/{walletId}/keyShares/backup/locations (spec security:none) → 401 auth-required deployed (spec-vs-deployed safe direction); GET backup/token unauth → 401 both routes
+- [SERVER-SIGNING-PROOF MODE DISCOVERED] /server waas routes reject dyn_ API tokens with "Authentication through the x-dyn-server-signing-proof header is not enabled for this environment" → per-env feature-flagged proof auth mode exists (disabled); would be owner-scoped by design if enabled; BUG-004's "spec says proof always verified" note already covers the verify gap
+- [NARROW-SCOPE TOKENS — BY DESIGN] minted gasless.write + waas.delegatedAccess.signMessage scope tokens (201, cleanup 204/204): gasless.write passes sponsorTransaction validation-first (intended purpose); delegatedAccess.signMessage token → /server signMessage 401 (API tokens rejected on /server waas — JWT-only routes), /sdk signMessage 401 — no narrow-scope escalation
+- [ADDITIONAL-ADDRESSES] /server variant NOT DEPLOYED; /sdk PUT minItems 1 (validation); user-scoped → no cross-principal edit
+- [DELEGATED-ACCESS ENCRYPTION KEY] GET encryptionPublicKey with srv → 404 "No active encryption public key found for this environment" (env-level setting, not settable via probed routes)
+- [FLOW REALTIME] POST /sdk/{env}/flow not deployed (404) — flow-scoped token test unreachable
+- [MINT SUB-FORGERY — CLOSED] POST /environments/{SB}/waas/authenticate with 6 body variants (email/userId/identifier/sub/verifiedCredentials of victim user ev8) → ALL mint sub=server-principal constant, only sid rotates → mint not user-forgeable
+- ARTIFACTS: recon/idor24/ (idor24a_log.json, idor24b_log.json, idor24c_log.json), scripts/idor24a-c
+
+Stage Summary:
+- Round 10 complete: spec-none routes, proof-auth mode, narrow scopes, mint forgery — ALL CLOSED (7 vectors, 0 findings). ACCESSIBLE SURFACE NOW EXHAUSTED for available credential classes (sandbox API token + server-principal JWT + derived narrow tokens). Remaining P1/P2 paths are capability-blocked pending user assistance: (1) live user-session OTP relay → cross-user /server matrix on original env + BUG-003 chain re-validation, (2) own-domain registration → globalWallets origin-gate bypass demo, (3) live dashboard login → org/member/personal-token surface. BUG-004 (P3) remains sole filed finding; no inflation
