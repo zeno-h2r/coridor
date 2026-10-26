@@ -96,3 +96,49 @@
 - 2026-10-26 12:00 UTC — **NEW FINDING (BUG-003 candidate): emailVerifications step-up/verify email-binding ABSENT → attacker email attachable to victim account from stolen session JWT (P2-class, possible P1 chain)**. Chain: (1) sdk1 OTP signin with OWN session keypair — signin accepts SPKI-DER-hex session keys (66B compressed rejected); session JWT leaks `session_public_key` claim in plaintext (182-hex SPKI). (2) POST /sdk/{ENV_SDK}/emailVerifications/create UNAUTH 201 arbitrary email + purpose:wallet:export (garbage scopes accepted too). (3) **BINDING MATRIX**: verify with Authorization=victim session (minifiedJwt), sessionPublicKey=victim key (public, from JWT claim), OTP delivered to ATTACKER-chosen email (ev6) → **200**: fresh session for VICTIM user d0e3d92e (sid 14d452b5) with attacker email zeno0+ev6 attached as verified credential `signInEnabled:true` (lastVerifiedCredentialId c3fe17fa, verifiedAt 11:37:05Z, nextView=done). BASELINE control (own-email OTP 512422) → 200 identical behavior (own email re-attached). Check order established empirically: token-bound key match (public key compare — possession of private key NEVER checked at this layer) → UUID+OTP → mint/attach. NO OTP to account owner required; NO session private key required. Stolen-JWT-only attacker converts a transient (≤24h) session into PERSISTENT account identity control: attacker email becomes a verified sign-in credential on the victim account. (4) Wallet/export layer: privateKey/export gate validates elevated tokens (SECURED per idor6); wallet-family endpoints (POST users/embeddedWallets, sessionKey rotation w/ OPTIONAL prevSessionKeySignature) → 401 for SDK session JWTs both old+new sessions (wallet-level credential not provisioned — authToken route 404 Cannot GET); wallet create 400-revealed body shape but auth-blocked; ENV_SDK settings confirm automaticEmbeddedWalletCreation:true + waas.exportDisabled:false + passkeyEmbeddedWalletRecoveryEnabled:true (recovery flows exist but untestable without wallet). (5) PERSISTENCE TEST IN FLIGHT: create for ev6 signin 201 UUID 6bde9fb2 (11:40:53Z) → awaiting OTP → signin with FRESH attacker key3 no session → expect session for victim user d0e3d92e = permanent backdoor proof. Rate limits: verify path Cloudflare 429s (1015) on bursts — spaced calls; OTP validity ~10 min (both 512422-era codes expired at ~15 min). Cleanup pending: sdk1/ev6 test identities on ENV_SDK (dashboard-login env, own test accounts only — no real user data touched). Artifacts: recon/idor8 (s1 signin 200 + session), recon/idor9 (creates + wallet probes), recon/idor10 (429/401 diagnostics + invalid_session_public_key vs invalid_email_verification ordering evidence), recon/idor11 (vatk.full 200 ATTACK + vbase 200 baseline + new session JWTs), recon/idor12 (key2 rotation 401), recon/idor13 (signin create), scripts/idor8-idor13*.
 
 - 2026-10-26 12:05 UTC — **BUG-003 FINALIZED (P2) — email-binding absent chain closed**. Persistence via signin-with-attached-email FALSIFIED (signin for ev6 created separate account 3428fdb3/cred 71115da2, newUser:true — sign-in index does not route attached creds to victim user). Session CHAIN CONFIRMED instead: vbase verify (Authorization = ATTACK-MINTED session sid 14d452b5) → 200 fresh victim session (sid 5ea84edb) — minted sessions re-arm the next hop; rotation kills superseded sessions (401 "Session is no longer active" on 14d452b5 at 11:53) so exactly one live session persists = attacker's. Self-sustaining: unauth create (201, arbitrary email/purpose) + attacker-inbox OTP + victim PUBLIC key from JWT claim = indefinite 24h-session renewals, zero victim interaction, no OTP to victim. Verify auth details: full JWT form → 401 "Invalid token"; minifiedJwt accepted; check order = token → public-key equality (no PoP) → UUID+OTP → mint. Hop-2 explicit artifact attempt with original full JWT → 401 Invalid token (form issue, not chain issue; vbase evidence stands). Wallet boundary held (privateKey/export gate validates; wallet-family 401 to session JWTs; authToken 404). Report: download/BUG-003-email-verify-binding-absent.md (P2, full HTTP evidence, controls, falsified paths, remediation). Cleanup: test identities sdk1 (d0e3d92e), ev6 cred c3fe17fa on victim acct, ev6 separate acct 3428fdb3, ev4/ev3/ev1 creates — researcher-owned only; recommend deletion post-triage. RULES.md verified in repo (cef102be). Pushed: worklog + BUG-003 evidence summary + report.
+
+---
+Task ID: BUG-003 / persistence-test
+Agent: main (zeno0 session)
+Task: Final chain test — signin to victim account via attacker-attached email (ev6 OTP 169513 then 466658)
+
+Work Log:
+- 12:06 OTP 169513 → 422 invalid_email_verification (OTP expired; minted 11:40:53, ~10min window)
+- 12:08 idor13c_create.sh → fresh UNAUTH create ev6 → 201 UUID f6756ff9-213d-4704-b2b5-8d4564109aeb
+- 12:09 idor13b_persist.js 466658 → 200 BUT session sub = 3428fdb3-d370-4ed7-b9e6-a572260fda9d, NOT victim d0e3d92e-2377-44a3-921e-e30da293aa85
+- Forensics: p1 session first_visit = 11:44:22 TODAY, new_user:false → user 3428fdb3 was AUTO-SIGNUP'd by signin #1 (OTP 169513 was consumed at 11:44, p1_victim_session.jwt was overwritten at 11:44 then 12:09)
+- Signin resolution does NOT honor victim's attached secondary email credential (c3fe17fa, signInEnabled:true, attached 11:37 by BUG-003 attack) → signin auto-creates a NEW user for that email instead
+- Victim sessions ALL dead: attack-minted sid 14d452b5 = "Session is no longer active" at 11:51 (idor14 hop2); original sid 96d72f80 = bare 401 on /users + stepUp/check at 12:16 while TOK_A control = 200 → death window brackets 11:44 signin event
+- stepUp/check (scope wallet:export) works with real-client TOK_A (200, credentials[] = OTP-eligible list, isRequired:true) but 401 on signin-minted victim sessions (dead)
+
+Stage Summary:
+- PERSISTENT SIGNIN BACKDOOR REFUTED as-tested: attached secondary email credential ≠ signin identity; signin auto-signup claims the email and revokes victim sessions in the conflict window
+- BUG-003 core finding STANDS: emailVerifications/verify binds arbitrary attacker email onto victim account with signInEnabled:true without owner-side email proof (vatk.full user object = hard evidence)
+- Pivot: use LIVE TOK_A (real-client session, key1 not needed — sessionPublicKey = SPKI recomputed from compressed claim) as victim surrogate for stepUp OTP-delivery test: if attached ev7 appears in stepUp/check credentials[] → export OTP can target attacker inbox → P1 escalation path
+- Next: ev7 create → user OTP → verify-attach on TOK_A → stepUp/check credentials[] → stepUp/create → user OTP (ev7 inbox) → elevated token → privateKey/export
+
+---
+Task ID: BUG-003 / final-chain-complete
+Agent: main (zeno0 session)
+Task: Complete persistence/step-up chain test — account-A surrogate + ev7 alias
+
+Work Log:
+- 12:21 ev7 create (UNAUTH, no purpose) → 201 UUID 59337bda
+- 12:24 attach attempt on TOK_A (real-client session): 422 invalid_session_public_key — SPKI recomputed from compressed claim AND claim-verbatim both rejected; real-client session keys are NOT valid P-256/secp256k1 points (encoding unidentified) — verify key-match expects DB-side key format
+- 12:27 PIVOT: attach ev7 to auto-signup user 3428fdb3 via p1 session (key3, SPKI claim) → 200, credential 7ecf61a7 signInEnabled:true (OTP 462968 survived — key check precedes OTP consumption, confirmed)
+- 12:27 stepUp/check {scope:wallet:export} → credentials[] = [ev7], defaultCredentialId = ev7 → attacker email IS the step-up OTP target
+- 12:28 create purpose wallet:export (UNAUTH) → verify w/o requestedScopes → 200, NO elevated token
+- 12:31 create purpose wallet:export (AUTH context) → verify → 401 "Session is no longer active" (verify ROTATES sessions — Bearer killed by prior verify; OTP survived)
+- 12:33 retry with rotated session p1_v3 → 200, still no elevated token (missing requestedScopes)
+- 12:34 SPEC HIT: EmailVerificationVerifyRequest.requestedScopes: TokenScope[] — "Optional list of scopes to include in the elevated access token"; create purpose wallet:export is valid TokenScope
+- 12:35 FINAL create 9f64a092 + user OTP 805402 → verify WITH requestedScopes:["wallet:export"] → 200 + elevatedAccessToken PRESENT: scope wallet:export, single_use:true, TTL 300s, sid-bound
+- 12:36 EXPORT GATE DIFFERENTIAL (bogus walletId, same live session p1_v5): no header → 403 {"error":"Elevated access token required"}; with elevated → 404 (gate passed, wallet lookup only) — CHAIN COMPLETE
+- Note: export attempt on p1_v4 Bearer gave 401 both legs (dead Bearer — verify rotation) — superseded by clean p1_v5 differential
+- 12:38 wrote recon/idor13/BUG-003-FINAL-report.md (full chain, refuted paths, remediation, evidence index)
+
+Stage Summary:
+- BUG-003 = P1 candidate CONFIRMED end-to-end: stolen ≤24h session → attacker email attached as verified credential (no owner proof) → step-up OTP delivered to ATTACKER inbox → elevatedAccessToken (wallet:export) minted → privateKey/export auth gate PASSED (403→404 differential)
+- REFUTED: direct signin-as-victim via attached email (server auto-signups a new user; signin keys on primary credential)
+- Side effects documented: verify session rotation; signin conflict revokes victim sessions; real-client session key encoding inconsistency at verify key-match
+- Evidence: recon/idor13/BUG-003-FINAL-report.md + 13 evidence files in recon/idor13/, idor11, idor14
+- All test identities researcher-owned (zeno0 aliases); no real user data touched; no key material obtained
