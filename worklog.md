@@ -158,3 +158,23 @@ Work Log:
 Stage Summary:
 - State recovered: nothing lost except raw byte-level dumps (values were elided in the report anyway; tokens dead at submission)
 - User question answered: victim session minifiedJwt CANNOT be minted (signin = primary-credential OTP only; attached creds auto-signup new user — proven; verify = needs live Bearer, chicken-and-egg) NOR forged (RS256+kid; alg-confusion/none/jku/x5u all 401) → precondition is a separate session-theft vector; chain value = laundering transient token into persistent credential + step-up OTP hijack + wallet:export, damage outlives stolen token
+
+---
+Task ID: BUG-003 / evidence-review
+Agent: main (zeno0 session)
+Task: Evidentiary review — is a pre-existing victim minifiedJwt strictly required to demonstrate/exploit BUG-003? (user directive: review only, NO report modification/submission)
+
+Work Log:
+- Correction to prior entry: repo pushes SUCCEEDED post-reset — worklog commit b32db82660 + reports/BUG-003-FINAL-report.md commit 5126473698 (token was display-redacted, not absent); remote reports/ confirmed via API: BUG-003-email-verify-binding-absent.md (12:05-era) + BUG-003-FINAL-report.md (rebuilt) + BUG-001/BUG-002 reports
+- Evidence base audited: local raw dumps (recon/idor8–idor14, scripts/idor8-idor13*) LOST in 13:05 reset; citations rest on (a) restored worklog entries (verbatim from session capture), (b) session record, (c) remote repo artifacts, (d) rebuilt report
+- Q1 verify gate — CONFIRMED REQUIRED: check order = Bearer validity → session_public_key equality (no PoP) → UUID+OTP → mint/attach (worklog 12:05 entry); full-jwt form → 401 "Invalid token"; superseded Bearer → 401 "Session is no longer active" (12:31 final-chain; 11:51 idor14 death-window); key mismatch w/ valid Bearer → 422 invalid_session_public_key (TOK_A 12:24) and ALL format variants (idor6 matrix, 13:30 entry)
+- Q2 signin-via-attached-credential — REFUTED at identity level: 12:09 signin OTP 466658 → HTTP 200 BUT session sub = 3428fdb3-d370-4ed7-b9e6-a572260fda9d ≠ victim d0e3d92e-2377-44a3-921e-e30da293aa85; forensics first_visit 11:44:22 = auto-signup by signin #1 (cred 71115da2, newUser:true); victim's attached cred c3fe17fa (signInEnabled:true, attached 11:37 via vatk) NOT honored by signin index
+- Q3 unauth create→verify mint — NOT DEMONSTRATED: create is UNAUTH 201 arbitrary email/purpose (13:30 entry) but verify gated per Q1; every victim-identity session observed (sid 14d452b5 @11:37:05Z vatk; sid 5ea84edb vbase) traced to a prior victim-session Bearer; create alone yields verificationUUID only
+- Q4 forgery — infeasible WITHIN tested vectors: HS256 alg-confusion ×4, none-alg ×2, jku/x5u ×2 (no OAST JWKS fetch observed) → all 401 (13:30 LEAD-2); limits: no kid-manipulation tests, no per-signer coverage (elevated/refresh token signers untested), single validator class, bounded by test window
+- VERDICT: pre-existing victim minifiedJwt STRICTLY REQUIRED per tested evidence; chain = laundering (attach 11:37 → stepUp/check default target 12:27 → elevatedAccessToken 12:35 → export gate 403→404 12:36); persistence nuance corrected: renewals are rotation-sustained DURING foothold; after expiry NO re-entry (signin refuted) — persistent residue = credential pollution + step-up OTP hijack only; independently exploitable = NOT demonstrated
+- Defensible severity as-tested: P2 chained (Broken Access Control / insufficient verification on credential binding + step-up target redirection); P1 requires positive T-A (unauth mint) or program acceptance of amplification argument
+- Missing tests filed: T-A no-Bearer verify matrix (decisive); T-B real-wallet export completion (403→404 proves gate-pass only, NOT key delivery); T-C signin primary-email control
+- Report NOT modified, NOT submitted (per directive); review delivered in-session
+
+Stage Summary:
+- Review complete: verdict + evidence table + exact missing tests delivered; severity framing = chained P2 defensible, P1 unproven; report untouched; worklog pushed
