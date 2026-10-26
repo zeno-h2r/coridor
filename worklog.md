@@ -194,3 +194,17 @@ Work Log:
 
 Stage Summary:
 - Honest call: BUG-003 = real auth-integrity defect, truncated impact evidence, unestablished provenance → NOT submittable at P1/P2 today; escalate-or-drop decision hinges on T-B wallet export completion; otherwise drop per rule 11
+
+---
+Task ID: RULES v3 / standalone-directive
+Agent: main (zeno0 session)
+Task: User directive — standalone bugs only; no hypothetical if-then chains; chain entry must have tangible standalone impact
+
+Work Log:
+- RULES amended (v3): standalone findings only; chains permitted ONLY if initial link has a real position AND tangible harm of its own; "if we had the victim's session then X" framings BANNED
+- BUG-003 disposition: DROPPED as submission; retained internally as documentation of the email-binding + step-up-target-hijack flaw family (BUG-001 sibling); no further work absent user request
+- Standalone leads ranked for execution: (A) waas keyShares backup-token consumer — backup token mints with plain session, wallet-agnostic, exp-iat 42089s ≈ 11.7h vs spec "valid for 1 minute"/wallet-specific (13:30 entry); consumer route + actual key-share delivery NEVER tested; real wallet 25d499d5 on own env fb6dd9d1 (end-user 7526c359, from round-5, left in place) = live test target, no victim contact; (B) unauth /sdk/{env}/* route sweep (passkeys attestation/authentication options, oauth redirect, magiclink, iframe, notifications) — user-enum / unauth-mint hunting; (C) console OAuth flow app.dynamic.xyz (redirect_uri/state/PKCE) — user-assisted browser, queued; (D) preprod/canary recon — requires scope check with user first
+- Executing A + B immediately (own env, researcher-owned identities only)
+
+Stage Summary:
+- Standalone-only mode active; A = top lead (key-material-without-step-up would be standalone P1-class with accepted session-possession threat model, same entry class as submitted BUG-001)
