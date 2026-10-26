@@ -3,7 +3,7 @@
 - **Researcher:** zeno0 (zeno0@bugcrowdninja.com)
 - **Target:** `app.dynamicauth.com` / `app.dynamic.xyz` (same-origin `/api/v0` proxy) — Dynamic Labs Managed Bug Bounty
 - **Endpoint:** `GET /api/v0/environments/{environmentId}/webhooks/{webhookId}?includeSecret=true`
-- **Suggested severity:** **P3** (argued **P2** — see Severity rationale)
+- **Suggested severity:** **P2** (escalated 2026-10-26 — see §8; originally submitted as P3/argued-P2)
 - **VRT:** `Server Security Misconfiguration → Missing Step-Up/Re-Authentication on Sensitive Action` (alt: `Broken Access Control → Privileged Action Without Re-Authentication`)
 - **Status:** Confirmed & re-verified live. Original discovery 2026-10-25T23:27Z; re-verified 2026-10-25T23:46–23:47 UTC (same session, both bypass variants + control all reproduce).
 - **Test environment:** researcher-owned sandbox `7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6` (all identifiers/secrets below belong to the researcher's own test environment).
@@ -196,3 +196,60 @@ Concrete downstream scenarios in Dynamic's customer base:
 - Test webhook: `721f79c5-572e-4d64-869d-680268d164b4` on researcher sandbox env `7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6`
 
 *All identifiers, tokens and secrets referenced belong to the researcher's own test environment. The console session JWT is intentionally redacted here and is available to triage via the Bugcrowd submission form / researcher's Burp history.*
+
+---
+
+## 8. ESCALATION UPDATE (2026-10-26 ~00:09–00:20 UTC) — cross-account + least-privilege confirmation → P2
+
+A second, independent test account (`zeno0@bugcrowdninja.com`, user `80327e1e-25b9-4b52-bba4-d2a49498d5f3`, fresh session `fb51befb-f875-4431-bb0f-c265724354a9`) was granted membership on the researcher's primary organization (`e6be9ca6-0af0-49fc-a257-9c0efac1687f`) and tested against the victim environment's webhook — a webhook this account never created and whose environment it was never admin of.
+
+### 8.1 Cross-account reveal (membership-driven authz, stale-token irrelevant)
+
+- B's JWT `roles` claim contains ONLY its own org (`org:06f46da7-…:owner`) — the victim org membership is not in the token. The server authorizes this endpoint from live DB membership, **and the step-up gate is enforced for nobody**: B → `GET /environments/7dfe3b0c-…/webhooks/721f79c5-…?includeSecret=true` → **HTTP 200 + full plaintext secret**, with role `admin`.
+
+### 8.2 Least-privilege reveal (role downgraded to `viewer`)
+
+The owner downgraded B to `viewer` (`PUT /members/b84845be-6965-46ef-ae45-4f1a5e861c4b` → `{"role":"viewer"}`, response `200`, `internalPermissions: []`) and the test was repeated:
+
+```
+GET /api/v0/environments/7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6/webhooks/721f79c5-572e-4d64-869d-680268d164b4?includeSecret=true
+Authorization: Bearer <VIEWER_MEMBER_SESSION_JWT>
+→ HTTP 200
+{"enabledAt":"2026-10-25T23:27:34.972Z", ..., "secret":"dyn_Qfvm49E4cdO0AewRTjk{PAGBhx2t[RNpVMqajPTaQaq4Yme[f12LQka9", ..., "webhookId":"721f79c5-572e-4d64-869d-680268d164b4", ...}
+```
+
+**A read-only `viewer` — the least-privileged role in the platform (`RoleEnum`: owner/admin/developer/operations/viewer) — retrieves the organization's webhook signing secret in plaintext.**
+
+### 8.3 Role separation otherwise intact (proves the gap is specific and unintended)
+
+Same viewer session, same environment, immediately before/after the reveal:
+
+| Viewer action on victim env webhook | Result |
+|---|---|
+| `PUT` update webhook (no-op body) | `403 {"error":"Unauthorized access"}` |
+| `DELETE` webhook (bogus id probe) | `403 {"error":"Unauthorized access"}` |
+| `POST` create webhook | `403 {"error":"Unauthorized access"}` |
+| `GET` webhook `?includeSecret=true` | **`200` + plaintext signing secret** |
+
+Webhook *writes* are correctly role-gated; the single credential-*reveal* action — which the API's own specification gates behind the dedicated step-up scope `console:webhook_secret:reveal` — bypasses both the step-up gate **and** the role model. A "viewer" who cannot so much as edit the webhook can silently take the key used to authenticate every event the webhook signs.
+
+### 8.4 Revised impact
+
+The realistic attacker set is now **every member of every customer organization, at any role**, plus anyone holding any member's session token (XSS, malicious extension, MITM proxy, log leakage — the 24h Bearer JWT is replayable with a single GET):
+
+1. **Least-privilege betrayal:** organizations invite viewers (auditors, support staff, contractors, junior devs) explicitly so they *cannot* touch credentials. Each of them can exfiltrate the webhook signing secret and forge customer-trusted events, with no OTP, no owner action, no elevated token, no log-visible anomaly beyond an ordinary 200 GET.
+2. **Offboarding gap:** members downgraded to viewer (instead of removed) retain full credential-reveal capability.
+3. **Session theft:** unchanged from original report, now aggravated — the thief needs *any* member's token, not an admin's.
+4. **Multi-environment blast radius:** the role grants are org-scoped while secrets are environment-scoped; every environment webhook in the org is readable by every member.
+
+### 8.5 Revised severity rationale
+
+Submitted as **P2** under `Broken Access Control → Privileged/Sensitive Action Available to Least-Privileged Role` combined with `Missing Step-Up Authentication`. A viewer obtaining a production signing credential without any re-authentication is a textbook least-privilege violation; the HMAC forgery chain (§3.4–3.5) converts it directly into customer-side impact. This is not a P1 only because it still requires an authenticated org member (or their stolen session) rather than a zero-interaction external attacker.
+
+### 8.6 Escalation evidence artifacts
+
+- `recon/b_invites.txt` — B pending invites (empty → old invite dead)
+- `recon/victim_members.txt` — org member list showing B role admin at test time
+- `recon/b_downgrade.txt` — owner downgrading B to viewer (200 response)
+- `recon/b_viewer_secret.txt` — **viewer → 200 + plaintext secret (core escalation evidence)**
+- Note: viewer PUT/DELETE/POST 403s captured in session log (transcript in worklog)
