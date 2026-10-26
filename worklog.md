@@ -2,9 +2,9 @@
 - Program: Dynamic Labs Managed Bug Bounty (Bugcrowd)
 - Researcher: zeno0 (zeno0@bugcrowdninja.com)
 - Scope: app.dynamic.xyz (dashboard + backend app.dynamicauth.com/api/v0)
-- Started: 2026-10-25 22:40 UTC — Last updated: 2026-10-25 23:50 UTC
+- Started: 2026-10-25 22:40 UTC — Last updated: 2026-10-26 00:20 UTC
 
-## CONFIRMED FINDING #1 (P3, borderline P2)
+## CONFIRMED FINDING #1 (**P2** — escalated 2026-10-26)
 ### Step-up authentication NOT enforced on webhook signing secret reveal → signed webhook forgery chain
 - Endpoint: GET /api/v0/environments/{environmentId}/webhooks/{webhookId}?includeSecret=true
 - Host: app.dynamicauth.com (same via app.dynamic.xyz/api/v0)
@@ -68,10 +68,11 @@
 19. Admin actions: list OK on victim org; approve flow needs 2nd member
 
 ## Next Actions
-1. ✅ DONE (2026-10-25 23:50 UTC): BUG-001 report written → `reports/BUG-001-webhook-secret-stepup-bypass.md` in this repo; ready to paste into Bugcrowd submission form
-2. After B re-login: accept invite → viewer-role includeSecret test (severity escalation path) + admin-action self-approve test + full write-access-as-viewer sweep
-3. User-assisted: one real wallets/signin capture (Burp), OAuth link on test account (→ /oauthAccounts/{id}/accessToken test), step-up OTP for wallet:export chain
-4. Deferred: full WalletKit MPC client ceremony; lazy chunks; exchange/onramp config secrets
+1. ✅ DONE (2026-10-26 00:20 UTC): BUG-001 escalated to P2 (viewer-role reveal confirmed) — append §8 to Bugcrowd submission
+2. User-assisted: one real wallets/signin capture (Burp), OAuth link on test account (→ /oauthAccounts/{id}/accessToken test), step-up OTP for wallet:export chain
+3. Deferred: full WalletKit MPC client ceremony; lazy chunks; exchange/onramp config secrets
+4. State note: B is currently viewer on victim org (e6be9ca6) — kept for further least-privilege sweeps
 
 ## Report Log
 - 2026-10-25 23:50 UTC — BUG-001 report authored and committed to repo (`reports/BUG-001-webhook-secret-stepup-bypass.md`). Re-verified live before writing: Test 1 plain-JWT reveal 200 (23:46:48Z), Test 2 garbage elevated-token 200 (23:46:57Z), control list endpoint omits secret, HMAC(rawBody) exact match vs captured x-dynamic-signature-256 + forged signature generated (hmac_verify_fresh.txt). Severity P3 (argued P2). Artifacts: recon/reverify_t1_234648.txt, recon/reverify_t2_234657.txt, recon/hmac_verify_fresh.txt.
+- 2026-10-26 00:20 UTC — BUG-001 **ESCALATED TO P2**. B (zeno0@bugcrowdninja.com) re-logged in (fresh sid fb51befb, JWT exp 2026-10-27T00:09Z, saved scripts/tok_b_new.txt). Old invite 91e1b785 dead (404; B pending invites count 0, recon/b_invites.txt). Invite d4a5e2e9-02c2-45eb-9696-b79f2fb1ca19 on victim org status=accepted role=admin (B accepted during re-login). KEY RESULT 1 (cross-account): B as member-admin with JWT roles claim containing ONLY its own org (stale token; authz is DB-membership-driven, step-up enforced for nobody) → victim env webhook includeSecret=true → 200 + plaintext secret. Downgraded B to viewer: PUT /members/b84845be-6965-46ef-ae45-4f1a5e861c4b {"role":"viewer"} → 200 (recon/b_downgrade.txt). KEY RESULT 2 (least-privilege): B as VIEWER → includeSecret=true → 200 + plaintext secret (recon/b_viewer_secret.txt). Viewer write sweep correctly 403 across PUT update / DELETE bogus-id / POST create — reveal gap is specific to the credential-reveal action. Report §8 added, severity revised P2. Member IDs: B=b84845be-6965-46ef-ae45-4f1a5e861c4b (viewer), A=a941506a-0799-4c36-8542-1e114cc889c0 (owner) on victim org e6be9ca6-0af0-49fc-a257-9c0efac1687f.
