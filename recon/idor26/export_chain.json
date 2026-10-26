@@ -1,0 +1,50 @@
+[
+ {
+  "step": "0-jwks",
+  "tag": "set repo raw",
+  "status": 200,
+  "body": "OK"
+ },
+ {
+  "step": "A-scope-enum",
+  "tag": "invalid scope -> full list",
+  "status": 400,
+  "body": "{\"error\":\"No recognized scopes in request. Must include one of: wallet:delegate, wallet:delete, wallet:export, wallet:offline_recovery_trigger, wallet:policy:update, wallet:refresh, wallet:reshare, wallet:restore, wallet:sign, user:delete, user:update, credential:link, credential:unlink, credential:update, mfa_device:delete, mfa_device:update, passkey:delete, device:delete, device:register, client_keyshare:backup_for_target, business_account:governance:update, business_account:link_wallet, business_account:member:add, business_account:member:remove, business_account:member:role:update, business_account:policy:update, business_account:proposal:approve, business_account:proposal:veto, business"
+ },
+ {
+  "step": "B-mint",
+  "tag": "scope=wallet:export",
+  "status": 200,
+  "body": "{\"elevatedAccessToken\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjMyNTliMGU0LWUyZjctNDFjYS05Y2RlLWZjNzY1MWUxNmVmZSJ9.eyJhdWQiOiI3ZGZlM2IwYy1jMGRiLTRkZmEtYmJhNi1mNzJkZjk3Y2NiZDYiLCJlbnZpcm9ubWVudElkIjoiN2RmZTNiMGMtYzBkYi00ZGZhLWJiYTYtZjcyZGY5N2NjYmQ2IiwiZW52aXJvbm1lbnRfaWQiOiI3ZGZlM2IwYy1jMGRiLTR"
+ },
+ {
+  "step": "B-claims",
+  "tag": "",
+  "status": 200,
+  "body": "{\"aud\":\"7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6\",\"environmentId\":\"7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6\",\"environment_id\":\"7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6\",\"exp\":1793041678,\"iat\":1793041378,\"iss\":\"app.dynamicauth.com/7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6\",\"jti\":\"e04a4fec-bbba-4e92-b318-1f94b429510e\",\"kid\":\"3259b0e4-e2f7-41ca-9cde-fc7651e16efe\",\"scope\":\"wallet:export\",\"sid\":\"3cb371ed-d252-4120-a733-938e90fef8f2\",\"singleUse\":true,\"sub\":\"db163919-caa3-47ac-8fe3-77cf54fee3ea\"}"
+ },
+ {
+  "step": "C-export-W1",
+  "tag": "own wallet + elevated",
+  "status": 200,
+  "body": "event: status\ndata: {\"message\":\"Creating room...\",\"step\":\"create_room\"}\n\nevent: room_created\ndata: {\"roomId\":\"6cb3802ba495c63c54dd80305300f47c\",\"serverKeygenIds\":[\"8em4U4qYDhfoYWWVr1iQtzge4VjTz8ZntwJuvXGgb95L\"]}\n\nevent: error\ndata: {\"error\":\"Invalid request\",\"status\":400}\n\n"
+ },
+ {
+  "step": "D-export-W2",
+  "tag": "CROSS-USER attempt",
+  "status": 403,
+  "body": "{\"error\":\"Invalid or expired elevated access token\",\"status\":403}"
+ },
+ {
+  "step": "E-elev-reuse",
+  "tag": "second use of same elevated",
+  "status": 403,
+  "body": "{\"error\":\"Invalid or expired elevated access token\",\"status\":403}"
+ },
+ {
+  "step": "F-no-elev",
+  "tag": "control without elevated",
+  "status": 403,
+  "body": "{\"error\":\"Elevated access token required\",\"status\":403}"
+ }
+]
