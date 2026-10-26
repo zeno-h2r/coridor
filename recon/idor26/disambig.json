@@ -1,0 +1,32 @@
+[
+ {
+  "step": "1-mint",
+  "tag": "fresh elevated",
+  "status": 200,
+  "body": "OK"
+ },
+ {
+  "step": "1-W2-crossuser",
+  "tag": "ev8 session + fresh elevated on ev9 wallet",
+  "status": 404,
+  "body": ""
+ },
+ {
+  "step": "2-W1-own",
+  "tag": "control own wallet",
+  "status": 200,
+  "body": "event: status\ndata: {\"message\":\"Creating room...\",\"step\":\"create_room\"}\n\nevent: room_created\ndata: {\"roomId\":\"af2d50a2f47f54a8a017e5b1c9e32d7a\",\"serverKeygenIds\":[\"8em4U4qYDhfoYWWVr1iQtzge4VjTz8ZntwJuvXGgb95L\"]}\n\nevent: error\ndata: {\"error\":\"Invalid request\",\"status\":400}\n\n"
+ },
+ {
+  "step": "3-server-W1-user",
+  "tag": "END-USER session, no elevated, /server route",
+  "status": 200,
+  "body": "event: status\ndata: {\"message\":\"Creating room...\",\"step\":\"create_room\"}\n\nevent: room_created\ndata: {\"roomId\":\"6369e012a9a37309bc9ae70c51d10c44\",\"serverKeygenIds\":[\"8em4U4qYDhfoYWWVr1iQtzge4VjTz8ZntwJuvXGgb95L\"]}\n\nevent: error\ndata: {\"error\":\"Invalid request\",\"status\":400}\n\n"
+ },
+ {
+  "step": "4-server-W2-user",
+  "tag": "user session, foreign wallet, /server",
+  "status": 404,
+  "body": ""
+ }
+]
