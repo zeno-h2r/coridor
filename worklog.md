@@ -208,3 +208,22 @@ Work Log:
 
 Stage Summary:
 - Standalone-only mode active; A = top lead (key-material-without-step-up would be standalone P1-class with accepted session-possession threat model, same entry class as submitted BUG-001)
+
+---
+Task ID: idor15 / standalone-hunt-A+B
+Agent: main (zeno0 session)
+Task: Execute standalone leads A (waas keyShares family) + B (unauth SDK sweep) per RULES v3
+
+Work Log:
+- TOKENS: TOK_A ALIVE (/organizations 200). A's console identity: org e6be9ca6 "victim zeno"; envs live 3d4562eb-c8d6-496c-a508-6ca4b49ce5ad + sandbox 7dfe3b0c-c0db-4dfa-bba6-f72df97ccbd6; A's SDK user on dogfood env fb6dd9d1 = c8792188-3451-41ae-bab4-7b3725fac172 (sid 912d35e0 via backup-token sub)
+- [A] backup/token re-minted with TOK_A: 200, aud app.dynamicauth.com, iss auth.dynamicauth.com/{env}, sub=c8792188 (session-user-bound, NO wallet claim), session_public_key claim = A's dashboard session key, exp-iat 32032s ≈ 8.9h (spec "1 minute" — mismatch re-confirmed)
+- [A] Spec-mined waas surface (sdk_pkg SDKApi.js + public-api.yaml): recover + backup/locations = POST session-gated (unauth 401/400); **authToken / passcode / backup routes NOT DEPLOYED** (Cannot GET; type param validation leaks allowed value "mpc" pre-deploy); GET /users/{userId} 404; embeddedWallets family write-only on GET
+- [A] waas/create = SSE MPC ceremony (room join + client keygen) — cannot be faked server-side; curl attempt died at join_room "Invalid request"
+- [A] PHANTOM WALLET DISCOVERED: 25d499d5-2721-4e63-8d2b-330873ef8cda ("idor5victimwallet", provider=browserExtension, address 0x9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b) = CONNECTED external wallet, NO key shares → cross-user share-recovery test void against it; round-5 "synthetic wallets" were connected-wallet registrations, not embedded MPC wallets
+- [A] Env matrix: /environments/fb6dd9d1/users → 403 Environment not found (fb6dd9d1 NOT A's org env — dogfood/dashboard-login env); TOK_A on /sdk/3d4562eb/* → 403 "JWT environment has no access" (env-binding enforced for own-org env — console session ≠ SDK session); live env create → 422 no_enabled_email_provider (live-env restriction); SANDBOX create ev8 → 201 verificationUUID b38b0ebf (Dynamic-hosted OTP works on sandbox)
+- [B] Unauth sweep (scripts/idor15_unauth_sweep.sh, 20 probes): jwks/settings/exchangeRates 200 by design; everything sensitive 401; flow/{bogus} 404 no oracle; emailProvider/users-check param-validation only; VERDICT: nothing above P4 (schema/allowed-values leaks via validation-before-authz ordering)
+- OPEN P1-CLASS QUESTION (family A): does keyShares/recover + backup/locations enforce USER-binding or only ENV+session? Decisive cross-user matrix needs TWO real embedded MPC wallets (browser-ceremony) + two sessions on sandbox — none exist in test surface; plan: user performs 2 demo logins (ev8, ev9) on sandbox env, pastes minifiedJwt values, then session1→recover(wallet2) + baseline own-wallet recover + backup-token chain
+- Artifacts: recon/idor15/ (a1_backup_token.json/.jwt, a2*, a4c_create SSE, a7_wallets, a8_create_ev8, a9_toka_envbind, a10-a12, b_* sweep bodies), scripts/idor15_unauth_sweep.sh
+
+Stage Summary:
+- A+B hunts: all unauth/auth-boundary surfaces SECURED or P4; backup-token TTL mismatch = amplification factor only; decisive cross-user share test blocked on real MPC wallets (browser ceremony) — user assist requested (2 demo logins)
