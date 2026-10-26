@@ -1,0 +1,80 @@
+[
+ {
+  "step": "0-ensure",
+  "tag": "already enabled",
+  "status": 200,
+  "body": "OK"
+ },
+ {
+  "step": "V1-hs256-confusion",
+  "tag": "signin",
+  "status": 422,
+  "body": "{\"code\":\"invalid_external_auth\",\"error\":\"JWT is invalid\",\"payload\":{\"additionalMessages\":[\"JWT algorithm 'HS256' is not allowed. Only asymmetric algorithms are accepted: RS256, ES256\"]}}"
+ },
+ {
+  "step": "V2-exp-past",
+  "tag": "signin",
+  "status": 422,
+  "body": "{\"code\":\"invalid_external_auth\",\"error\":\"JWT is invalid\",\"payload\":{\"additionalMessages\":[\"JWT verification failed: jwt expired\"]}}"
+ },
+ {
+  "step": "V3-iss-mismatch",
+  "tag": "signin",
+  "status": 422,
+  "body": "{\"code\":\"invalid_external_auth\",\"error\":\"JWT is invalid\",\"payload\":{\"additionalMessages\":[\"Issuer (iss) does not match\"]}}"
+ },
+ {
+  "step": "V4-aud-mismatch",
+  "tag": "signin",
+  "status": 422,
+  "body": "{\"code\":\"invalid_external_auth\",\"error\":\"JWT is invalid\",\"payload\":{\"additionalMessages\":[\"Audience (aud) does not match\"]}}"
+ },
+ {
+  "step": "V5-kid-unknown",
+  "tag": "signin",
+  "status": 422,
+  "body": "{\"code\":\"invalid_external_auth\",\"error\":\"JWT is invalid\",\"payload\":{\"additionalMessages\":[\"kid in JWT must be a signature key in JWKs keys\"]}}"
+ },
+ {
+  "step": "V6-no-kid",
+  "tag": "signin",
+  "status": 422,
+  "body": "{\"code\":\"invalid_external_auth\",\"error\":\"JWT is invalid\",\"payload\":{\"additionalMessages\":[\"JWT header contains no key ID (kid)\"]}}"
+ },
+ {
+  "step": "V7-email-mismatch",
+  "tag": "signin",
+  "status": 422,
+  "body": "{\"code\":\"invalid_external_auth\",\"error\":\"External user has embedded wallet with other existing verified email\"}"
+ },
+ {
+  "step": "V8-ghost-sub",
+  "tag": "signin",
+  "status": 200,
+  "body": "{\"jwt\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjMyNTliMGU0LWUyZjctNDFjYS05Y2RlLWZjNzY1MWUxNmVmZSJ9.eyJraWQiOiIzMjU5YjBlNC1lMmY3LTQxY2EtOWNkZS1mYzc2NTFlMTZlZmUiLCJpc3MiOiJhcHAuZHluYW1pY2F1dGguY29tLzdkZmUzYjBjLWMwZGItNGRmYS1iYmE2LWY3MmRmOTdjY2JkNiIsInN1YiI6ImE4NzAxZGU0LTcxYWMtNDU3MC04MmEwLTI1ZmQ"
+ },
+ {
+  "step": "V8-session-claims",
+  "tag": "ghost minted?",
+  "status": 200,
+  "body": "{\"sub\":\"a8701de4-71ac-4570-82a0-25fd2c475eb4\",\"email\":\"ghost@evil.example\"}"
+ },
+ {
+  "step": "V9-ev9-sub",
+  "tag": "signin",
+  "status": 200,
+  "body": "{\"jwt\":\"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjMyNTliMGU0LWUyZjctNDFjYS05Y2RlLWZjNzY1MWUxNmVmZSJ9.eyJraWQiOiIzMjU5YjBlNC1lMmY3LTQxY2EtOWNkZS1mYzc2NTFlMTZlZmUiLCJpc3MiOiJhcHAuZHluYW1pY2F1dGguY29tLzdkZmUzYjBjLWMwZGItNGRmYS1iYmE2LWY3MmRmOTdjY2JkNiIsInN1YiI6IjI1ZWM5YTNmLWY1NDQtNDIyNC05NTM3LWZmYjY"
+ },
+ {
+  "step": "V9-session-claims",
+  "tag": "ev9 minted?",
+  "status": 200,
+  "body": "{\"sub\":\"25ec9a3f-f544-4224-9537-ffb63d40d22b\",\"email\":\"zeno0+ev9@bugcrowdninja.com\"}"
+ },
+ {
+  "step": "V10-verify-console-scope",
+  "tag": "step-up with console scope claim",
+  "status": 429,
+  "body": "<!doctype html>\n<!--[if lt IE 7]> <html class=\"no-js ie6 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 7]>    <html class=\"no-js ie7 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if IE 8]>    <html class=\"no-js ie8 oldie\" lang=\"en-US\"> <![endif]-->\n<!--[if gt IE 8]><!-->\n<html class=\"no-js\" lang=\"en-US\">\n    <!--<![endif]-->\n    <head>\n        <title>Access denied | app.dynamicauth.com used Cloudflare to "
+ }
+]
