@@ -178,3 +178,19 @@ Work Log:
 
 Stage Summary:
 - Review complete: verdict + evidence table + exact missing tests delivered; severity framing = chained P2 defensible, P1 unproven; report untouched; worklog pushed
+
+---
+Task ID: BUG-003 / critical-reassessment
+Agent: main (zeno0 session)
+Task: User-directed critical reassessment — is BUG-003 strong enough to submit AT ALL? (no inflation, no sunk-cost defense, no report modification)
+
+Work Log:
+- Impact ledger rebuilt from evidence only. PROVEN beyond-plain-session value: (1) stolen session ALONE cannot complete wallet:export (403 elevated-required; legit path OTPs to owner credential — idor6 12:xx gate matrix + 12:27 stepUp/check owner-credential list), BUG-003 redirects step-up OTP to attacker inbox → elevatedAccessToken minted (12:35) + gate passed (12:36 403→404) = the step-up control DESIGNED to stop session theft is defeated by session theft, silently, with no owner notification; (2) account-persistent residue: attacker email verified signInEnabled:true (cred 7ecf61a7 @12:27) + defaultCredentialId = attacker credential — survives expiry, causes owner step-up DoS/OTP interception; (3) foothold extension: rotation-sustained renewals while actively maintained (vbase re-arm, 12:05 entry) — but admin revocation still evicts (no Bearer → no verify)
+- NOT PROVEN / ASSUMED: actual private-key export (403→404 = gate passage on BOGUS wallet only, no wallet provisioned, wallet-family 401 for session JWTs); any unauth session acquisition (signin refuted @sub level 12:09; verify Bearer-gated; forgery dead); re-entry after expiry (refuted — signin keys on primary credential); downstream consumers of polluted credential (untested); persistence of defaultCredentialId post-expiry re-observed from victim side (assumed stored-state); post-expiry OTP interception usefulness to attacker WITHOUT a second session compromise (none — verify needs live Bearer)
+- INDEPENDENT EXPLOITABILITY VERDICT: NONE demonstrated. Every proven harm sits downstream of a live victim-session Bearer. Falsified signin path killed the classic add-email→login takeover; what remains is step-up-target hijack only
+- Submission triage simulation: as-is report (P1 header, "permanent takeover", export chain) → realistic triage = P4/N-A (session-theft precondition + impact truncated before materialization); step-up-bypass framing honest version = P3 borderline; user rule = P1/P2 only
+- FINAL VERDICT: TOO WEAK TO SUBMIT in current form — hold. Do not submit as P1 (two unproven claims: provenance + key export). Path to submittable P2 = complete T-B (real wallet-provisioned session via real SDK client login, user-assisted browser step, then full chain to actual key-share delivery); T-A (no-Bearer verify) cheap add-on to lock provenance; if wallet provisioning stays blocked → DROP per rule 11, retain as internal documentation of the email-binding/step-up flaw family (BUG-001 sibling pattern)
+- Report left unmodified; reassessment logged; no new API calls made (analysis-only task)
+
+Stage Summary:
+- Honest call: BUG-003 = real auth-integrity defect, truncated impact evidence, unestablished provenance → NOT submittable at P1/P2 today; escalate-or-drop decision hinges on T-B wallet export completion; otherwise drop per rule 11
