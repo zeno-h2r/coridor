@@ -314,3 +314,21 @@ Work Log:
 
 Stage Summary:
 - Full hidden-endpoint + multi-class hunt round complete: NO new P1/P2. Webhook SSRF chain defended at 4 independent layers; scope model strict; bulk/console features properly authz'd; step-up gate consistent on unlink; exports/env/user reads org-or-env bound. Honest blockers remaining: authorizeHtml XSS (needs residential browser), /auth/* + serverSigning (needs dashboard cookie session = user assist), cross-org proof (needs foreign identifiers = out of scope ethically). BUG-004 P3 remains the only filed finding; no inflation
+
+---
+Task ID: idor19b / verify-family-and-webhook-receivers-closure
+Agent: main (zeno0 session)
+Task: Continue P1/P2 hunt — verify/link-merge-transfer family, external webhook receivers, legacy embeddedWallets endpoints
+
+Work Log:
+- [verify/link — GATED] 403 "Elevated access token required" on: foreign-wallet claim w/ garbage sig, own-wallet relink, all variants — wallet linking behind same step-up gate as export/unlink (consistent enforcement across the family)
+- [verify/unlink — GATED] same 403 even for own wallet; cross-user unlink (W2) blocked by identical gate
+- [wallets/verify — GATED] 403 step-up with full valid body + garbage signature (own + foreign address) — signature semantics unreachable without step-up; gate precedes verification
+- [embeddedWallets/sessionKey — SECURED] POST {publicKey: <session's own SPKI hex>} → 422 invalid_session_public_key "Security verification failed. Please reauthenticate" — server-side binding validation active (format-mismatch rejection proves comparison logic exists); unauth 401
+- [EXTERNAL WEBHOOK RECEIVERS — NOT DEPLOYED on app.dynamicauth.com] /turnkey/webhooks, /coinbase/onramp/webhooks/{env}, /sendgrid/webhooks, /resend/webhooks, /lithic/webhooks, /webhooks/aiprise, /stripe/webhooks → uniform 404 "not found" with garbage bodies (forged-event vectors closed at this host; receivers likely on separate ingestion host)
+- [method map] ew/backup GET-only (405 on POST), prefetch POST-only, flow/source GET-only (405 on my GET? — 405 means method mismatch; flow/source requires POST), users/wallets/selection — 405 on POST w/ empty (needs auth first? recorded, low value)
+- Final liveness: ev8 session near TTL expiry (~16:04 UTC); TOK_A + SB_TOK + min-scope token remain valid
+- ARTIFACTS: recon/idor19/batch10_log.json, batch11_log.json
+
+Stage Summary:
+- Complete P1/P2 hunt round across mined-hidden endpoints: ALL closed — step-up gate consistent on every sensitive wallet/link op, sessionKey binding validated, external receivers absent, scope model strict, SSRF chain 4-layer defended. NO new P1/P2; BUG-004 (P3) remains only filed finding. Honest blockers requiring user assist: dashboard-cookie session (/auth/*, serverSigning/keys), residential browser (authorizeHtml XSS assessment), real OAuth provider flow
