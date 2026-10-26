@@ -227,3 +227,19 @@ Work Log:
 
 Stage Summary:
 - A+B hunts: all unauth/auth-boundary surfaces SECURED or P4; backup-token TTL mismatch = amplification factor only; decisive cross-user share test blocked on real MPC wallets (browser ceremony) — user assist requested (2 demo logins)
+
+---
+Task ID: idor16 / ev8-session-and-matrix-mapping
+Agent: main (zeno0 session)
+Task: User OTP 973495 (ev8) → session mint + waas scoping matrix mapping
+
+Work Log:
+- scripts/idor16_signin.js written (fresh P-256 keypair → SPKI-DER-hex, auto-retry with verificationUUID — signin REQUIRES verificationUUID, 400 without)
+- ev8 signin on sandbox 7dfe3b0c → 200: sub db163919-caa3-47ac-8fe3-77cf54fee3ea, sid a95426f7, TTL 7200s = 2h (sandbox TTL ≠ 24h dogfood TTL — env-config), wallets NONE
+- Sandbox waas scoping matrix (session-bound): backup/token → 200 sub=db163919 exp-iat 7200 (TTL tracks env session config); keyShares/recover bogus vs foreign-real → uniform 404 (no oracle, no leak); byWalletAddress cross-env (live-env address from sandbox session) → 404 "WaaS wallet not found" (env-scoped)
+- Console pregen path CLOSED: POST /environments/{env}/embeddedWallets → 422 "Cannot create a Turnkey embedded wallet in an environment configured for V3 wallets. Use createWalletAccount from useDynamicWaas instead." — server-side confirmation that real MPC wallets REQUIRE the browser client ceremony
+- OIDC lead CLOSED: auth.dynamicauth.com/.well-known/openid-configuration (root + env-scoped) → 404; not a classic IdP surface
+- Artifacts: recon/idor16/ (ev8_session.jwt/.mini, ev8_key.priv.pem/.pub.spki.hex, c1_bt, c2_bogus, c3_foreign, c4_byaddr, c5*_pregen), scripts/idor16_signin.js
+
+Stage Summary:
+- API-only paths to an MPC wallet exhaustively closed (ceremony-only); cross-user share test strictly requires browser-ceremony wallets on sandbox (demo logins ev8+ev9); all scoping behaviors mapped clean; ev8 session alive ~2h for supplementary use
