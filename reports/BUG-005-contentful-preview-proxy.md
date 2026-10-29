@@ -47,6 +47,8 @@ curl -s 'https://www.dutchbros.com/at-home/_payload.json?_b=bac26790-0c6c-43bd-9
 - Vanilla Caramel Ground Coffee, OG Medium Roast Ground Coffee, Caramel Mocha Ground Coffee, Mafia Dark Roast Ground Coffee, Chocolate Macadamia Nut Ground Coffee, Coconut Mocha Ground Coffee, Caramel Pumpkin Brûlée Pods, Irish Cream Ground Coffee, Epic Light Roast Ground Coffee (all `/at-home/products/...`), plus the at-home page with the Holiday carousel.
 - Product names/slugs: `preview/1Vk8EchNWIgiTYiq9AjLR8.json` etc. via the proxy.
 
+**Step 5 — browser-rendered preview (verified 2026-10-29 08:15 UTC):** the SPA route `https://www.dutchbros.com/preview?entry_id=2RC3a5rLcnm6s6KwhAVZbZ` (Nuxt route `preview`, component `xuN6gd0F.js`) fetches the same unauthenticated proxy and renders the entry as a full branded page. Although the server responds HTTP 404 (SPA fallback shell), client-side hydration matches the `/preview` route and displays the unreleased content: verified headless-render output includes "Candy Cane Mocha & Holiday Sprinkle Cookie", "LIMITED EDITION HOLIDAY FLAVORS", and the unreleased product imagery. This means anyone with just a browser — no API tooling, no entry-ID harvesting script — can view CMS content at a clean URL once an entry ID is known, and entry IDs are enumerable from public payloads (Step 2).
+
 ## Impact
 - **Pre-release content disclosure (demonstrated)**: unreleased seasonal products, campaign banners, and news content are readable by anyone, days-to-weeks before the production site deploys them. Seasonal launches (e.g., Holiday menu) are embargoed marketing events; a competitor or leak site monitoring this endpoint gets the full launch catalog early — names, slugs, descriptions, pricing-adjacent metadata, and image assets, in structured JSON.
 - **Full CMS entry disclosure (by ID)**: the proxy returns every field of any entry, including fields the site never renders (e.g., `css`, `accordionFields`, internal component metadata, raw `freeHtml`), with no field allow-listing.
@@ -62,6 +64,7 @@ curl -s 'https://www.dutchbros.com/at-home/_payload.json?_b=bac26790-0c6c-43bd-9
 3. Add a field allow-list / strip `sys` internals in proxy responses.
 
 ## Evidence files
+- `recon/draftdiff/evidence/poc4_preview_browser.png` — headless-browser screenshot of `/preview?entry_id=2RC3a5rLcnm6s6KwhAVZbZ` rendering the unreleased at-home page (holiday banner + unreleased products); DOM text extraction confirmed "Candy Cane Mocha & Holiday Sprinkle Cookie" + "LIMITED EDITION HOLIDAY FLAVORS"
 - `recon/draftdiff/evidence/poc1_preview_response.json` — unauthenticated proxy response (Holiday content inside)
 - `recon/draftdiff/evidence/poc2_live_athome.html` — live page (Holiday content absent)
 - `recon/draftdiff/evidence/poc3_live_count.txt` — grep count 0

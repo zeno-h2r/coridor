@@ -1,0 +1,9521 @@
+[
+ {
+  "id": "01arxSWoMP4hQWeDMQLyZp",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "0MWFH1GH8EuBj8QpyWXWK",
+  "files": [
+   "news-events_drink-one-for-dane-does-it-again-dutch-bros-and-customers-raise-more-than-1-3-million-dollars-to-hel.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "108FxbBbDilsni0vfAZUdy",
+  "files": [
+   "news-events_db-opening-new-location-huntsville-alabama.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "10SQjruSRMS6EZNDkbEteM",
+  "files": [
+   "news-events_drink-one-for-dane-2024.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "10btmdhjUW1wiiMaHBwqGl",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "11iBzm2xnuOXjPceRjnwsa",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "11v7YdtIOdjuuuj6rsPGdn",
+  "files": [
+   "news-events_drink-one-for-dane-customers-help-dutch-bros-coffee-raise-14-million-to-help-end-als.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "123VXjl7EfQTWmYKPZNlyE",
+  "files": [
+   "news-events_dutch-bros-2021-top-5-hits.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "12ULS4bn7KRKmDbMwO8W0V",
+  "files": [
+   "news-events_get-into-the-st-patricks-day-spirit-with-these-dutch-bros-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "14FUDqrf76Ej5nQhXPeDcr",
+  "files": [
+   "terms-of-service.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "14G7sNs47BUK12wg2tp4LJ",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "14qJX4qoGfQOAUoLGHgr72",
+  "files": [
+   "news-events_fall-pie-inspired-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "14xvvljSVLUxi8gyBdXbxW",
+  "files": [
+   "at-home_recipes_kicker.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "15VgaWYK5H5Pw3ZC5o1Hts",
+  "files": [
+   "our-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "16Bti8yphJPujSSs4B1SuP",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "17B0fNMO7dKNSVDETy0s0F",
+  "files": [
+   "trunk-or-treat.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "17HbNFKF5yNrnivbMfyo8E",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "17yiilj3XfJ4IAEGc736Wj",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 9
+ },
+ {
+  "id": "17zoA9s5aSZ721GfBT1eU5",
+  "files": [
+   "error-404.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "18a7KCb46VYMumq3mwIk2I",
+  "files": [
+   "news-events_texas-sweet-tea.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "18lCJqTg8gsLW5XTtuAJUw",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "199gDbU3XX99MUKWCcb3tG",
+  "files": [
+   "news-events_dutch-celebrates-national-cold-brew-day-with-new-drink.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "19hwDxW5pmGKJlIkP8Qh17",
+  "files": [
+   "news-events_dutch-bros-coffee-raises-more-than-483000-for-100-nonprofits-to-fight-hunger.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1BDmYcM5BtXXBMtKkeBGx1",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "1BjG907Et15Woth7R76gAs",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "1BjH4oCMDw9ntWtHhDWWxm",
+  "files": [
+   "news-events_buck-for-kids-2025-post.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "1BvzUUcXAwjI7ivdvVJChx",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1CXrFMaDJ7udzwFQTKau3w",
+  "files": [
+   "news-events_mothers-day-sticker-drop-2026.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1EFtuv5cS2qZvAj7kw48hR",
+  "files": [
+   "news-events_dutch-bros-caffeine-free-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1ExaVjyQ6sm1egBdt62rxP",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1GZW6qKeRJI7Dv7yrXP0Y5",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1HYCGfWJJ0bW4O6ag4mm4L",
+  "files": [
+   "at-home_recipes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1I3NkbvtxbLGGw6sJ3PcHM",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1Iqbh2mBrHqNrdIf9hU79f",
+  "files": [
+   "news-events_celebrate-summer-dutch-bros.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1J1euxubyA2DLjjiMSXhmX",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "carousel",
+   "viewAllCta"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "1J4Ib1KY3lAKD0AwTkTiTk",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1J5564M75DvhCUbxDfvvdO",
+  "files": [
+   "news-events_mystery-shoe-charms.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1J9ah6rTZlzhIvszrjfTZc",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1KeElIqHBfYbaajodCFm9e",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1LqurCcF7EnJbulzoda4mT",
+  "files": [
+   "news-events_groovy-holiday-cups.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1MIj98tevE16YBCttpeXh4",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "descriptionComp",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1MsKh238GJv7sREcYw8OL2",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1NFiVhM5yFURS1ElugTSw9",
+  "files": [
+   "error-500.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1OI5y8dsl7jV1BocNpgQXf",
+  "files": [
+   "news-events_new-fall-drinks-at-dutch.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1P7ekHqGiUFwC1PDTpx1aD",
+  "files": [
+   "news-events_dutch-bros-named-cnoa-region-ii-corporation-of-the-year.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1PnNI87HEPXqONVaEf2okb",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1QQbg6i8DE8vY332eEAG6Q",
+  "files": [
+   "news-events.json",
+   "news-events_spring-has-sprung-with-lavender.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1RZzeHmxH9QUpi1TpYL43E",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_creamers.json",
+   "at-home_products_categories_creamers_caramel-mocha-creamer.json",
+   "at-home_products_categories_creamers_chocolate-macadamia-nut-creamer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 8
+ },
+ {
+  "id": "1TcRLxJlKMZQ1jRQ7DjBlp",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1U1IolVcoqinNZWHQirC2Y",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1UGd3NX0fjLZcTzL76PrZD",
+  "files": [
+   "news-events_dutch-bros-coffee-appoints-joth-ricci-president.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1UHTyH1kdlstUVNO3COZuu",
+  "files": [
+   "news-events_dutch-bros-and-its-customers-raise-more-than-400000-to-support-california-wildfire-relief-efforts.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1UJYQysDsp5Xl8DdySpdWW",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1Uc81EGm1cE0R3OGHAcKFu",
+  "files": [
+   "news-events_dutch-bros-st-patricks-2026.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "1UvC2gRBrugqvmfvrt7Y5c",
+  "files": [
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_coconut-mocha-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "bannerImg",
+   "bannerMobileImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1Vk8EchNWIgiTYiq9AjLR8",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "1VpVke0jIPw3NAlzG2Iqsl",
+  "files": [
+   "terms-of-service.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "1W68hzEsw01pX6xBRUAoag",
+  "files": [
+   "news-events_Dutch-Bros-takes-us-back-with-new-nostalgic-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1YkHpB4vJSGt4xDzN1AV7x",
+  "files": [
+   "support_articles_do-you-deliver.json",
+   "support_articles_how-can-i-find-out-information-about-my-local-stand.json",
+   "support_articles_how-can-i-share-feedback-about-my-visit.json",
+   "support_articles_i-forgot-my-item-at-the-shop-have-a-lost-item.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "supportArticles"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1aojMIEZ86JAmkpSP97NkS",
+  "files": [
+   "news-events_how-to-celebrate-national-donut-day-at-dutch.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1cP4aog25WYGFfdU5aLegu",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1dH4kdMIUOtPZLpp8uaedN",
+  "files": [
+   "at-home_recipes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1dx5V6FTxsGf2PrZSGDHxP",
+  "files": [
+   "at-home_how-to_how-to-dutchify-your-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1etr13tX70HBodmE6By4Ew",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1ezpfzYcQkwN4W8UDKqzqd",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banners"
+  ],
+  "prev_revision": 9
+ },
+ {
+  "id": "1glEF9IBD2KuQYBjRLDNK4",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1gmwIbMVwLRp2jWfN5VqMz",
+  "files": [
+   "news-events_sweet-vs-sour-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1gueU0kZErdAoHhgICYFoH",
+  "files": [
+   "news-events_route-92-mystery-air-freshener.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "1hDzjH5HVl5KBQ39NR9b4q",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1ilL3vfbbkrBSXWSqfVDUN",
+  "files": [
+   "news-events_dutch-bros-breast-cancer-awareness-campaign-raises-421440-for-ohsu-knight-cancer-institute-and-albie.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1j0XBENt6cccHGjqjglFVe",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "1jIDcr6WdbEBoSpKnxqCaE",
+  "files": [
+   "at-home_recipes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1l2rPQubQbuhNUvlci9HuM",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1mdQbTF8aESHAByUKgJ06l",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1n5XjsnWQEDO0vEHaNv1cB",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1nexeEkMXXzuxiyYrXc6Lc",
+  "files": [
+   "news-events_dutch-luv-2024.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1nwJqpy3ZacScGxLMsW9oN",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 8
+ },
+ {
+  "id": "1oY4yQuZJrZexRJdXgst9e",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1oqPXQhQxlwNxPJDTeLgOM",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "card"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1ortBcxjf5o8OTyUYoIlrG",
+  "files": [
+   "at-home_how-to.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1phi6Rkwcmf7QakwfKjg3I",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "1qIJDxwpFHlPgtKAhFJXM0",
+  "files": [
+   "drink-one-for-dane.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "1qMSvkp6pqqE3UF0pseK0c",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1qef2NXQhKol2z3UNyBRgN",
+  "files": [
+   "news-events_dutch-bros-raises-more-than-430000-for-local-kids-organizations-with-buck-for-kids-fundraiser.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1rBguxWZThqIOHJrmf9mcx",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1rewzJewZ212zRCqK1Gtiv",
+  "files": [
+   "our-impact_company-wide.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1ss65r6yoGNK4vmF4nNEWJ",
+  "files": [
+   "lonely-ghost.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "1tOPEy4nOjxKQA9YS9Wa8N",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "1tOwHbZ5R1nex6UoQMO0fj",
+  "files": [
+   "at-home_recipes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1tvoGKqUHfaznEWTWRJxoM",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "1vYW0TYnd9v0xxajvxWAdx",
+  "files": [
+   "news-events_mystery-lanyard-and-pin-set.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1vkT9Y59kwfiYpkdh8nXFz",
+  "files": [
+   "news-events_national-chai-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1wB16zjRCRyiqM8sNhQPQO",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1wIYfMXOCt4dItiIY4PAjJ",
+  "files": [
+   "besties.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "1xDtkPJy6RGWBauESE2tTg",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1y5rtCGKn3ZldrM2NsMuAG",
+  "files": [
+   "news-events.json",
+   "news-events_dutch-bros-new-st-patricks-day-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1yJ8tclbiAK6bg57RAf6jo",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1yg7R27d5rkQ4uV8y0ziSR",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "1yllwXkUGVihYH1BOeeCfq",
+  "files": [
+   "news-events_buck-for-kids-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "1yzptzk4xLEpzgXk5OHCU8",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "1zaOWGXbPwZvefL7MpKj1D",
+  "files": [
+   "our-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "206Flf5ltlw7EjbFbXnsua",
+  "files": [
+   "news-events_national-toasted-mellow-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "20QbJyaqMbEcIQWfN87h3R",
+  "files": [
+   "news-events_mystery-mini-figurines.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "20jFZ2c6A5zxZnj4yTrCki",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "backgroundImage",
+   "carousel",
+   "viewAllCta"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "20tzMJwRzxM8zzti8wBb2L",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "carousel",
+   "viewAllCta"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "21lkbVI9iI17jS4hHodJiP",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktopImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "21vYSRtVDhFFonAkIBewW7",
+  "files": [
+   "user-content-terms.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "222eaBUFaGeRH2kRAmeIHX",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "22332LYfuryugNZGMzdhZ",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "22HJnWQiXsBqHS5jqKTtSN",
+  "files": [
+   "news-events_surprise-sticker-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "22OYGyo6ewbcUMGAnNU9TL",
+  "files": [
+   "news-events_national-chocolate-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "22ya7b5KlZso6mf7tfi1qk",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "237XiH8BpWD0gU6qDa4mQn",
+  "files": [
+   "news-events_national-love-your-pet-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "24F5TpZbpew1ufRWSsh6ga",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "24Ljt96ucJyhEsfgEU5fBm",
+  "files": [
+   "at-home_where-to-buy.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "24pECr82D5zwus0PX3MUpB",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "253GRA3euATg4DSiVgzjfT",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "25ckT2dWRsWe9Ie1fdXMWv",
+  "files": [
+   "news-events_buck-for-kids-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "25hHOCTPkoz2h6aPn5siRu",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "26xHbyeGLWabi2Al4PJ5a7",
+  "files": [
+   "news-events_coffee-for-a-cause-dutch-bros-donates-a-record-495k-to-local-youth.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "270Z6X9X5qSvBuKC88W3we",
+  "files": [
+   "at-home_recipes_caramelizer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "27xiSJ6LMjU4FajB5hr5j3",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "28BiFpXmOVAJnHQIfGlsiU",
+  "files": [
+   "our-impact_company-wide.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "28TjUGgmJzgb0NXcXRzPiU",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_multi-serve.json",
+   "at-home_products_categories_multi-serve_caramel-mocha-multi-serve.json",
+   "at-home_products_categories_multi-serve_chocolate-macadamia-nut-multi-serve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "29ZsrvjacgQklb5lytRfJg",
+  "files": [
+   "news-events_orangesicle.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2A34CuCTL9WUXBZsZ9uYg2",
+  "files": [
+   "news-events_buck-for-kids-results-2023.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2AF6QZhvT2gj7RzGD2Qzal",
+  "files": [
+   "news-events_dutch-bros-chainfest-2024.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2C08yYZyx8JHPhLbL2AE7",
+  "files": [
+   "news-events_dutch-bros-shine-is-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2C2TbXuorvi7IJkVD5iphY",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2CHzOQ6kJqMk6J5JP2ovAT",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2CQfR9FeQYqAenclQ68GEc",
+  "files": [
+   "news-events_september-sticker-welcomes-fall-activities.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2Ca9Gs0rQPEutGT3L9ZaeQ",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2D9YHAPEXY1wqPyndcFUXO",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "2EJEmdIvWYxN0Mqwc5IaKQ",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktopImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2ERFAs7wyX5eNrxh60VzxH",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_multi-serve.json",
+   "at-home_products_categories_multi-serve_caramel-mocha-multi-serve.json",
+   "at-home_products_categories_multi-serve_chocolate-macadamia-nut-multi-serve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "2GQtv9AeWSjFL1HTwcwJgq",
+  "files": [
+   "news-events_solar-eclipse.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2Ge1TuOzEaboUKz98wkXHX",
+  "files": [
+   "lonely-ghost.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2H5fCZ3jSgASW60c0w5q1M",
+  "files": [
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2HSmV89A41IEhQ26pMpYKo",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "2HgQVNucNBISzhCcQFEv2J",
+  "files": [
+   "news-events_chillin-with-dutch-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2I5kwzGkmhDLnUzw8hrelf",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "2ISq8P7IcDGaQ76Ad1yGNI",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2J1DxDQzZUist78AHTmPap",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2JAPvEZpeteeWXnE9ndwOD",
+  "files": [
+   "support_articles_caffeine.json",
+   "support_articles_do-you-offer-bulk-coffee.json",
+   "support_articles_do-your-drinks-have-dyes-in-them.json",
+   "support_articles_do-your-shops-offer-drip-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "supportArticles"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2JLJr0BMOEhZDF3xCzIcdi",
+  "files": [
+   "news-events_6-festive-red-white-blue-drinks-for-summer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2KYZWxkgBzU9KXis9TB4gs",
+  "files": [
+   "news-events_celebrate-national-hot-chocolate-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2KpCdifHiXtOK1UnSIh9Sd",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2LjvHOtsJvScQTzYPtZlrs",
+  "files": [
+   "news-events_mini-skateboard-merch-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2MVjw1gmtJObLtZgdDtcYX",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages",
+   "weight"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "2MwqE47lYe5iNbWzsRU6io",
+  "files": [
+   "news-events_regulars-club-patch.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2NGJ1mTZeVdV1tnUNwoS26",
+  "files": [
+   "at-home_recipes_golden-eagle.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2Nlpm014bTF0cxtvrIlqx7",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2OLhGnpohrdVSCiSqjRFV4",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2PF9Vtpa8fdXKLYoWAMFai",
+  "files": [
+   "golden-birthday.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "2RC3a5rLcnm6s6KwhAVZbZ",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 8
+ },
+ {
+  "id": "2RpkpMzzjyofQlVdPoWFVz",
+  "files": [
+   "our-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2SVnNZgDMC98yJEVZTeEnw",
+  "files": [
+   "news-events_dutch-bros-presents-1-3-million-donation-to-mda-at-diamondbacks-game.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2SWYcO7x0uRrfArFiJoE0d",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2Syy0QhqR0tnOdttt7Peba",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "2TC3RR1M0SAqJtGkYqP4i4",
+  "files": [
+   "news-events_dutch-bros-and-its-customers-raise-more-than-530k-to-help-fight-hunger.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2TvLO44zQRQMmDIJBjg2je",
+  "files": [
+   "news-events_rep-your-team-for-the-big-game.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2UWHtCH8gVY0gXkRkqF55A",
+  "files": [
+   "news-events_dutch-bros-recognized-in-top-10-of-oregons-most-admired-companies.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2UX7R7mnplSZuPf8thPz9W",
+  "files": [
+   "news-events_world-emoji-day-2024.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2XCCi5GRptINh1Pg7qTND8",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2XJNUi2L7Yk6k87OwSFGfh",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articles"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2XK5nUe6qWlFH5GJpcGz25",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_multi-serve.json",
+   "at-home_products_categories_multi-serve_caramel-mocha-multi-serve.json",
+   "at-home_products_categories_multi-serve_chocolate-macadamia-nut-multi-serve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "2Xk6uCKfT3Tshu5izWM8F7",
+  "files": [
+   "news-events_2024-national-jelly-donut-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2Y6jK3KZLN2qbQZlCLoE1I",
+  "files": [
+   "news-events_pumpkin-pie-soft-top.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2Y7Kk37uIUGD3YU56VQTSj",
+  "files": [
+   "at-home_recipes_annihilator.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2YQUjhw1fINkGvWfQyOuWR",
+  "files": [
+   "news-events_luv-wins-dutch-bros-donates-to-local-food-organizations-on-valentines-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2YxQ0YTh7D7UP65X0yL9dt",
+  "files": [
+   "news-events_dutch-luv-2024-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2ZnVx46XFwpPApnLhKPhT6",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "2aPf8kjBnOQEJFFBh2iKcQ",
+  "files": [
+   "news-events_celebrating-national-best-friends-day-5-dutch-bros-drinks-to-grab-with-your-bff.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2bR1fiaeHHAQUEwWWqESz7",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2bdWwa3naUvew8uNVMqvMz",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2beCdRPPAFN2MVT9zz6oe6",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2cyhv0Y3F90FKJAkSDmgsC",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_multi-serve.json",
+   "at-home_products_categories_multi-serve_caramel-mocha-multi-serve.json",
+   "at-home_products_categories_multi-serve_chocolate-macadamia-nut-multi-serve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "2dMkU19Tc6sUlgjLHmcACr",
+  "files": [
+   "news-events_dutch-bros-coffee-celebrates-reopening-of-paradise-location-five-months-after-devastating-california.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2dPSKze5DMei6DhiiebC6w",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "2dZTyGJpCUsTgaBkcoWZmQ",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "2dkcaAbTh9kdEDdWWRqTY7",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2esE1uhIVQRaHatCZ7vc33",
+  "files": [
+   "news-events_lavender-returns.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2fJiaJh9Ga2bLXGoEIkV4W",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2fcCHDmX2wb1WlwFO131M7",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2fmLoYGrQBNEe3LV62WXDk",
+  "files": [
+   "news-events_drink-one-for-dane-dutch-bros-and-customers-team-up-with-muscular-dystrophy-association-to-accelerat.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2fuDo7SlAlNUlwXiL7kTfH",
+  "files": [
+   "digital-accessibility.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2gG6D1eV0jI0mXOeE9tTxd",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2h0LHqRZNy9OsLBHRx7a62",
+  "files": [
+   "news-events_dutch-bros-texas-partners-with-red-cross.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2hB12gsEP6vyG7HM1OH1AX",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "items"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2hu0qAtsWIAgA53Fh9beSB",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2jSou8m2LqB3BnbSbdL40I",
+  "files": [
+   "news-events_dutch-bros-basketball-ducks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2k1uog6r2grgopDe2jcFOD",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2kHC3vlpCJNZEI31O3qd5i",
+  "files": [
+   "news-events_buck-for-kids-is-dutch-bros-celebration-of-national-coffee-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2kJVa3hTOFFEBt1AsPqW8H",
+  "files": [
+   "error-404.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2kleJshZmxUZGeEteODomr",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "descriptionComp",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2kn3J758wrlpOVKGxePtPN",
+  "files": [
+   "news-events_drink-one-for-dane-raises-over-1000000-to-endals.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2mDDiagIxVHWlyfQ5sQPHI",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2mNsfFN2pCRB0pKRp5c1x9",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2mePSnDsrKab2ylaenEqPf",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2n3ldb1CGEbkO5l2uAlVlL",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2nLffml9T4N3LdXeIrrKCM",
+  "files": [
+   "news-events.json",
+   "news-events_national-strawberry-day-at-dutch-bros.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2o4qY3u19Uq7ZgtvOGcQzt",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2oh1Pu2ymvItCxJEPeNsAx",
+  "files": [
+   "news-events_dutch-bros-welcomes-new-location-in-phoenix.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2pu0X13yAHP5fYq4eX2vck",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2rtcDXJMTIS0blREW9uDpE",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2sQVR7BqVyluvDRaOwb3vO",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2u4fJQcjFBv5h5q9444Co7",
+  "files": [
+   "news-events_national-cold-brew-day-4-ways-to-order-dutch-bros-cold-brew.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "2uJJLGNLKVML6kLSG4PjIK",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2uyIoiZ0HWlh97B0h2L0kL",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2yGXZnbv2BYjnynkRzbP1C",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "2zC5Ht9KxnZAvyDphpvPAv",
+  "files": [
+   "news-events_fathers-day-sticker-drop-2026.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "32VYbHwycraFvLCkZ2Qts6",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "32dm3qE1wMWiGU3ghRkpa6",
+  "files": [
+   "news-events_the-dutch-bros-difference.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "33hkUlKVUjgnGB1wS1WrEQ",
+  "files": [
+   "news-events_celebrate-mothers-day-with-dutch.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "342vEWP2veoWSZOCCIbiXu",
+  "files": [
+   "news-events_dutch-bros-welcomes-new-location-in-Escondido.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "34NsvGZHw3jdmhQa4BkBmx",
+  "files": [
+   "giveaways.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "354A9lixHjPK8MtFkBlo9a",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_single-serve.json",
+   "at-home_products_categories_single-serve_caramel-mocha-iced-latte.json",
+   "at-home_products_categories_single-serve_chocolate-macadamia-nut-iced-latte.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "35NzTrUX9VcT80VFnOZ7Dh",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "35hnqTINwYuRWyuXxlMOaL",
+  "files": [
+   "news-events.json",
+   "news-events_national-hot-chocolate-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "36ltVLL4wlIbGBTXK0oiFL",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "36vvTlFAkXEa3dmzKirKuM",
+  "files": [
+   "at-home_recipes_caramelizer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "38ni4IX12DhKCHOlZPzYlw",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3A41Itgnx3P2nTkRO1yafs",
+  "files": [
+   "privacy-policy.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3AEQE0K1IvfZmFHIFg7rZ4",
+  "files": [
+   "news-events_love-your-pet-day-sticker-collection.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3Bws5Zr7GzuEhuOAc4WAMv",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3DAbFkIvLNnzn2X3hFTBSW",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3DpT94ndo2xaCpXDzACVUV",
+  "files": [
+   "giveaways.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "3GKso5bWkKwj86eyHOEk8M",
+  "files": [
+   "news-events_sip-on-the-sunny-side-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "3HBTiD19AyVUul7QokOydK",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3Hm1M4HpNsRAoQGrGgMjKY",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3HnktTwiCHHtzrgW2qCDgK",
+  "files": [
+   "lonely-ghost.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "3IIIjkuLBBQIGYbVGbYlU8",
+  "files": [
+   "news-events_national-coffee-day-2023.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3Ilny3RVwIGzWIYYnhZowL",
+  "files": [
+   "dutch-101.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3J88ksBZe0cLKtBvYiKx2U",
+  "files": [
+   "news-events_broista-appreciation.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3JFpxTcFQQ7YzGDc9mtXb7",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3Jvzj4MQZ5Lkq0522bAX22",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3K9kYx4FUnxVwgHwfWVfub",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3KBFgYzk4hBmrcVDUADALG",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3KWM8wkgAmLIahKYCFKtTd",
+  "files": [
+   "at-home_where-to-buy.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "3Kny3t6AuLwl5vBUYXqZKt",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3LVECd3HXKyH8T1Lmui0DY",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3LYoULIe7ZF34deGTyOKTV",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3MKAx7cXd6528LuwlggAek",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3MOjS8AGUqKBLkLps4eQkM",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3NMEslaKz6vy61zlgcWbAt",
+  "files": [
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json",
+   "at-home_products_categories_coffee-pods_chocolate-macadamia-nut-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "bannerImg",
+   "bannerMobileImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3NYo6e8ZeMmFoEf1ZhpUJK",
+  "files": [
+   "news-events_national-emoji-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3NuRsEF29eblYkpZ36i0ij",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3OA3kJ818RZ1PjgZ6zfMMw",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3OKCPyA426b9Gcp9xcaJZI",
+  "files": [
+   "diversity-equity-inclusion.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3OzTD5WKHY0GBXN9uLKuuN",
+  "files": [
+   "news-events_dutch-bros-coffee-appoints-keith-thomajan-as-chief-of-staff.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3PalTvWwYZL4jynw4i8SNt",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3PfT64fJLNQfsBTl7aQp0b",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "3PwxM5mqaLORss4CV4PLDU",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "carousel",
+   "viewAllCta"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3QRyR74mgZkd8GOZjc72bW",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3RQB1usmzOmpCknwIGFpBm",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3RYBP0Di2fFDe2qkPu8AVt",
+  "files": [
+   "news-events_dutch-bros-protein-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3Rm57HUYr5Ob9aKkk2U5Mt",
+  "files": [
+   "support_articles_giving-back-with-dutch-bros.json",
+   "support_articles_how-do-i-franchise.json",
+   "support_categories_company-info.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "supportArticles"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3SDCcVlnzvt185aH1pW9C7",
+  "files": [
+   "news-events_buck-for-kids-2026.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3SHsGzvKi7MDRex9UvwxK6",
+  "files": [
+   "news-events_national-dog-day-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3SQ2jqtOiElHDxl8mYTgvZ",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3TmLH82tNy50XO4yCfnNGq",
+  "files": [
+   "news-events_cosmic-party-planet-dutch-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "3UCw1tuj6RfVf49SGsov1e",
+  "files": [
+   "news-events_elevate-your-afternoon.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3UN4QBtyBfKmh1RN7G28yj",
+  "files": [
+   "news-events_mini-charms-merch.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3UZVtNrHmuigdSrejUp3Tu",
+  "files": [
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3UwsdsJxdZKV1GJ8XrqRqD",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3YKvi0YiN5Gv0wW78xkrsz",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banners"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3YPxeHMtQUlgZLu4aYzU1N",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3YdyhUo7QQf5FnFD92wFXd",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3Z1ItPPoPyteLyTnHmELSf",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3ZcpJ9Jx5pGXF2X3TjdmQF",
+  "files": [
+   "news-events_deck-the-halls-with-jingle-nog.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3b1W1uunAL4v4lfyMUzVoc",
+  "files": [
+   "news-events.json",
+   "news-events_new-sticker-new-dutch-bros-drink.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3b2uVKHNMm4gs6kyiZwXzx",
+  "files": [
+   "news-events_afterglow-rebel-energy-drink.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3bac5ehfjq27tdrlxsPNv2",
+  "files": [
+   "news-events_dutch-bros-donates-220000-to-support-breast-cancer-advancements.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3c4F3vws2sxSbFUc14vW7a",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3cKCGiesHftOsiJAyvEjo2",
+  "files": [
+   "news-events_mangonada-is-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3cPJ9pzTNLgr9v68dSDFEQ",
+  "files": [
+   "news-events_dutch-bros-launches-matcha-and-flavor-fusion-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3caCIRbFvX6oKRX4sKLVK0",
+  "files": [
+   "news-events_dutch-bros-ordering-tips-and-tricks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3cvreTFeVQ82XsFqSGCm1x",
+  "files": [
+   "news-events_protein-packed-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3dLGHLICfDbqdnEsc0LsuE",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3eTomjZyBiIcnGtuTCLUt4",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3f8D0sH0rEjGbYMhxvUkYg",
+  "files": [
+   "at-home_how-to.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3fkuds0I2TbFXRBn5lMji7",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "secondaryImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3jMpQKdIplY0qwOfciZAlU",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3jhuXcwxgFPW9FgZyGmYs7",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3k0i1sevYeC8QlMmCqYew6",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3l7xmPioUwedCNnm7nzw1p",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3lwVBMX9iFylDYsCoNdGwK",
+  "files": [
+   "news-events_dutch-luv-2026.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "3mRrouxJIYO5jCip8MkUgs",
+  "files": [
+   "news-events_dutch-bros-new-at-home-products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "3nomSE9PDuUEKX6Rm8vuro",
+  "files": [
+   "news-events_living-with-als-the-hard-times-and-the-hope.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3ooUSRE6ceSPSphLMgyEv4",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3pABbM12ei2XCqwvNIyvQk",
+  "files": [
+   "news-events_hello-taurus-season-this-is-the-earth-signs-fave-way-to-drink-coffee-according-to-dutch-bros-survey.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3pdcwCrxxZ7V3gZSGknFrh",
+  "files": [
+   "news-events_bracket-challenge-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3phHPSU2EzykqWLPQUCOxX",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_single-serve.json",
+   "at-home_products_categories_single-serve_caramel-mocha-iced-latte.json",
+   "at-home_products_categories_single-serve_chocolate-macadamia-nut-iced-latte.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "3sLGHCRsAPUiMppPVZfmDM",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3scXfHIHZ9JkyHT69BVs7r",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctaLabel",
+   "heading",
+   "items"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3sezzTUSb0LEOI37ALX2Rz",
+  "files": [
+   "news-events_money-for-local-youth-organizations-2024.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3tBpoxyveSMdOS82idUwAY",
+  "files": [
+   "news-events_national-dog-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3tS2i0n0zbcMQ34w6oMuok",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3tiWkVv7GfpuWvMmwhjsee",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3txDJqJESOOR2LdxQJmPBx",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3v768imFkWDRkATi9W02L1",
+  "files": [
+   "dutch-101.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "3vRehK59lcYHp76mPt2cA8",
+  "files": [
+   "no-kid-hungry.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3vTrPXLlsSk0elxAahiYWS",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3vxv4NYEYNre5W14UoKFeV",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3woczK4TH0gwYY9H2NE5x2",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3wp10AFBfh4GrP1AMnPQV",
+  "files": [
+   "our-impact_company-wide.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3xmk6uA9W4amspBjE3wQb0",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3yuVxHJE5CdyWKgejbX7uN",
+  "files": [
+   "our-impact_company-wide.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "3yzMSzdTgDeYQI6hX2iHl9",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3z1VMgRQA0JQaVR3100gj7",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_single-serve.json",
+   "at-home_products_categories_single-serve_caramel-mocha-iced-latte.json",
+   "at-home_products_categories_single-serve_chocolate-macadamia-nut-iced-latte.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 9
+ },
+ {
+  "id": "3z1vkp0veRMtvUIAl0kq8K",
+  "files": [
+   "news-events_dutch-bros-dutch-rundown.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "3z44ZdPXU0t7Qfp7WzzAmk",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "3zTEDnkK4cIMmIOHC5wI7W",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "40AVrRKcxpwAJDYsdGbTJf",
+  "files": [
+   "giveaways.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 8
+ },
+ {
+  "id": "40bewprd6AhuuqwwlzQ2MS",
+  "files": [
+   "news-events_2025-holiday-ornament.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "40qFYSXmu2VDXOEpG6on7X",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "41UxGrXaf3AU1SA0tPBdc8",
+  "files": [
+   "news-events_coffee-for-a-cause-dutch-bros-holds-10th-annual-buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "41u9ZyKN1hgq6nSi9lQbG2",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "42C5gF32N6gzKeOcYtA8nK",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "42J5xW1WXyuGO0NkiH76I7",
+  "files": [
+   "news-events_coffee-day-straw-topper.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "44TqrkgIpfDllLOEkUJwzC",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "bannerArrow",
+   "bannerBackground",
+   "supportCards",
+   "supportSectionDesktopImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "44W05Pp4auYTvHkEjb8PgO",
+  "files": [
+   "news-events_holiday-cup-designs.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "44Z7eoI86Im2HoeejcD9Ve",
+  "files": [
+   "news-events_may-friendship-bracelet-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "45xpOAyxzygtGK6OIogFuc",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "46g1njSl27teZ55RQtNeVf",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "46oPaKOlkMTX9jXnNw5u7D",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "46vY8vPWC9MTgPJ3Sq5qjo",
+  "files": [
+   "at-home_products_categories_single-serve.json",
+   "at-home_products_categories_single-serve_caramel-mocha-iced-latte.json",
+   "at-home_products_categories_single-serve_chocolate-macadamia-nut-iced-latte.json",
+   "at-home_products_categories_single-serve_coconut-mocha-iced-latte.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "bannerImg",
+   "bannerMobileImg"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "47h2oJFv0saniAuqaGDEPt",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "49GXswlYz7HLkVMVnbVQrr",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4AHf4LhmdRbUpaEvgtjXrz",
+  "files": [
+   "giving-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4AhYCuSdonMcSIrq6WhQtk",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "4BvVkr3EsmidX9Kg5I5gSm",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4CD3UgZKiGdorfMwW9pq0j",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "4CRCEswV0bUUAcB81HlJ8M",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "4ClefqxlFXhruBXZby5LBj",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "customLink",
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4DpqZMizXUh5UvU6CceYAn",
+  "files": [
+   "news-events_sip-in-the-fall-vibes-with-dutch-bros-seasonal-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4Dv0jhq55XgQJIIwUtXN7x",
+  "files": [
+   "phx-apparel-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4FJYOPACMnFUAesDib7oJV",
+  "files": [
+   "news-events_may-is-ALS-awareness-month.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4Fq4QfOjg0mV8fi8Pe1xZu",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "promoTiles"
+  ],
+  "prev_revision": 53
+ },
+ {
+  "id": "4G0l6iclqW9IBXcPYXxBKk",
+  "files": [
+   "news-events_how-to-dutch-breves-and-lattes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4HHs0On78IzlNioz2C0hA6",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "descriptionComp",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4HxP0L1DHlHiz6Abm2bzH3",
+  "files": [
+   "news-events_level-up-your-summer-with-dutch-bros-newest-drink.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4IA4YeBDabI8dM3xg7yvO5",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "4IRYrvSKGTSfZkA6EzubpQ",
+  "files": [
+   "news-events_dutch-bros-sweet-cereal-sips.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4JMMQ8eJ12rGO2zOp7mkjK",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "4Jk2iwxzl2USke7wgFJ09h",
+  "files": [
+   "news-events_firecracker-rebel-is-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4KC99mRAmTEclGBrMQrmWg",
+  "files": [
+   "news-events_dutch-luv-2026-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "4KCEPdexWhbpNADT4MOdxr",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4KJLsfpG5Zmh5uVYRi5VoC",
+  "files": [
+   "news-events.json",
+   "news-events_compliment-your-sticker.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4LKs2LPlE4UXNAO2QacXfo",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4MBkbImt8LNt7TjIwW0VKV",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4MIBbD2651IzZUgpqdhUpl",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_creamers.json",
+   "at-home_products_categories_creamers_caramel-mocha-creamer.json",
+   "at-home_products_categories_creamers_chocolate-macadamia-nut-creamer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "4MK93xM3GbdPwejFPQ52wo",
+  "files": [
+   "news-events_luv-won-this-valentines-day-as-dutch-bros-donated-over-251600-to-local-food-organizations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4MgJDzEqWN96wQ0YrDpG8h",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4MkBBVcWhF4mPzBE9SIHdm",
+  "files": [
+   "news-events_dutch-bros-gets-caffeinated-with-new-edition-of-cold-brew.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4N6jJcXgcEFZV6wfsgdz6r",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4O2lBaJAApDJq6EgmzwxCL",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_creamers.json",
+   "at-home_products_categories_creamers_caramel-mocha-creamer.json",
+   "at-home_products_categories_creamers_chocolate-macadamia-nut-creamer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 8
+ },
+ {
+  "id": "4OLpafCWaBljPTfVlBP4G5",
+  "files": [
+   "news-events_drink-one-for-dane-2024-donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4Pq1AnXsi0o5dw86DcGXvX",
+  "files": [
+   "news-events_dutch-bros-bracket-challenge-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4Q4hAwcwCPJfpqyfBY7wlU",
+  "files": [
+   "news-events.json",
+   "news-events_national-chocolate-mint-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4QqXglsoTVoasvEpRnj9k3",
+  "files": [
+   "news-events_dutch-bros-owala-launch-special-edition-water-bottle.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4S8nQ1njq5LSwj1qjjJkCy",
+  "files": [
+   "news-events_fun-boy-dutch-bros-drink-floatie.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4ScUKRjniIRCTGZuN0CNsQ",
+  "files": [
+   "news-events_community-wellness-3-31.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4TW6Relf1Bqe3qefyZOgj2",
+  "files": [
+   "diversity-equity-inclusion.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4TwGaLuuJSvFHlWAzhovv3",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "4UNlWjhCdgBrZagiTZz5WI",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4UfHG8q6eEhcLbkReWXBAT",
+  "files": [
+   "giving-back.json",
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4UioxVgEtmQdkERXKe4RWr",
+  "files": [
+   "news-events_2024-buck-for-kids-donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4UsCEKwmJQ6TA0qlLttQ0r",
+  "files": [
+   "news-events_dutch-bros-and-its-customers-raise-more-than-805k-for-local-food-banks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4V2nwdv0qvD3bAOXG6PSyA",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4W2RjJSba01lYgNr3US9sT",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktopImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4YOi6LIbl9z7ToWLg2xhRg",
+  "files": [
+   "news-events_national-chocolate-milkshake-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4bBrm85L3MBFrC1wjaIgxT",
+  "files": [
+   "news-events.json",
+   "news-events_dutch-luv-2023-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4bD1SzebXW9NdQhYBEQE1T",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4bhRznNP8BjVnbUAH2vkE5",
+  "files": [
+   "golden-birthday.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4bio8ODOrcaD6u3UjcWqKe",
+  "files": [
+   "news-events_dutch-bros-and-its-customers-to-support-local-food-banks-for-annual-dutch-luv-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4cCvlGJ4daCJ3MdoY0UcnF",
+  "files": [
+   "news-events_celebrate-sugar-cookie-chai.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4fMP208gBCgGe7J82UrLgS",
+  "files": [
+   "rebel-after-3.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4fVaZMd6NwEfGIcXwyhkJr",
+  "files": [
+   "news-events_buck-for-kids-giveback-2023.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4fWhSdLHJxD9UHyoB9ybY3",
+  "files": [
+   "news-events_glow-up-merch-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4feXPeG53CXLv1GXGqEQ2U",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_creamers.json",
+   "at-home_products_categories_creamers_caramel-mocha-creamer.json",
+   "at-home_products_categories_creamers_chocolate-macadamia-nut-creamer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "4foLWWkoBjkojXpajZvZz6",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4hLOnqH50wy0CpYzRG2764",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4hjLn9eMj8KmftwzRfVeNn",
+  "files": [
+   "our-impact_company-wide.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4hr3zIVtM5RSyKJRtTV6Dh",
+  "files": [
+   "support_articles_can-i-purchase-dutchwear-apparel.json",
+   "support_articles_can-i-purchase-rebels-and-or-cold-brew-and-have-it-shipped.json",
+   "support_articles_can-you-send-me-free-stickers-or-where-can-i-find-them.json",
+   "support_articles_do-you-sell-coffee-and-drinkware-at-your-shops.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "supportArticles"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4hxglsSwDWTdLeCDQV5vfn",
+  "files": [
+   "news-events_new-dutch-state-stickers.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4hy9PGUuOmOqoHdGGBJcs5",
+  "files": [
+   "news-events.json",
+   "news-events_best-drinks-for-february-sticker-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4iPyWXrs5lF7ZrxSioX4g7",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4irCuYRYXgpJWqLw1ZooeO",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4lhBSTcanIu6IBbY8m7Qf7",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4n1oOET0UAhcZcalvoXMWD",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4nCtkwb6csV5NTaHOb74lF",
+  "files": [
+   "privacy-rights-notice.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "4nFtnwKOe5hgYqvWWemLvh",
+  "files": [
+   "news-events.json",
+   "news-events_bracket-challenge-champion-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4nX4lXS53bDjUE6oIgk8ZD",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "carousel",
+   "viewAllCta"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4njFi4TIPtttHnUQ90LAh5",
+  "files": [
+   "giving-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4oqroUk2moIgQZHQxJoZum",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4p0ylBeNAqe4QYxpPzIYqR",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4p1nqeFs6Mz6HtEWrJCc0B",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4pXZyC7CvZxuPW23hgekWx",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4pvrP82nmsp7QALVBSkfCh",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4rO1uwWJ6PjMQTdomoQwRf",
+  "files": [
+   "gift-cards.json",
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "4rWoW9FmyoUJywipPH1W22",
+  "files": [
+   "news-events_buck-for-kids-2026-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4rwvnypM6D5S41Kqnkk7y8",
+  "files": [
+   "news-events_dutch-bros-coffee-opens-four-new-locations-in-december.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4sh6OTYkG7Yrgea8BZ5PH",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "items"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4tKGxT9swFoFsh1Yi9HSjf",
+  "files": [
+   "news-events_dutch-first-los-angeles-location.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "4vPO8t63siNo8fHTQsAYXU",
+  "files": [
+   "news-events_summer-social-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4vPSK0YrFjEb9yRFqNrMQy",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4vaa2dZQ2xvvMTP8yzDUd0",
+  "files": [
+   "news-events_dutch-bros-employee-donates-kidney-to-nine-year-old-boy.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4vqaiSfbqOlzhKlepqlkYH",
+  "files": [
+   "diversity-equity-inclusion.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4vuwUuOpQPJP2cJEjf5wnX",
+  "files": [
+   "news-events_creepy-crawler-rebel.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4wa17LVWr9hpbYGCC1d5Jg",
+  "files": [
+   "news-events_dutch-bros-winter-wonderland.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4x3iJ5ZkbrgLmq7JidWFnu",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4xzBYZzUK5540ojOIw34fT",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "4yQ8FYp3r0kecKwF2oer6J",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "4zOgqUF86x9hXZ2mFuX3Nf",
+  "files": [
+   "news-events_new-sticker-anounces-spicy-drink-season.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "50GrzBBYM0f9oiUjpef4yl",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "50Nujn1DZCCNgFDtVTP9bv",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "525FQufSox2NsPzAbLJPlV",
+  "files": [
+   "news-events_dutch-bros-october-sticker-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "52CcSgG6EdlkeklJ07UqC8",
+  "files": [
+   "news-events_dutch-bros-bag-charms.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "53pCStbJmByK73dO8m8Cxe",
+  "files": [
+   "news-events_2022-top-5.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "53vW1yWeCvHZ0YAbjP6TmJ",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "55p3D45kP0UNCdMw8uDzD",
+  "files": [
+   "news-events_rad-firecracker-rebel.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "56dqspcHaCJQWuUt85RvYg",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "56zwMvlDFscadCCjeb7ZZJ",
+  "files": [
+   "news-events_new-years-drink-trio.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5893LxgQt688aoX4H5YiO5",
+  "files": [
+   "news-events_dutch-bros-chosen-best-coffee-shop-by-readers-of-idaho-business-review.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "58bT7mtkhSRpHm6VXjjpHS",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "59YcWhKoiKtglKsFH8o1XX",
+  "files": [
+   "news-events_its-baaaack-dutch-bros-white-chocolate-lavender-cold-brew.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "59loE6tSHL1bRK30g3k91Q",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_multi-serve.json",
+   "at-home_products_categories_multi-serve_caramel-mocha-multi-serve.json",
+   "at-home_products_categories_multi-serve_chocolate-macadamia-nut-multi-serve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "5AHhYxy9afQE518boXk6PC",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "carousel",
+   "viewAllCta"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5AtqnoLymTcKX0YCwdPtqB",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5B5KQrXo4Ojt8YARmSNChM",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5BiFQNftojebftylHwpS8Q",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5Btzfo2tt2lU3QoUFHUZNz",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5C2UNr6VJ5S7qdCxMDWqL4",
+  "files": [
+   "news-events_dutch-bros-lonely-ghost-collab.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5E2XBsdbaOYSq17f4u0F6n",
+  "files": [
+   "news-events_mangonada-rebel-returns.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5EXRPYtGZFlghYIFCQsej0",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5Esly2Fe0EK5iD8wqPqRGz",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5FHtdsX7JvYxNlwp01o9Wa",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5GgaxUunmw1h6nQQAyBWZY",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5GvVFIru2A2vHUb8PyyIH7",
+  "files": [
+   "news-events_dutch-bros-co-founder-travis-boersma-named-portland-business-journal-2017-executive-of-the-year.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5H22gIhp3vjrXeFvcCI2ao",
+  "files": [
+   "lonely-ghost.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5Ial5BDPCNx8Ob0ndgbB15",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5IangmEXirqBJ3sxwcYTnQ",
+  "files": [
+   "news-events_national-pumpkin-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5JJdNnpPUBP2g2wyGhNWxe",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5JiqDrOQ3VUrQzw58n4Wo9",
+  "files": [
+   "news-events_dutch-bros-poppin-boba.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5Jp3eSk7LRKyHmT4HV63rl",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "backgroundImage",
+   "cta"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5LYE2iIonrXjqQQmNuQyaU",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5LxIO0YlO7JnHKzf74JU7D",
+  "files": [
+   "silver-rail-giveback.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5MipoiJjxurqmuf6K0f0Qa",
+  "files": [
+   "news-events_national-drive-thru-day-2024.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5MxPfMw4fgH2BEju1jerWN",
+  "files": [
+   "at-home_recipes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5NRAVfkty8I7ySi1gwucyF",
+  "files": [
+   "at-home_products_categories_multi-serve.json",
+   "at-home_products_categories_multi-serve_caramel-mocha-multi-serve.json",
+   "at-home_products_categories_multi-serve_chocolate-macadamia-nut-multi-serve.json",
+   "at-home_products_categories_multi-serve_coconut-mocha-multi-serve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "bannerImg",
+   "bannerMobileImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5PdYOBfyg4Ga5SUUrDpXPH",
+  "files": [
+   "news-events_dutch-bros-big-game-rebels.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5PlUd7BLtIf0ZtkOGwMKsX",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "carousel"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5Po7LucurULXjQW7qgkpeg",
+  "files": [
+   "news-events_dutch-bros-and-MDA-partner-to-beat-ALS.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5PuNKxvJMC9AJhDxolPXXw",
+  "files": [
+   "news-events_new-myst-energy-refresher.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "5QI5L2TreJXLO5iJyUw5qf",
+  "files": [
+   "at-home_how-to_how-to-brew-drip-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5Qvj8BmisTlu816gBdWiCF",
+  "files": [
+   "news-events_2024-national-nonprofit-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5RZPd7LkqaolSTvUdWN3zi",
+  "files": [
+   "news-events_sour-candy-rebel.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5RiqACxwYDLeBeRhc0FEXg",
+  "files": [
+   "giving-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5RqglVWEKvnjxe0oikHJ77",
+  "files": [
+   "news-events_2025-sticker-memory-lane.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5RwHIhTdTcPXlxFncBCgcO",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5S0mzjNKY4apr8XBPM4Diz",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5Vul4ZwpSobi4oFqPdjSEH",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5WTHAIIFIdJnnxbkOnl5Ug",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5WnCUmru3DrCw0DMkm6P2A",
+  "files": [
+   "news-events_drinks-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5XCcPW1VUj2SYcsIpaMdXA",
+  "files": [
+   "news-events_dutch-bros-buck-for-kids-raises-414233-on-national-coffee-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5YMtdjh2IaX7LL4f62w05e",
+  "files": [
+   "news-events_secret-menu-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5YrWxQ77Hr9obmw9WMK5dp",
+  "files": [
+   "news-events_fathers-day-drinks-from-dutch.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5ZhSMfvaBtmzZhK0vf7UOU",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5ZheZ4efrD7P61DtLOYyxd",
+  "files": [
+   "random-acts-of-kindness_legal.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5aX1Bp4u7cBEuN7ibpGVoZ",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5aaCyZpmUJpTAXwkWmzZWJ",
+  "files": [
+   "news-events_win-free-dutch.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5b3TuO4owpU9OmW94Z7TNA",
+  "files": [
+   "news-events_dutch-bros-dutch-luv-2025-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5bpHkroCEXBvs5pNpbIKQ7",
+  "files": [
+   "at-home_recipes_annihilator.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5eK0PC5I5dMYy3rBeCuMkD",
+  "files": [
+   "at-home_products_categories_creamers.json",
+   "at-home_products_categories_creamers_caramel-mocha-creamer.json",
+   "at-home_products_categories_creamers_chocolate-macadamia-nut-creamer.json",
+   "at-home_products_categories_creamers_coconut-mocha-creamer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "bannerImg",
+   "bannerMobileImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5gAGtD8WPtE9oQSu2OzLY0",
+  "files": [
+   "error-500.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5gFIaZK6XEx6XUgeCABDwn",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5gcTiprkTzlkEoMHqnJOvP",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5h6RTR8rZaKICboqwiXQ9o",
+  "files": [
+   "news-events_dutch-bros-beats-target-raises-more-than-1-3-million-in-one-day-for-mda.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5hsPAY8Xhy2nYQVsBmunXy",
+  "files": [
+   "at-home_recipes_cocomo.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5iBTTMJoY6hJgpvRiFOqRz",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5iJ6WroeSWRvbUxI95U8rE",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5ijm1f1WJl1A50trk54Te2",
+  "files": [
+   "privacy-policy.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5j2x7Wmmig6l0ieDfhJRwG",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5jKNgQSZxL3X594CkSmIX4",
+  "files": [
+   "news-events.json",
+   "news-events_what-is-white-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5jTrrRQkxUvsQoBxRF89H1",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "5kMq7hBU25fvjCEdaEzJ6o",
+  "files": [
+   "news-events_dutch-bros-names-charley-jemley-cfo.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5khvM0D3lrBcLWCxrZpmSp",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5m7N2JeqJQkkDgrO3Wumnp",
+  "files": [
+   "news-events_dutch-bros-and-its-customers-raise-more-than-19m-to-help-end-als.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5ma3jyWEBxrsHfwMwAPqav",
+  "files": [
+   "news-events_celebrate-st-patricks-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5nCkqdI5Mbo1MtZ0LlFP4F",
+  "files": [
+   "our-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5nv9NaBxIQiorg4FkxN0ka",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5o3j65Aj9o1JcSkWEF1ajA",
+  "files": [
+   "news-events_fall-favorite-drinks-are-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5ozzotLx22i7Ys7JDRzbHm",
+  "files": [
+   "news-events_dutch-bros-and-customers-raise-351561-for-more-than-1-million-meals-for-the-hungry.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5pMVg6rpv3lHLx5Mi8lXgp",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "items"
+  ],
+  "prev_revision": 11
+ },
+ {
+  "id": "5ppYcmdXecqV3KIcuijSBa",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5pxfoMPFzMy9VTuIwzMiPI",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 9
+ },
+ {
+  "id": "5qcksKu9s9s1PP29mDVpks",
+  "files": [
+   "news-events_six-ways-to-order-dutch-cocoa.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5qehOG8NAq2B169XFmwxBE",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5qq0hmM8ENVA0x0Cc9bpHS",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5ryfmFsxhUGXp6AuIWWDSS",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5sHJlhYC6zW7uUQy8VOrBe",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5sdvet2Bf5Gbi35mM9sGgh",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "5tBtyX7F9lWyowwjSScaQV",
+  "files": [
+   "news-events_mystery-cold-cup-sleeve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5tJoXfz32tXg08EZi1tW7F",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5tfTolg66DAZ78ywekKXBT",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5uADhtgmbKVp9x3pgERnhN",
+  "files": [
+   "news-events_dutch-bros-bracket-challenge.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5uNy1zO8bhh4FALshL7pGF",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "5ubk0MZuZX5pCQtvmECYo4",
+  "files": [
+   "news-events_dutch-bros-north-colorado-springs-to-celebrate-grand-opening-with-free-16-ounce-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5v9MYcWjfFkCl7r014VbMp",
+  "files": [
+   "news-events_trick-or-treat-mystery-pins.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5vAHK74xb2cvZJWuicg6V9",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5vlHQqBVFq5V62AZtXE3vU",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5vlHszEsDolA8EmBiO4Jzj",
+  "files": [
+   "news-events_national-watermelon-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5wAW85SuawdvkyjByBEnMt",
+  "files": [
+   "news-events_order-with-order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5wLTdIepuANs8Wz8WDfrfJ",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "5xdEIeqUsSpNdYsUrZLozX",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "5yRdPRc8rOR8ekhnRiEKv7",
+  "files": [
+   "news-events_2024-national-friendship-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "5z79iEE4I0C77GEI6wHHWX",
+  "files": [
+   "news-events_dutch-bros-national-cold-brew-day-420.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "61gOqz40gX6YfHs4dnW3Pu",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 34
+ },
+ {
+  "id": "61t8aAnhCJ5pthtU1uUADM",
+  "files": [
+   "giving-back.json",
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "62OPATzoojM3SFa9uRNmBJ",
+  "files": [
+   "news-events_dutch-bros-coffee-from-seed-to-cup.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "63YnGSYNExYkXOQAnZbPyE",
+  "files": [
+   "error-404.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "63v6pr22HFrAefqUWJ3iKl",
+  "files": [
+   "news-events_pickleback-rebel.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "640TJvQ689b0mPiybllhPK",
+  "files": [
+   "news-events_national-coffee-day-2024.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "651OgqoMl6XSqQhRsPvbaC",
+  "files": [
+   "news-events_valentines-day-with-dutch-bros.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "656fLRz6qvHhvhfu4YrZFL",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "65UHGJ3LQgv8MeyV6MjqFA",
+  "files": [
+   "giving-back.json",
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "66PcjheXeD4dK8f4iTwvOA",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "68a2PQHVfva6xuFBYYMHer",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "68hMvrOp1PL4OF7qPwp99v",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "customLink"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6AcKKmp6XaLypfhYLr0NBN",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "6BLZyg3yfziAhsKxkEb4rE",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6BaixqE7GcSH5QY9o96xLP",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "customLink"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6CuNFiSb3fAzDnQZOZjIq6",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6EH2Hex28TsXTdI17tNLOZ",
+  "files": [
+   "news-events_memorable-merch-drops-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6ES6Hr0CsHkL9FweWl6fCD",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6HPv9MiMlvo4MxLjm5sTRr",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6HQhSImu19B1MkJwHHnP1N",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6HXtxDKU5Fy4PtcYhCEKLi",
+  "files": [
+   "news-events_firecracker-rebel-energy-drink.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6HgwtjZDhYaPwSiut2PdG9",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6Ie1QoNmndnhQH3P422qEb",
+  "files": [
+   "news-events_dutch-bros-dairy-free-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6Iub8RW0dAJq8KDKWkAbqM",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "6J8qHyfDLnt5ZGhNLSVdWx",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "6JXfOy7DyM4I8DZLEL57qz",
+  "files": [
+   "news-events_dutch-bros-new-holiday-drink.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6K1J2tdWT8ep6V5ac8XNGx",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "6KRp37dgj3gkxGahe32qYR",
+  "files": [
+   "news-events_dutch-bros-foundation-donates-250000-to-wildfire-relief-efforts.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6MEKx1SrKam8vDEN7Ys3IK",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6MdS2Df27fVZfOM359STzy",
+  "files": [
+   "news-events_dutch-bros-creative-collective.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6N7DUJNzEen3AazeTvkEVT",
+  "files": [
+   "news-events_drive-thru-coffee-love.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6OLcUeKT33IyJi0Aqh3pyf",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6PEbfnutZnLpST2lg9HOzc",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6PFlcvB3QbbyyowUWXdGb7",
+  "files": [
+   "news-events_dutch-welcomes-back-fall-flavors.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6Q1wwvtHITuGJeYM5ZFuGV",
+  "files": [
+   "news-events_try-lucky-clover-soft-top.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6QOVNCm5H5OwETusvdNbRR",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6QSccu50PmB20fNnz9ZG22",
+  "files": [
+   "news-events_the-best-iced-energy-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6QTz3dBU9vNPfdBjzXgpB7",
+  "files": [
+   "news-events_back-to-school-sticker.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6QaBHrFCIt56bHI2W54xBd",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "heading",
+   "leftCardBtn",
+   "leftCardImg",
+   "leftCardText",
+   "optionalCardBtn",
+   "optionalCardImg",
+   "optionalCardMobileImg",
+   "optionalCardText",
+   "rightCardBtn",
+   "rightCardImg",
+   "rightCardText",
+   "subHeading"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "6SFxXkwgO4t7CoS0nMVWqJ",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6SWxBsISHncnZLxFdxOao",
+  "files": [
+   "at-home_where-to-buy.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "6TKTlEk1tkiDJ3j2rXxKTb",
+  "files": [
+   "news-events_a-design-10-years-in-the-making.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6TPEh4W1cpi8RPFd9MxMCG",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "6TaO7gK9UtOulpdA8AEwAO",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6TciliUlK0ve6dXoqoRTef",
+  "files": [
+   "news-events_dutch-bros-celebrates-national-coconut-day-with-cocomo.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6To6B0p0Ljq2JR8rpz4yi7",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6TtowOl1qBcjnG2TJzSns5",
+  "files": [
+   "back-to-school.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6Uf8jnwkh8RxPTGYvs8Tko",
+  "files": [
+   "news-events_Paying-it-Forward.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6UzkiqxSwBrcAZSBpomxl5",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6VyKEThx2T8Z9cSFVHWiUh",
+  "files": [
+   "news-events_dutch-bros-holiday-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6W2vSB8Useri6fU5MUB2MN",
+  "files": [
+   "news-events_vault-1992-merch-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6WURfDSeDUKdOkgGtpjVIQ",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6XZGaQO8udqiy5fomhPCXa",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6ZPnXHDUnw2QfvmlPpPWim",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "6Zl4VmvZ45wN1FSv43iSx9",
+  "files": [
+   "news-events_congratulations-to-brant-boersma-announced-as-2017s-top-emerging-leader-in-southern-oregon.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6acCNzut0fZ8TrGjJhZIog",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6c3cPgTc3Cwur0Z3gMPGtW",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6c5shlgBHec9sI7XsMEMRl",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_single-serve.json",
+   "at-home_products_categories_single-serve_caramel-mocha-iced-latte.json",
+   "at-home_products_categories_single-serve_chocolate-macadamia-nut-iced-latte.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "6cAGSWrdtBNQVc03QFEPzr",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6cGr4QkLkGw8QP5rFF3AZY",
+  "files": [
+   "at-home_how-to_how-maximize-your-milk.json",
+   "at-home_how-to_how-to-brew-drip-coffee.json",
+   "at-home_how-to_how-to-dutchify-your-coffee.json",
+   "at-home_how-to_how-to-tom-tom.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6cjCZgZ2Vu4PugDzaHcI3m",
+  "files": [
+   "news-events_national-passenger-princess-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6dJBdcS7tsOgSisuPjKiru",
+  "files": [
+   "news-events_theres-no-place-like-dutch-bros-for-the-holidays.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6edQY9xET1YTZ1igJdXnYg",
+  "files": [
+   "news-events_2025-holiday-gift-guide.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6emlKaKpjYmCqwUSDLiurK",
+  "files": [
+   "news-events_buck-for-kids-2022-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6exKzxl1PorpcbD13r7FNH",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "6f7E60E8WQFhNfOzuGYmfW",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6gnfnxqfSWIR8NT4AWDy5L",
+  "files": [
+   "at-home_how-to_how-to-brew-drip-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6hYcbArGkCEhw4E2MpVsAE",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6ik3agqTl4CHiSu1m5tlec",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6jD2vUgo6EAJLa4mTPC0zI",
+  "files": [
+   "news-events_dutch-bros-chosen-best-coffee-house-by-readers-of-the-fresno-bee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6kZDZyEzdyhnqRpOhcongz",
+  "files": [
+   "giving-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6mJLLoBSLZisMDaj0ByBjG",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "6mKm2ea0tJJZQXpmdYUSms",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6mcMM2xljxF2It3bs94zlg",
+  "files": [
+   "news-events_drink-one-for-dane-raises-over-970000-in-one-day-to-endals.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6qD2rHvjISNXdPUaKhehBI",
+  "files": [
+   "at-home_recipes_cocomo.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "text"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6qOw3uebX886TZLRG9oGNQ",
+  "files": [
+   "our-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6qmdOvLjgyZDZ6pFTcaoD0",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6soIVOw4EbuR7nJUo0inAq",
+  "files": [
+   "random-acts-of-kindness_legal.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "6su6TSrtaFSZPeerlYg1fM",
+  "files": [
+   "news-events_dutch-bros-foundation-supports-health-programs-in-origin-countries.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6taC7qADX0JF7kf9vHUWKN",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6uoNqMMOd9ORqwbE2tFuLI",
+  "files": [
+   "news-events_vibes-sticker-drop-winner.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6upIkaZDIvbfrqk7MM4FFm",
+  "files": [
+   "news-events_7-fun-ways-to-level-up-your-sticker-of-the-month.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6uz6u5ULJ2Fw1cy6WOpxNR",
+  "files": [
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_coconut-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_epic-light-roast-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6vO1OIzWkSEcvsLGvxIDsu",
+  "files": [
+   "news-events_find-your-next-favorite-drink.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6woXjqNrh9bcm7ZmDPUSj0",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6xBFIeIQxxHAkytKtC8mQM",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "6y2VofyDHhwKRecpi0dJPl",
+  "files": [
+   "dutch-101.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "6zLr0tqrnqD7GIRPhDCU1x",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "71WgEy2j71pMfivIBBCzzq",
+  "files": [
+   "news-events_dutch-bros-and-customers-raise-more-than-453000-for-local-nonprofits-on-annual-buck-for-kids-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "71xPOOWQ0mI2igZcVoAdQ7",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "72ENfz7P9NB7xC7Ygy1SgQ",
+  "files": [
+   "news-events_national-dog-day-2026.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "72NBNoQDHZWvEN7yENQ7UK",
+  "files": [
+   "purchase-order-terms-and-conditions.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "72alwVt1bPNWLU4TXfJzgi",
+  "files": [
+   "news-events_dutch-bros-drink-one-for-dane-looks-to-advance-the-fight-against-als.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "73Mc0sGV9zTVByefiebhYh",
+  "files": [
+   "news-events_national-cold-brew-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "73NSIDJ51wLRuHybdSZ5qy",
+  "files": [
+   "news-events_mystery-frog-charm-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "73VoJweACnItmOZhKb7YXX",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "73aSVAzBduDHfvBfGauJSB",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "73lxjOXog1vK5xFiUZkfsM",
+  "files": [
+   "news-events_dutch-bros-releases-shine.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "74rMiFCe5TboMCgkFFnoro",
+  "files": [
+   "news-events_2026-drink-one-for-dane-results.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "756t2dZiMD6ZcoGJUsnZXD",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "76PaoQk6cWm06aoQ39yi0h",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktopImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "77qu3ztrjjkWh73lHhXHtX",
+  "files": [
+   "news-events_drink-one-for-dane-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "783U6ZpYbcbcV3fPOLg2OQ",
+  "files": [
+   "news-events_dutch-bros-coffee-launches-annual-breast-cancer-awareness-campaign-with-new-dutch-creed-mug.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "79NVoFfonlYGxmF2FLsCL7",
+  "files": [
+   "digital-accessibility.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "7AVTtcidvsFYT2f1U7XZDW",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7AoxHiVCnlaKRbVNT48Ikr",
+  "files": [
+   "news-events_in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7BVBE9TjwJWT1Xt0d0LkCu",
+  "files": [
+   "support_articles_how-do-app-stickers-work.json",
+   "support_articles_how-do-i-get-started-with-the-dutch-bros-app.json",
+   "support_articles_how-do-i-order-ahead.json",
+   "support_articles_how-do-points-work.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "supportArticles"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "7BYb1Kl8SQ1k5AwjqXjW4Q",
+  "files": [
+   "giving-back.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7BdrZDgNsUx7tPSoA2Og0T",
+  "files": [
+   "news-events.json",
+   "news-events_dutch-bros-supports-local-charities.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7Di1jzwU8syHcOLt10rjuR",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7EPENx6rJjK5b7eDk5JU8T",
+  "files": [
+   "news-events_pumpkin-season-at-dutch-bros.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7F9ftOXs0fbuhC0q77MHnG",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7Fk40z8gj13uqXQZODk3Ez",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7FoOTJgqQ8ql7GOTgmbMZs",
+  "files": [
+   "news-events_new-name-same-heart-the-dutch-bros-foundation.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7Fz6KEIywm0om3svbCjlBU",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7HWkqJr61LEkGlGdaXwvph",
+  "files": [
+   "news-events_drinks-to-match-your-costume.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7I84u6GPSW7HHUwSPdATSu",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "7K4HXjicYRGltm9fd0GotL",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7LZemeGpIcb9ZkwuE6J6DH",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7LysJmLFjUkaOyILp7a3G2",
+  "files": [
+   "at-home_recipes_golden-eagle.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7MRV2GqcCb6apxIiDvZB8d",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7a9u9KheSaMn0dCO6lI0ME",
+  "files": [
+   "news-events.json",
+   "news-events_love-for-our-charity-partners.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7aaNuEMAOtIxtAdLvH8uqs",
+  "files": [
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7cFcmy0q5SRqjfFzW1EOrJ",
+  "files": [
+   "news-events_sugar-free-dutch-classics.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7cdhZmQ2CcPCIfo6PsiEEv",
+  "files": [
+   "at-home.json",
+   "at-home_how-to.json",
+   "at-home_products.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7dBNClfcrS0tRyoHxJudf3",
+  "files": [
+   "news-events_db-opening-st-augustine-florida.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7dnA0wRYpWpkDNnNUM9JsM",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7g77pwxXiDQ2ATOHi13a5d",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7gkCU3EmOhnFQUWv4vKRz0",
+  "files": [
+   "news-events_win-free-cold-brew-and-more-at-dutch-bros-this-month-for-national-cold-brew-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7h0RZnXdTNNPhs8mjoyEOb",
+  "files": [
+   "news-events_2024-national-dog-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7kSYXbIpZH0t8f7qRf3ALv",
+  "files": [
+   "news-events_2024-national-lemonade-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7kty3iAwdd9KJkPm8tXJ2a",
+  "files": [
+   "news-events_november-sticker-drop.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7l1EbfWfqeAPu5zqkxfmZW",
+  "files": [
+   "news-events_dutch-bros-coffee-secures-investment-from-tsg-consumer-partners.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7l9NIMyna29Z9SenxFVIPR",
+  "files": [
+   "news-events.json",
+   "news-events_lavender-love-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7lOXFTKGxRpT7QTR4sLJD0",
+  "files": [
+   "digital-accessibility.json",
+   "privacy-policy.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7nenJ8u7UOFCUy5YqkOcmA",
+  "files": [
+   "news-events_6-drinks-you-will-luv-a-latte-this-valentines-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7nh0clgw76ld8lXSz1YuEG",
+  "files": [
+   "news-events_dutch-bros-coffee-house-donates-over-2250-to-college-dreams.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7nhv1eFif0QBsZbzvtCxgT",
+  "files": [
+   "news-events_national-ugly-christmas-sweater-day.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7p8FWo9gFXyxKMBzV8W3tO",
+  "files": [
+   "diversity-equity-inclusion.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7pICbxBVNJJBgZLOvdku5c",
+  "files": [
+   "news-events_working-at-dutch-bros-headquarters.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7pZcRxw5cc7SIaf7CgZmy",
+  "files": [
+   "random-acts-of-kindness_donations.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7qge5XXP8qKWpsHu8Bs1cf",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7rmKiGfDEzUZUpCA0FnJVi",
+  "files": [
+   "news-events_dutch-luv-2019.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7t87ysvtQBVKrlT2J4VC4n",
+  "files": [
+   "news-events.json",
+   "news-events_broista-sticker-competition-top-10.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7t9tsq81yg2jD3hYcL2xTA",
+  "files": [
+   "news-events_festival-inspired-wristbands.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7u8ywbgnLTIJW51mQbu1gz",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7uFbv9pXxpoTFV5zAR7idn",
+  "files": [
+   "news-events_share-the-dutch-luv-with-valentines-day-inspired-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7uMS78W4UAV83cK2XpcOyp",
+  "files": [
+   "news-events_dutch-bros-creates-this-summers-sweet-escapes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7uubp3WJ2eJDOmci8vU2nC",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7vTq8bkWAj7GQcjJxforab",
+  "files": [
+   "news-events_dutch-bros-coffee-named-a-top-workplace-for-second-year-in-a-row.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7vyoFp9zDqlShIywbGia2F",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7wECu3V2pfJZ1BsF0hMSww",
+  "files": [
+   "our-impact_locally.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "7yNLSC5KhWTWmr4AyZDIg5",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "7zjqHC5WAV1fRdpAy8vNdY",
+  "files": [
+   "order-ahead.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage",
+   "secondaryImage"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "8rUC3cEPhee5VJfmyY5sz",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "8s3FZHsGhPi8h99n9EBlX",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "9Ev6KszCO54FTvFuRxFvJ",
+  "files": [
+   "news-events_dutch-bros-july-summer-sticker.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "9HPx22rylgjbT3yJXCvs1",
+  "files": [
+   "invoice-terms-and-conditions.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "AEDMRwLjYQ79WptgqyWWP",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktopImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "AW85KqedEDauLpnHO74lJ",
+  "files": [
+   "in-app-gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "AvPHFkc92zyGQWHKEDzU5",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-grounds.json",
+   "at-home_products_categories_coffee-grounds_caramel-mocha-ground-coffee.json",
+   "at-home_products_categories_coffee-grounds_chocolate-macadamia-nut-ground-coffee.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "accordionFields",
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "B1S0sl0zooX2icDYHs80H",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "CZOH90kZBY6FeeuPsql7E",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "Cwe9t2s24JYAo1BSPq2BR",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "D3WbjojOi88jrFbTwc1RR",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "E9fheQh0bIe20CmD2gvya",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "ELDQuH9clAPDAeuLDV1rU",
+  "files": [
+   "terms-of-service.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "Ea1KjPl5meDSA5dD5wAlM",
+  "files": [
+   "error-500.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "FpLrJibzAByM1Wyn242oH",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "H5SV2O7U4Ml9Bk1UgX8Vq",
+  "files": [
+   "news-events_spring-fever-dream-mixtape-drink-trio.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "JYT0LvVnmfPdTC9POsIvz",
+  "files": [
+   "route-92.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "K3tib8dIKl2IkQgMoE82J",
+  "files": [
+   "gift-cards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "K8nY9eti2Ktu8ZbooJkyV",
+  "files": [
+   "access-denied.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "LUiKkG6FUXBux5Q0CZcVN",
+  "files": [
+   "news-events_holiday-2025-drink-menu.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "OBw9onpHEll559SwKKets",
+  "files": [
+   "our-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "P8McLJeirLBz3nERydmEA",
+  "files": [
+   "news-events_dutch-bros-frosted-lemonade-is-here.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "PawmlsbTw9xnQ3bI43GF1",
+  "files": [
+   "at-home_recipes.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "Pv672beJn1jMFGO7IKikh",
+  "files": [
+   "at-home.json",
+   "at-home_recipes.json",
+   "giving-back.json"
+  ],
+  "added": [
+   "css"
+  ],
+  "removed": [],
+  "changed": [
+   "htmlContent"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "QMTBapnE9TLLFqKSa3xyj",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_creamers.json",
+   "at-home_products_categories_creamers_caramel-mocha-creamer.json",
+   "at-home_products_categories_creamers_chocolate-macadamia-nut-creamer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "QeMyYh3w5Mb70s1EkKbcE",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "secondaryImage"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "St4YUAA1sUI5tBMhA0Rub",
+  "files": [
+   "news-events_dutch-bros-holiday-menu.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "TgJMo6Ix855exOnmLxNi6",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cssFile"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "U7jue5z8k5Y0Cdvdzt6aD",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "UGevUi7SPfL3HqeTuv0A2",
+  "files": [
+   "news-events_dutch-bros-dutch-luv-2025.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "UWTw1JJ8bpRkfQReCeQ1m",
+  "files": [
+   "news-events_dutch-bros-summer-road-trip-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "Ur2iWyq3eXTyu5SyRz7QD",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "VDpywqK5UBOWtFV39gcUa",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "VFIieE5gHQH1XB30CErpg",
+  "files": [
+   "news-events.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "customLink",
+   "image"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "VGFfsj0JDuUqkQrodIQp8",
+  "files": [
+   "news-events_2024-fall-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "W59CcaK8BRREAR5lGRwcx",
+  "files": [
+   "drink-share.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "YcJB0pzJBnG1KT1F5c9Ny",
+  "files": [
+   "news-events_drink-one-for-dane-2026.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "aZslThZtCg1rXnBja5Jcc",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "bpUEXGgh317dbVh61BYS4",
+  "files": [
+   "random-acts-of-kindness_legal.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "c8dxVCmAekgBsAiF43vKY",
+  "files": [
+   "news-events_2024-Holiday-Menu.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "eHnNzgnzqQdqv1Fh4tpiG",
+  "files": [
+   "at-home.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "ePQZTdkTFDKqCrUzab2fr",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "pageComponents"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "fajGIr2srCIDIcat9NxKZ",
+  "files": [
+   "news-events_Dutch-Bros-celebrates-winning-broista-sticker-designer.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "g10v1D3lbVtBe8y2Lok4o",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "ctas",
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 4
+ },
+ {
+  "id": "g2kifsgnLo3uUCLIKkkC0",
+  "files": [
+   "random-acts-of-kindness.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content",
+   "imageBackground"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "gq7l5G5FWdfLkVmiSaW8C",
+  "files": [
+   "support.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktopImg"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "hRzENmL7tGJvuNrxpsLyQ",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 5
+ },
+ {
+  "id": "hnOLeupOJGDEVJH77r3ta",
+  "files": [
+   "news-events_dutch-bros-back-to-cool-drinks.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 3
+ },
+ {
+  "id": "i1uWYy6GdO0LdTJ6MANxJ",
+  "files": [
+   "news-events_dutch-bros-coffee-raises-more-than-333000-for-ohsu-cancer-institute-and-albie-aware.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "i6juJyhPJXD23e0E29tqp",
+  "files": [
+   "news-events_chill-on-the-sunny-side-with-dutch-bros-newest-drink-duo.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "iSiw3jRarK1kEEakiXMvI",
+  "files": [
+   "at-home_recipes_kicker.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "banner",
+   "image",
+   "ourProducts",
+   "pageComponents"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "jhp6XbAgh5TJr1qFDZfmi",
+  "files": [
+   "news-events_dutch-bros-florida-tour.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "jnuLYspDtpLnt9mL5fW6V",
+  "files": [
+   "news-events_dutch-bros-1000th-location-orlando-fl.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "kmRI5lDcpWJr4qVitzqtR",
+  "files": [
+   "sticker-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image",
+   "mobileBackgroundImage"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "lYppH7qTCgnEBpFP1NV3n",
+  "files": [
+   "our-impact.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 1
+ },
+ {
+  "id": "ltzLX3XRrepENMD1jX4ro",
+  "files": [
+   "news-events_dutch-bros-phoenix-employees-making-an-impact-with-blessphx-campaign.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "mb3pKP7B6sNqyuLHl4CWn",
+  "files": [
+   "news-events_summer-crazy-straws.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "noleOGTMNBbuOHYYFSU5X",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 7
+ },
+ {
+  "id": "oSCbzBB1gOJek7UWWf39n",
+  "files": [
+   "news-events_mothers-day-sticker-and-gift-card-sleeve.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "q6VoKYMEiYv4nUlqFLFLt",
+  "files": [
+   "rewards.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "cta",
+   "image",
+   "subHeading"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "qvUQLbyABCGSG01z89EJI",
+  "files": [
+   "news-events_giving-back-dutch-bros-leader-finds-new-passion-and-purpose-in-haiti.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "scpka6lEop4k031X34vH4",
+  "files": [
+   "dutch-luv.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "desktop",
+   "mobile"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "sw568O07W8ATxrRuoNemy",
+  "files": [
+   "news-events_dutch-bros-fights-als-with-drink-one-for-dane-may-11.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "tx9L8PlTOBeinWKVOol2S",
+  "files": [
+   "news-events_dutch-bros-celebrates-veterans-day-by-raising-funds-for-lacey-veterans-services-hub.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "u5wXiclPZEMuYhDKf9tLq",
+  "files": [
+   "news-events_dutch-bros-raises-more-than-2m-in-one-day-to-help-end-als.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "wxJ9ravRp4OcQPaWF8RBa",
+  "files": [
+   "buck-for-kids.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "xlzfV5JrIeWs9QieHAKsF",
+  "files": [
+   "news-events_chocolate-crunch-cold-brew.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "xnMaywApo8raCRplwqzt8",
+  "files": [
+   "at-home_products.json",
+   "at-home_products_categories_coffee-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-mocha-pods.json",
+   "at-home_products_categories_coffee-pods_caramel-pumpkin-brulee-pods.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "previewImages"
+  ],
+  "prev_revision": 6
+ },
+ {
+  "id": "yD7sLn2CyBt3haejXxMTT",
+  "files": [
+   "https:__www.dutchbros.com.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "css"
+  ],
+  "prev_revision": 9
+ },
+ {
+  "id": "zG8I8eb0mNhzItdmaIN3h",
+  "files": [
+   "news-events_april-sticker-drop-playlist.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "articleBody",
+   "image"
+  ],
+  "prev_revision": 2
+ },
+ {
+  "id": "ziWuuy8LlH9pJY7Djf02R",
+  "files": [
+   "our-story.json"
+  ],
+  "added": [],
+  "removed": [],
+  "changed": [
+   "content"
+  ],
+  "prev_revision": 2
+ }
+]
