@@ -63,6 +63,29 @@ curl -s 'https://www.dutchbros.com/at-home/_payload.json?_b=bac26790-0c6c-43bd-9
 2. If the preview route must stay public for the Contentful editor integration, validate a short-lived signed token issued to authenticated editors instead of accepting bare `entryId` lookups.
 3. Add a field allow-list / strip `sys` internals in proxy responses.
 
+## Step 6 — Unreleased product IMAGERY also exposed via same-origin asset proxy (verified 2026-10-29 10:50 UTC)
+
+The preview-proxy responses embed full Contentful **Asset** objects for every linked image (`fields.previewImages[].sys.id` + `fields.file.url` containing the 32-hex asset hash). The same origin serves those assets through `/ctf/tesk7a84db2g/{assetId}/{hash}/{fileName}` — no auth required, only the hash (a capability value that the unauthenticated preview endpoint itself discloses).
+
+Chain: unauth `/api/contentful/preview?entryId=<product>` → embedded asset URL+hash → unauth same-origin image fetch.
+
+Verified example — image of an unpublished product (Irish Cream Ground Coffee, part of the 2026-10-27 batch, absent from the production site):
+
+```
+GET /api/contentful/preview?entryId=1BjG907Et15Woth7R76gAs   → 200, embeds Asset 2HLVdeizwY5SikEcEpXZEV
+GET /ctf/tesk7a84db2g/2HLVdeizwY5SikEcEpXZEV/02b9405f93a21ee4c04f66b98a967dc5/ground-coffee-irish-cream.webp
+→ 200, image/webp, 51,442 bytes, 1000×1200 (CF-Cache-Status: HIT)
+```
+
+Additional unreleased-batch images confirmed fetchable the same way (all 200 with real image bytes):
+- `4iFuX4MOMvsC8jIlza5EMy/5b08302a…/Grounds-Group-Mafia-Dark.webp` (Mafia Dark Roast — unreleased product)
+- `7fwZK5OIwwJ20GF5JIyync/7c3cc3fb…/Grounds-Van-Carm-FT.webp` (Vanilla Caramel Ground Coffee — unreleased product)
+- `JA6j6iOkjdPYOJ0C3M5UJ/84b3a96b…/irish-cream-staged.webp`, `7bbcRV5ciBmAdnezrjgFVi/9a645119…/Grounds-Pattern__1_.webp`, `52wwhAKwdB7lRrPPFIAxTW/c26ef726…/Grounds-Staged-Van-Carm.webp`, `2PSSLlk89NxhU96BGzCRQc/c71bdd13…/Grounds-Group-Van-Carm.webp`
+
+Cross-check: live `/at-home/` page and its `_payload.json` contain **zero** references to these files (grep count 0) — the imagery is not on the production site, only reachable through this chain.
+
+Isolation note (honesty): the asset proxy itself requires BOTH the 32-hex hash and exact filename (wrong hash → 404, missing filename → 404), so assets are not independently enumerable — the exposure rides entirely on the unauthenticated preview endpoint disclosing the capability values. This extends the disclosure from JSON fields to the actual pre-release imagery, materially strengthening the "leak site gets the full launch catalog" impact statement.
+
 ## Evidence files
 - `recon/draftdiff/evidence/poc4_preview_browser.png` — headless-browser screenshot of `/preview?entry_id=2RC3a5rLcnm6s6KwhAVZbZ` rendering the unreleased at-home page (holiday banner + unreleased products); DOM text extraction confirmed "Candy Cane Mocha & Holiday Sprinkle Cookie" + "LIMITED EDITION HOLIDAY FLAVORS"
 - `recon/draftdiff/evidence/poc1_preview_response.json` — unauthenticated proxy response (Holiday content inside)
