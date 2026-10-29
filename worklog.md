@@ -37,12 +37,19 @@
 - 2026-10-29 06:38 — comm-prefs API contract reversed from AY771uSN.js; live-verified lookup (own alias → empty groups). FINDING CANDIDATE #1 logged
 - 2026-10-29 06:39 — /api/ route sweep across 64 bundles: only _content + comm-prefs dynamic. No other server routes
 
-## Next Actions
-1. Comm-prefs: verify update-endpoint auth model on OWN alias; check if real subscribed profile leaks PII; decide P4 discard vs escalate
-2. /rush-dutch/ + gift-cards page deep read (forms, pearcommerce offers flow)
-3. XSS: SSR reflection tests on Nuxt routes + DOM sinks in loc/app.8cec000e.js (4 innerHTML hits, context unknown)
-4. go.dutchbros.link redirector param behavior (note: separate domain — scope question for user)
-5. Nuxt payload /_payload.json?_b=buildId on key routes; sitemap files (menu, locations)
+- 2026-10-29 06:41 — comm-prefs/update verified: requires uuid+state+(external_id|braze_id); garbage uuid -> 400 (real Braze group id needed). CANDIDATE #1 VERDICT: P4 (marketing pref tamper/enum only) -> DISCARDED per P3-only rule. No PII in response shape ({email, subscription_groups}).
+- 2026-10-29 06:43 — XSS sweep: (a) SSR reflection on 6 routes/params (home/menu/rush-dutch/404-path/gift-cards/locations): ZERO reflections. (b) DOM sinks: loc app innerHTML renders stands.json fields (company S3 static, not attacker-controlled); comm-prefs chunk sink `innerHTML:n(y)` traced to `o.data?.fields?.htmlContent` = Contentful rich-text field -> staff-authored CMS only, no UGC path found -> not a bug per intended-functionality rule. (c) Origin reflection: static ACAO:* (not echoed). (d) postMessage listeners = Mapbox internals only.
+- 2026-10-29 06:45 — Full JS corpus: 127 unique chunks (~2.5MB) secret-swept (api keys, JWT, AKIA, eyJ, sk_live, ghp_, xox): NOTHING beyond by-design public (Mapbox pk token acct dbwebdev, CF beacon token, GTM id, Contentful SPACE ID only).
+- 2026-10-29 06:47 — Nitro/framework probes: _nitro/openapi.json, _nitro/swagger, api/_health, __sitemap__/debug, _nuxt/devtools, .well-known/security.txt -> all 404. _payload.json?_b=<buildId> -> 200 prerendered Contentful data (public content only; cache-control max-age=0, no CF cache -> no poisoning surface). api/_content/query POST -> empty.
+- 2026-10-29 06:49 — S3 passthrough confirmed on files.dutchbros.com (real S3 XML AccessDenied on ?list-type=2) -> bucket LIST properly denied; versioning null; POST not probed. Asset-proxy theory dead (www /tesk7a84db2g/... 404; sitemap image:loc stale).
+- 2026-10-29 06:51 — Host-header discipline: apex Host on www origin -> 403; apex direct -> 301 www. Contact form = requesteasy.com/63a3-3777 (3rd-party vendor).
+- 2026-10-29 06:55 — CT enumeration (certspotter, crt.sh down): 28 unique subdomains. DNS+HTTP probe (scripts/dns_probe.py): ZERO dangling (no takeover). Key intel: custie-services.dutchbros.io -> CNAME d-2072ag2dcb.execute-api.us-west-2.amazonaws.com (AWS APIGW, 403 root); go.dutchbros.link -> CNAME custom.bnc.lt (Branch.io, live); marketing.dutchbros.com -> dutchbros.tkmldevelopment.com (3rd-party agency host, direct AWS IP 54.71.246.118, "Sign In - Dutch Bros" portal); vault.dutchbros.com -> "IT Portal" title, 200 unauth, behind CF; loyalty-api.dutchbros.com -> 520 (live, erroring); love/win.dutchbros.com -> 401 basic-auth; dev-portal/myaccess/dbu/leadhq live; trk.dutchbros.com -> 404; portal-b/portal-d/store-admin/store/toolbox.app/turn -> TCP ok, HTTP timeout (strict).
+- 2026-10-29 06:56 — VERDICT www.dutchbros.com: fully mapped + hardened static Nuxt app. No P1-P3 on listed scope. Remaining yield = adjacent infra hosts (SCOPE QUESTIONS for private program): loyalty-api, custie APIGW backend, vault IT Portal, marketing agency portal. ACTION: user to check program asset list in Bugcrowd brief before touching those hosts.
+
+## Next Actions (updated 06:56 UTC)
+1. SCOPE GATE (user): confirm with Bugcrowd brief which hosts are in scope: loyalty-api.dutchbros.com, custie-services.dutchbros.io (APIGW d-2072ag2dcb), vault.dutchbros.com (IT Portal), marketing.dutchbros.com (agency host), dev-portal.dutchbros.com, myaccess.dutchbros.com, leadhq.dutchbros.com
+2. If www-only confirmed: remaining in-scope ideas = comm-prefs braze_id-only lookup test, rush-dutch deep read, seasonal page re-checks (Contentful-driven, watch for new UGC campaigns feeding htmlContent field)
+3. www status: FULLY MAPPED — no reflection, no client secrets, no dangling DNS, S3 locked, no debug endpoints
 
 ---
 
