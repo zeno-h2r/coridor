@@ -1,3 +1,51 @@
+# Dutch Bros Coffee Bug Bounty — Engagement Worklog (ACTIVE)
+- Program: Dutch Bros Coffee Managed Bug Bounty (Bugcrowd, private)
+- Researcher: zeno0 (zeno0@bugcrowdninja.com) — header tag: zeno0
+- Scope: https://www.dutchbros.com/ only. Excluded: DoS/DDoS, rate-limit bypass, email bombing, SE, P5s
+- Focus: SQLi, XSS, client-side vulns, secret disclosure, SSRF, RCE
+- Started: 2026-10-29 06:30 UTC — Last updated: 2026-10-29 06:40 UTC
+
+## Architecture / Attack Surface Map (2026-10-29)
+- www.dutchbros.com: Nuxt 3 SSR on Cloudflare (server: cloudflare, __cf_bm bot mgmt, HTTP/3). SPA fallback on unknown routes (404 = 63KB HTML)
+- CMS: Contentful, space `tesk7a84db2g`, env `master`; assets proxied same-origin at `/tesk7a84db2g/{assetId}/{hash}/{file}` (no ctfassets prefix on www)
+- Runtime config PUBLIC in HTML (window.__NUXT__.config): apiBase=https://files.dutchbros.com/api-cache/, commPrefsApiBase=https://custie-services.dutchbros.io, filesUrl, gtm GTM-NVXW9D5, datadogService dutchbros-com, buildId bac26790-0c6c-43bd-9738-c409b7841561
+- /locations/: SEPARATE Vue CLI app (not Nuxt), Mapbox GL, pk token pk.eyJ1IjoiZGJ3ZWJkZXYi... (public-by-design, account "dbwebdev"), bundles /locations/js/{mapbox,vendors,app}.*.js
+- Static host files.dutchbros.com: S3-backed (x-amz-id-2, x-amz-version-id) behind Cloudflare; /api-cache/ stands.json
+- stands.json: 3.3MB, 1295 stands. ALL fields public-safe (address/hours/lat/lon/google_place_id/workday_url/yext_url/is_hiring). NO PII/internal. NOT a finding
+- Contentful tokens: NOT in any client bundle (2 hex strings in bundle0 = non-token). SSR-side only
+- robots.txt: legacy Drupal boilerplate (user/login, /core/, node/add...) — ALL 404, noise
+- /rush-dutch/ hidden promo page: 200 (138KB) — pending inspection
+- Dynamic routes on www: /api/_content (Nuxt Content, POST /query → empty), /api/communication-preferences, /api/communication-preferences/update
+- Out-of-scope hosts observed (NOT testing without confirmation): go.dutchbros.link (redirector), custie-services.dutchbros.io (comm-prefs backend), shop.dutchbros.com (Shopify), careers (Workday), support (Zendesk), investors (IR), offers.pearcommerce.com, www.requesteasy.com/63a3-3777 (accessibility forms)
+- OAST: uknlcrf75fh366x00d84p7f6ycrvud8dy.oast.me | webhook https://webhook.site/d8382db7-bf06-4831-a15b-6ed6ccdbfb6f
+
+## FINDING CANDIDATE #1 — Unauthenticated email-keyed comm-prefs lookup/update (PROVISIONAL P4 — needs impact escalation or discard)
+- Page /communication-preferences reads URL params directly: `_ = p.query.external_id, y = p.query.braze_id` (bundles/AY771uSN.js)
+- POST https://www.dutchbros.com/api/communication-preferences?external_id=<EMAIL>&braze_id=<id> → {"email":"<email>","subscription_groups":[...]} — NO auth token, NO signature, external_id IS the email address (error "Invalid email format" on bad format)
+- Update: POST /api/communication-preferences/update body {uuid:<subscription_group_id>, state:<state>, external_id:<email>, braze_id:<id>}
+- Attacker chain: email link is ?external_id=victim@x.com&braze_id=... → page loads prefs for ANY email supplied in URL; update only needs same params
+- Honest impact today: marketing profile enumeration + pref tampering for arbitrary email = P4/P5. NOT submittable unless: subscription_groups leak PII (name/app account binding), or update path reaches transactional notifications (order/app comms). VERIFY: what a real subscribed user's groups look like + whether update needs braze_id
+- Curl: curl -X POST 'https://www.dutchbros.com/api/communication-preferences?external_id=EMAIL&braze_id=' -H 'Content-Type: application/json' -H 'Origin: https://www.dutchbros.com'
+
+## Test Log
+- 2026-10-29 06:30 — Fingerprint: CF in front, Nuxt3 SSR confirmed (_nuxt bundles, __NUXT__.config), ACAO:* on static, DYNAMIC cache
+- 2026-10-29 06:31 — CT logs via crt.sh: timed out/empty (unstable). Home 141KB parsed
+- 2026-10-29 06:32 — 20 initial bundles pulled; only vendor code. Contentful hex strings = dead end (AccessTokenInvalid vs space tesk7a84db2g on cdn+preview)
+- 2026-10-29 06:33 — 4 key pages fetched (locations 3.4KB = separate Vue app!, menu, rewards, gift-cards). 64 bundles total collected
+- 2026-10-29 06:34 — locations app: Mapbox + stands.json endpoint. stands.json analyzed: clean
+- 2026-10-29 06:36 — api-cache filename probe (menu/drinks/config/... 15 names): all 404. Only stands.json
+- 2026-10-29 06:38 — comm-prefs API contract reversed from AY771uSN.js; live-verified lookup (own alias → empty groups). FINDING CANDIDATE #1 logged
+- 2026-10-29 06:39 — /api/ route sweep across 64 bundles: only _content + comm-prefs dynamic. No other server routes
+
+## Next Actions
+1. Comm-prefs: verify update-endpoint auth model on OWN alias; check if real subscribed profile leaks PII; decide P4 discard vs escalate
+2. /rush-dutch/ + gift-cards page deep read (forms, pearcommerce offers flow)
+3. XSS: SSR reflection tests on Nuxt routes + DOM sinks in loc/app.8cec000e.js (4 innerHTML hits, context unknown)
+4. go.dutchbros.link redirector param behavior (note: separate domain — scope question for user)
+5. Nuxt payload /_payload.json?_b=buildId on key routes; sitemap files (menu, locations)
+
+---
+
 # Dynamic Labs Bug Bounty — Engagement Worklog
 - Program: Dynamic Labs Managed Bug Bounty (Bugcrowd)
 - Researcher: zeno0 (zeno0@bugcrowdninja.com)
