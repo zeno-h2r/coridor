@@ -66,12 +66,12 @@
 - 2026-10-29 07:39 — ROUND 3C: /locations/ Vue CLI app audit (negative): app.8cec000e.js innerHTML = formattedHolidayHours/NormalHours (Yext-managed stand data); Mapbox popup setHTML = shop name/distance (same source). loc/mapbox+vendors = library internals (worker postMessage channel, attribution innerHTML). All attacker-unreachable.
 - 2026-10-29 07:45 — ROUND 3D: /api/sendgrid/submit LIVE TESTS. Contract: multipart {category, firstName, lastName, email|rewardsEmail, ...fields, attachment_0..N}. Client-side: image-only (MIME 7 types/ext 9 types) + 10MB. T1 empty POST -> 500 parse error. T2 missing fields -> 400 "Missing required fields: category, firstName, lastName, and email or rewardsEmail are required" (server validation exists). T3 arbitrary category "BOGUS_CAT_XYZ" + valid fields -> 200 SUCCESS (server does NOT allowlist category). T4 attachment zeno0-poly.html w/ image/png MIME -> 400 "File zeno0-poly.html has invalid usage. Blocked for security." (server-side extension enforcement CONFIRMED). T5 traversal filename ../../zeno0-trav.png -> 400 same message (filename filter). T4/T5 blocked = no email sent. T6 category="zeno0+route1@bugcrowdninja.com" -> 200 success 0.71s — PENDING USER: check if zeno0+route1@ alias receives the email -> if YES, category controls recipient = unauth arbitrary-recipient email relay (P2/P3 candidate); if NO, category is subject/metadata only -> P4 ceiling, surface CLOSED.
 - 2026-10-29 07:46 — /phone-fix (www) 301 -> toolbox.app.dutchbros.com/phone-tool-v18300s (hardcoded Nitro rule, query params pass through to fixed host, not attacker-controllable). Apex dutchbros.com -> 301 www. OOS target noted.
+- 2026-10-29 07:55 — T6 VERDICT (user confirmed inbox EMPTY): category does NOT control recipient. Unknown/arbitrary category values land in default route (subject/metadata/lookup-key at most). Sendgrid surface FINAL VERDICT: server-side extension+filename enforcement present, no recipient control, no storage of uploads, category not allowlisted but no impact -> P4 ceiling, DISCARDED per rules. Surface CLOSED.
 
-## Next Actions (updated 07:47 UTC — scope locked to www only)
+## Next Actions (updated 07:56 UTC — scope locked to www only)
 1. SUBMIT BUG-005 (user decision): P3 pre-release content disclosure via unauth preview proxy — report ready in reports/BUG-005-contentful-preview-proxy.md
-2. USER ACTION: check zeno0+route1@bugcrowdninja.com inbox for T6 category-routing probe email (sent ~07:45 UTC, subject refs "T6"). If received -> escalate sendgrid category routing to P2/P3 candidate; if absent -> close sendgrid surface (enforcement good, ceiling P4)
-3. NEXT: /api/rush-dutch/submit field validation (JSON form->email; no upload path, lower priority); comm-prefs diff after user registers in-app
-4. RETRY Wayback CDX; re-run chunk sweep on next deploy (watch /_payload.json prerenderedAt for rebuilds)
+2. [DONE 07:55] sendgrid surface CLOSED (T6 negative, P4 ceiling)
+3. NEXT: /api/rush-dutch/submit field validation (JSON form->email); Wayback CDX retry; comm-prefs diff after user registers in-app; chunk sweep on next deploy
 
 ---
 
