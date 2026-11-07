@@ -940,3 +940,27 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. sigma_workbooks / sigma_bookmarks — Sigma reporting query surface (workbook data queries).
 2. we_workflow rerun/restart_task — workflow engine surfaces.
 3. Need resources: assistant low-priv elevation (2nd account), word redirect (worker restart).
+
+---
+
+## Session 2026-11-07 (l): workflow engine (we_*) — auth-gated, clean + TOKEN REVOKED (blocked)
+
+### T-025 workflow engine — NEGATIVE (cannot reach, clean gate)
+- we_* endpoints are a separate service (Fastify-style JSON errors) behind a unified auth gateway: 401/404 oracle maps live routes: we_tasks, we_tasks/{id}, we_definitions, we_executions/health, POST we_workflow/{id}/rerun, we_workflow/{id}/start_workflow, we_workflow/{id}/restart_task/{tid}, workflowable/{type}/{id}/retry_workflow.
+- Auth: `token` header (Rails scheme) => 401 "Missing authentication"; `Authorization: Bearer <anything>` => 401 "Bad token" (uniform, NO format/alg/JWT detail leak). 13 Bearer variants (api-token, JWT alg=none, HS256 empty/garbage sig, one-part, cookie-style) all identical "Bad token" — parser clean, no oracle differential.
+- Cookie variants (token/_auditboard_session/session/sid/auth/jwt/access_token) => all "Missing authentication". Real clients use browser session (cookie flow) — unreachable with token-only credentials.
+- No unauthenticated endpoints: docs/openapi/metrics/version/ping/debug/config/swagger/schema all 404; only count routes mirror 401.
+- Verdict: auth gate uniform + clean; no bypass from token-only position. Needs a real session (2nd account) — parked with the IDOR/assistant-elevation batch.
+
+### T-026 generative chain enum — BLOCKED
+- All generative/stream probes now 401 — see below.
+
+### 🛑 API TOKEN REVOKED mid-session (hard block)
+- At ~session (l) start, EVERY endpoint began returning 401 "Missing authentication" (incl. /api/v1/issues which was 200 all week). `Authorization: Bearer` now returns "Bad token" on Rails routes too => unified auth gateway parses both schemes; our `231:39e9...` id:secret token is dead server-side.
+- Likely cause: credential rotation after report submission (BUG-006/BUG-007) or account deactivation.
+- All testing STOPPED. Need: fresh API token (or session) from program/team.
+
+### Next queue (m) — resume after new token
+1. T-026 generative promptUri chain enum + promptAttributes injection (AI category).
+2. T-027 narrative editor sanitizer fingerprint (AI-generated HTML -> stored XSS persistence).
+3. With 2nd account: IDOR batch + assistant low-priv elevation + we_* session-flow tests.
