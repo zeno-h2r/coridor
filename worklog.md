@@ -868,3 +868,25 @@ Internet-reachable headless-Chrome SSRF primitive with external readback, intern
 
 ### Status
 - Both drafts READY for user review/submit. Remaining test ideas needing resources: assistant low-priv elevation (needs 2nd account), word redirect (needs worker restart).
+
+---
+
+## Session 2026-11-07 (i): assistant file-attach pipeline — injection (no tool exec) + NEW SSRF sink (blind, excluded)
+
+### T-022 attachment ingestion + indirect prompt injection — PARTIAL (answer control YES, tool exec NO)
+- Ingestion CONFIRMED: chat/stream `context.fileAttachments[0]` = {id:str, status:"ready", pinned, file_key, filename, url, size} (Zod 422 leaked shape; top-level fileAttachments ignored, must be INSIDE context). Real PDF -> assistant quotes content verbatim via search_knowledge_base (4/5 markers HIT). Scripts t022a2_attach_ctx.py.
+- Indirect injection: SOP-embedded instruction in PDF -> assistant parrots exact injected title/description (ZXINJ-7Q2 marker HIT in answer) but NEVER emits create_issue card. 3 payload strengths (explicit "do not display" / SOP wording / explicit tool-invocation) x 2 modes (ask, allow) => all NO tool execution. Agent system prompt guards tool invocation from file content.
+- Control: explicit user ask "create an issue" in allow mode => create_issue tool_executed (approval_mode:"auto") + create_issue card in stream. So the mechanism exists but is user-intent-gated; DB write is CLIENT-side on user confirm (38 issues all old seed data, no new rows; server conversation store returns 0 messages). Assistant cannot write DB directly.
+- Conversation IDOR already enforced (T-014). autoRejectLastToolMessage: pending create_* cards auto-rejected on next message.
+
+### T-022d/e/f — SSRF via fileAttachments url — CONFIRMED but blind => EXCLUDED (program: "SSRF without impact")
+- NEW SINK: server-side fetch of attacker-controlled `context.fileAttachments[0].url` (free string, no file/attachment record needed, file_key fake). OOB CONFIRMED: webhook.site hit xN `GET ?assist-ssrf=probe1` UA `Python/3.12 aiohttp/3.14.5` (assistant KB backend stack leaked; src ip 34.214.1.78). URL path+query fully attacker-controlled.
+- Response body IS downloaded+processed: timing varies with response (HTML 4.6s / text 6.5s / valid PDF 27.2s) — parser runs on fetched bytes.
+- Readback NEGATIVE: canary (text and valid-PDF via webhook.site custom response, content-type application/pdf, size matched) never enters context; async retry +45s NEGATIVE. Index step broken for non-attachment-record files.
+- Internal NEGATIVE (timing oracle): IMDS 169.254.169.254:80, 10.0.0.1:80, 10.255.255.1:81 (blackhole control), 172.20.0.1:80 all ~35s = blackhole baseline vs public 5-6s. Assistant service egress-isolated from VPC (same model as BUG-006 Chrome renderer, DIFFERENT service/infra).
+- No credential leakage: fetched request carries only user-agent/accept/accept-encoding/host — no auth headers, no AWS tokens.
+- Program excludes "SSRF without impact (blind SSRF)" => NOT submittable. Recorded as BUG-006 enrichment (systemic egress isolation across 2 independent AI services) + aiohttp/3.14.5 stack intel. Scripts t022d_url_ssrf.py, t022e_readback.py, t022f_docker_async.py.
+
+### Next queue (j)
+1. SQLi sweep — focus-list category never systematically tested: rag add_document/query params, ml-recommendations ids, generative promptAttributes, list-endpoint filter/sort strings. Error-based + boolean + timing, targeted.
+2. generative/stream promptUri chain enum via 422 (chain:narrative known; look for chain:verify_population_file and others).
