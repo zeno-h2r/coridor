@@ -1319,3 +1319,37 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. BUG-012 submission (P3, operator decision) — evidence table + copy-paste repro ready.
 2. If triage wants more: identify localhost:3000 (needs POST-capable probe — webhook registration to internal host with fixed path), or catch redirect-following with an axios-tolerant redirector.
 3. Watch-list unchanged: regulatory-profiles/autofill SSRF if flag enabled; klq-import-from-ml job shape; sox_ai_review/queue.
+
+## Session 2026-11-08 (w): NEW-SURFACE sweep — AI plane (evidence-search/scoring/transcription/sox_ai_review/dynamic-schema/generative), table-query DSL, SQLi ladder — ALL NEGATIVE/FLAG-GATED (honest)
+
+### Operator directive
+- "keep work new surface ... until found p1,p2" — sweep every untested surface.
+
+### T-051a/b — AI surfaces (scripts/t051a_ai_surfaces.py, t051b_transc_sqli.py; state/t051a|b_results.json)
+- evidence-search (POST {resources:[{resource_type,resource_id}],user_instructions}) → **422 FeatureNotEnabled** (flag-gated; user_instructions = free-text to AI agent w/ credentials — LEAD if flag ever enabled).
+- assessments/{id}/run_scoring_agent → **403 "Ops Audit Risk Assessment Scoring Agent Dev Flag is not enabled."**; validation leaks data_source_key enum (Zod).
+- sox_ai_review/queue → 200 {status:ok,queue:[],run_status:idle}; entity_type enum Narrative|ControlsDatum; **queue never fills even with REAL narrative 31** (extra gate); no status/runs routes (404).
+- generative/dynamic-schema ALIVE: {fields:[{name,label,type∈(text,number,boolean,date,enum,multiselect,rich_text,json)}], persona, context, description} — validation-only, no security surface.
+- generative/log shape: {generatedOutput:str, context:obj, promptUri, promptAttributes, model, appVersion, feature} — arbitrary-text DB write; readback gated by settings.ux:AITile (denied) → stored-XSS in AI tile UNVERIFIABLE (LEAD, not claimed).
+- featureName enum leaked: AI Core Generative AI | Narratives and Flowcharts | Ops Audit Narratives and Flowcharts | Scoping Memo | Audio Transcription | Fieldwork Automation | Scenario Planning | Evidence Summary | Field Mapping Support.
+
+### T-051e/f — transcription pipeline END-TO-END (scripts/t051e_transc_cmdi.py; state/t051e|f_results.json)
+- POST /api/v1/generative/transcription {audioFileId:int} — extension allowlist leak (.wav .mp3 .mpg .mpeg .ogg .flac .webm .wma .aac .mp4 .m4a); requires fileable attachment.
+- FULL FLOW PROVEN: s3_upload_signature (uploadField is descriptor "formData:file" — real field name MUST be `file`; --form-string for policy fields) → S3 201 → POST /api/v1/files (t045 rich shape) → PUT /files/{id} {fileable_type:'Issue',fileable_id:121} → transcription → **"Error from ML Service: azure_speech.transcribe 429 Resource Exhausted"** (backend error detail passes through verbatim), then clean run → "Transcription response missing both full_text and speakers" (silence).
+- **Command-injection via filename: NEGATIVE** — `zx-$(whoami).wav` + backtick variant: uniform responses (S3 SDK path, no shell); no timing/error differential.
+- Cleanup: files 2680-2682 deleted (200). Orphan S3 objects (zx-dbg.wav, 4xx-named variants, no records) — harmless.
+
+### T-051c/d — table-query DSL (ab:query) + SQLi ladder (scripts/t051c_tabledsl.py, t051d_filterdsl.py; state/t051c|d_results.json)
+- POST /api/v1/table/count|ids?entities=X {"ab:query":{entities,filter}} — filter KEYS allowlisted ("Invalid filter 'id--', issues cannot be filtered by..."), values scalar-parameterized ({'id':'121 OR 1=1'} → literal match, ids:[]), unknown DSL keys (sql/sort/having/select/joins) IGNORED → **SQLi NEGATIVE**.
+- POST /api/v1/{res}/distinct?path= — path allowlisted ("does not support distinct on 'X'") → NEGATIVE.
+- ticket_by_url: ActiveRecord-parameterized (payload echoed in 404 detail) → NEGATIVE. issues sort= → whitelisted → NEGATIVE. entities param metachars → 404 model-miss → safe.
+
+### T-051g — SSTI via generative/modify existingText (state/t051g_results.json)
+- modify shape: {promptUri, promptAttributes:RECORD, existingText, modifyAction∈(polish|shorten|lengthen), featureName, pageContext} — request passes Rails validation and reaches Optro AI service, which 400s on template context (chain:narrative + {id:31} insufficient) → **SSTI UNVERIFIABLE** (rendering never reached; neither benign nor engine-artifact payload differs). NOT a finding; lead requires capturing a real browser session's AI call for correct template context.
+
+### Net session result
+- No P1/P2 from new surfaces — all honest negatives or gates. Durable intel: transcription full-flow recipe; Azure shared-key 429 (ops noise); validation-enum harvest; ab:query DSL documented as safe.
+- Watch-list grows: evidence-search + run_scoring_agent + autofill + sox_ai_review = FOUR flag-gated AI surfaces — if program enables any, retest immediately (user_instructions free-text agent = strongest candidate).
+
+### State
+- B(230) token live; files 2680-2682 deleted; no business objects modified (Issue 121 untouched by file delete cascade — attachment removed only).
