@@ -1131,3 +1131,43 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. BUG-009 submission (user decision) — draft ready in reports/BUG-009-submission-draft.md.
 2. Cross-org BOLA — still blocked on operator account.
 3. Watch-list (needs low-priv account or stable ML service): server-side-id promptUris (ops_audit/description, controls/test/procedure, verify_population_file), we_* session flows (needs browser session cookie), word-fetcher redirect-follow (lock release).
+
+---
+
+## Session 2026-11-07 (r): BUG-010 — cross-account attachment DELETION (BFLA) + T-028 revalidation after BUG-008 submission
+
+### Context
+- BUG-008 submitted by operator (session m). A(231) token dead again on session start (401, rotation pattern holds). A record re-checked via B cross-account read: role_id 5, flag clear, name/email/display_name clean — no residual state.
+
+### T-035 role plane revalidation (extends sessions n/o/q — all consistent)
+- Roles dump refreshed: 1 Superuser(god), 2 System Admin, 3 Reviewer, 4 Tester, 5 Owner, 6 External Auditor, 10 Implementer, 11 Third Party User(limited), 16 "Hurtsec Test", 17 Without "action.edit" — roles 16/17 are program-created test roles.
+- PUT /users/231 {role_id:6} → 422 `user:action.administer` (named permission now visible). Self PUT /users/230 {role_id:6} → 422 (self-protection + administer).
+- POST /users create ladder role_id 6/5/2/1 → 422 administer; role 2 gives DISTINCT error "must have System Admin privileges"; role 1 gives "cannot create Superuser from non-Superuser account" (layered, per-role gates).
+- Table ethereal_action (ab:ethereal update, entity user, filter id:['231']) + POST /users/ethereal_update → both accepted async (correlationId, pusher-only results), ZERO effect on target after 8s — role write silently refused server-side. /users/bulk_update → 404.
+- SCIM plane for Owner: /idp_scim_configs + /identity_providers → 403 (can't list/generate tokens). Bundle: SCIM patch allowlist includes role_id by design, but plane unreachable at Owner tier.
+- `base_role` mass-assignment accepts (200, updated_at moves) but is a NO-OP — bundle shows baseRole is an ALIAS of role.shortName (computed), not a writable credential attribute.
+- Verdict unchanged: role_id change fully gated; consistent with session n/o/q closure.
+
+### T-036 assistant/SQLi quick revalidation
+- /assistant/saved-prompts → 422 FeatureNotEnabled (assistant disabled org-wide in QE) — assistant BOLA angle stays dead.
+- Table engine injection sweep round 2 (t030/t030b): distinct?path= is allowlist-validated ("does not support distinct on 'X'"); ab:query filters validate operators+keys with model-aware 400s; `order` keys are IGNORED server-side (order id DESC returns id ASC — client-side sorting only). NoSQL/SQLi: clean. Extends session (j).
+
+### T-037 BUG-010 CONFIRMED (P3 rec) — attachment deletion outside parent edit boundary
+- Narrative 31 = REAL 2016 SOX flowchart ("2.US Fixed Asset Flowchart"), scopes.owner_users.all=[65]. B's perms on it: view/viewFile/create ONLY (PUT → 422 narrative:action.edit).
+- B's perms on A-created file 2660: view + delete ONLY (PUT rename → 422 file:action.edit).
+- **DELETE /api/v1/files/2661 (creator A/231, parent Narrative 31) → 200** with global_audit entry; subsequent GET → 410 ModelAlreadyDestroyedError. Restore attempts: PUT deleted_at → 410, POST /files/2661/restore → 404. No API restore path.
+- Org-wide scope: file 1247 "Fixed Asset Flowchart.vsdx" (creator user 1 = SUPERUSER, 2016) exposes _permissions action.delete:true to B. Flags confirmed identical on 1248/2641/2634 (Attachment-parented).
+- Read stays correctly gated; delete is the only out-of-boundary mutation. Logged but not prevented.
+- Deliverables: reports/BUG-010-attachment-delete-bola.md + BUG-010-submission-draft.md.
+- State disclosure: file 2661 (our own test artifact from earlier RAG sessions) remains deleted — deliberate destructive proof on OWN test file; business files untouched (2660 rename was refused 422; name never changed).
+
+### State
+- A(231): token dead (rotation), record clean, role 5, flag clear. Re-mint via BUG-008 chain when needed.
+- B(230): intact, token live.
+- No unreverted probe artifacts (all writes either refused by server or executed on our own test file).
+
+### Next queue (s)
+1. BUG-010 submission (operator decision) — draft ready.
+2. BUG-008/BUG-009 retest after vendor patch waves (BFLA still LIVE as of session o).
+3. Cross-org BOLA — still blocked on operator account.
+4. Watch-list: server-side-id promptUris (needs stable ML service), we_* (needs browser session), word-fetcher redirect (worker restart), issues/controls attachment delete breadth (extends BUG-010 if vendor pushes back on narrative-only framing).
