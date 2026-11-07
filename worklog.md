@@ -668,3 +668,36 @@ Stage Summary:
 3. ethereal_action policy verification (generic mutation engine).
 4. automation_credentials/ticketing integration surfaces.
 5. generative/stream promptAttributes per-template (AI focus).
+
+---
+
+## Session 2026-11-07 (c): AI generative deep-dive + remaining queue
+
+### T-013 generative/stream — LIVE (gpt-5.4), authz holds on ids
+- promptUri enum leaked via 422: chain:narrative, chain:narrative.review, chain:verify_population_file, template:narrative.body (log-only), template:ops_audit/scoping_memo_report, template:issues/issue_summary, template:ops_audit/multi_audit_summary, template:ops_audit/cross_audit_summary, template:files/verify_sample_evidence, template:integrations/field_mapping_suggestion, narrative/flowchart{,/visio}, prompts.modular_summarization_template.
+- featureName enum (422 leak): AI Core Generative AI | Narratives and Flowcharts | Ops Audit Narratives and Flowcharts | Scoping Memo | Audio Transcription | Fieldwork Automation | Scenario Planning | Evidence Summary | Field Mapping Suggestions | Generate Library Control | Reranking.
+- WORKING CALL: POST /api/v1/generative/stream {promptUri:"chain:narrative", promptAttributes:{narrative_id:31}, featureName:"Ops Audit Narratives and Flowcharts", pageContext:{attachments:[],moduleName:"narratives",moduleRoute:"/narratives/31"}} -> 200 ndjson, meta {app_version 47.0, model gpt-5.4-2026-03-05}, streamed narrative HTML for MY narrative.
+- promptAttributes = object (Zod record), snake_case ids (narrative_id); optional context (text), processes_datum_id.
+- CROSS-SCOPE TEST: narrative_id 1,5,10,15,20,25,30,33,41,49,55,70,100 -> uniform 404 (authz enforced or nonexistent; no leak). NEGATIVE.
+- template:issues/issue_summary {issue_id} -> ML 400 (wrong key, shape undiscoverable from deployed bundles); POST /api/v1/generate_issue_summary_report (GuidedSummary) focus_areas keys undiscoverable (11 guesses rejected, endpoint has NO caller in deployed JS — dormant). INCONCLUSIVE, parked.
+- pageContext schema: {attachments:[{id,type}], moduleName:string|null, moduleRoute:string}.
+
+### T-014 assistant conversations — ENFORCED (NEGATIVE)
+- userConversationId = `conversation::user:<uid>` (predictable). POST /api/v1/assistant/conversations {conversationId} — own id 200 (empty messages), other users' (230, superuser 1) -> 403 ForbiddenError "You do not have access to this conversation." Clean.
+- assistant/files/check+register: content_hash-based dedup; hash enumeration infeasible. assistant/tools/confirm + tools/<tool>/result use X-Conversation-Id header (untested — needs live conversation).
+
+### T-012 ethereal_action — INCONCLUSIVE (results undeliverable)
+- ALL mutation jobs accepted (200 correlationId) incl. against hidden id 123: delete(nonexistent ok), delete(123 REAL HIDDEN ID — fired, outcome unverifiable; NOTE: potential policy-in-job; no further mutation probes fired), update invalid-column x2 (no-op by schema error if executed).
+- Results ONLY via PoXA ws private-ethereal-action channel — QE PoXA ws 503 (handshake 403 via nginx for non-ws, 503 for real upgrade). No REST status endpoint. CANNOT verify enforcement. DO NOT trust ethereal_action for anything.
+- pusher/auth signs any private channel (JSON body socket_id+channel_name) — known from T-004.
+
+### T-008 passwordless_invitations — uniform 404 (NEGATIVE)
+- request_new/redeem with garbage/empty tokens: 404 {"message":"Not found."} uniformly, no timing differential. Token space untestable pre-auth.
+
+### T-015 automation_credentials — secrets stripped (NEGATIVE + intel)
+- 56 credentials listable (Owner role, org-wide by design, _permissions.action.view evaluated). Secret-class fields ABSENT on real creds (Snowflake/Jira/Alteryx: only host/username/endpoint). 6 legacy test creds contain dummy values (test/x/sn-pass) left by prior testers.
+- Prior testers' SSRF artifacts: cred 7 host=webhook.site/...; cred 8/9 host=169.254.169.254 — last_verified error messages differ by failure class (timeout vs Invalid authentication) = error-based blind oracle via jira host verification. Blind class — excluded by program, not pursued.
+- webhook_urls: FeatureNotEnabled 422. ticketing/credentials: 404 (route differs).
+
+### Session verdict
+- BUG-006 (attachments/html SSRF) remains the ONE reportable finding (P3 rec). All other surfaces tested this session: enforced or inconclusive-with-honest-status.
