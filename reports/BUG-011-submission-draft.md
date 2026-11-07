@@ -12,6 +12,15 @@ The QE API authenticates requests when the **long-term API token** (`id:secret`)
 
 Because the token is a permanent, non-expiring credential granting full API read/write to the account, accepting it in URLs places that credential in every URL-capturing system: web/proxy/CDN access logs, APM/OpenTelemetry traces (the app emits `traceparent`), browser history, `Referer` headers, log aggregation, and support tooling. Any capture = full account compromise via the token.
 
+**This is also first-party behavior, not just a server-side gap.** The deployed SPA itself transmits the permanent API token in URLs during normal usage:
+
+1. The rich-text editor's image picker ("tinyvision") builds its request source as
+   `` `/api/v1${imagesSourceUrl}&token=${session.token}` `` — the user's permanent API token is appended to the URL on every editor image search (bundle evidence: `tinyvision:{source:\`/api/v1${e.imagesSourceUrl}&token=${e.get(\`session.token\`)}\`}`).
+
+2. Report share links are constructed as `/api/v1/reports/{id}/{type}?token=<share_token>` and rendered in a UI field for users to copy/share (share-token lifecycle: `POST /api/v1/reports/{id}/generate_share_token`, `/invalidate_share_token`, `GET /has_share_token`). The same `?token=` parameter also accepts the full-privilege permanent API token (repro above), so credential-in-URL transport is normalized end-to-end on this deployment.
+
+Any captured URL therefore yields a permanent full-privilege credential, and the same write surface enables the account-takeover chain reported separately (BUG-008).
+
 ## Steps to reproduce
 
 1. Authenticated read with **zero headers** — token only in URL:

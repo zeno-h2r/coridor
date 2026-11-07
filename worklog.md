@@ -1211,3 +1211,35 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. BUG-011 submission (operator decision) — draft ready.
 2. chain:verify_population_file / file-parse chain shapes (AI file-parse surface; keys undiscovered) — low priority.
 3. Watch-list: attachments/html regenerated schema → retest BUG-006 PoC against new contract (type field + attachable fields; verify html->pdf flow unchanged for report accuracy); we_* browser-session flows (unreachable token-only); retest BUG-008/009/011 after vendor patch waves.
+
+## Session 2026-11-08 (t): BUG-011 impact deepening + JS dig round 2 (smuggling/S3-chain/imports) per operator directive
+
+### Operator directive
+- "deep dig BUG-011 — where's the impact? can it expose another user's token or ATO? + deep dig JS for server-side RCE/SSTI/SSRF/LFI/request smuggling." No BAC (standing rule).
+
+### 🔥 BUG-011 impact chain CONFIRMED — first-party token-in-URL (report updated)
+- **TinyMCE "tinyvision" image picker builds `source: \`/api/v1${imagesSourceUrl}&token=${session.token}\``** — the app puts the user's PERMANENT API token (session.token = same id:secret accepted as header token) into the URL on every editor image search (bundle evidence, 4 copies across chunks).
+- **Report share-token system**: `apiEndpoint = https://host/api/v1/reports/{id}/{type}?token=` + `POST /reports/{id}/generate_share_token` → {share_token} / `invalidate_share_token` / `has_share_token`; the `?token=` share link is rendered in a UI input (`reportsShareLink_apiEndpointField`) for users to COPY/SHARE. Same `?token=` param accepts the full-privilege API token (proven session s) → credential-in-URL transport normalized end-to-end.
+- Lucidchart embed: `https://lucid.app/embeds?token=${e.result.token}` iframe (Lucid's token to 3rd party — noted).
+- Report files updated (BUG-011-api-token-query-param.md + submission draft) with the first-party chain + consequence (captured URL = permanent full-privilege credential incl. BUG-008 write surface). Severity rec stays P3 honestly (needs a log/trace/share capture to complete the chain).
+
+### T-045 S3 re-mint chain — CLOSED (negative, well-evidenced)
+- POST /api/v1/files with client-supplied key → 422 "File <key> not found. Is the file uploaded?" — server HEAD-verifies object existence before record creation → arbitrary-key records impossible; keys are org/model/<uuid4>-gated (unguessable) → cross-tenant S3 read via record manipulation dead. Existence-check oracle noted (needs known key; none leak).
+
+### T-046 request smuggling — CLOSED (negative, fail-closed proxy)
+- Raw-socket differential matrix on /api/v1/users/login + we_* (non-poisoning, no leftover requests): baseline/TE-valid/CL0+TE/CL+TE/TE-trailing-space ALL parse identically (same 401 login_failed, ~0.26s); dup-CL (same/diff) → 400; TE-tab/TE-xchunked/obs-fold → 501; CL-hex → 400; CL-space accepted+parsed. Front proxy (nginx-class) rejects every ambiguous encoding BEFORE dispatch. No desync differential on any plane.
+
+### T-044 import/parser surfaces — schema-cracked, outcome unverifiable (honest INCONCLUSIVE)
+- `ops_audit_items/import/json` (+ siblings framework_items/framework_item_implementations/compliance_assessment_items/auditable_entities) LIVE: empty-body → 200 {results:[],summary:{},storePayload:{},isRunningInBackground:true}; shape = {data: JSON.stringify({json:[...],options:{doCreate,doUpdate}})}. Attribute-level import mass-assignment NOT pursued further (BAC-adjacent, banned).
+- `vms/csv-import` FULL schema cracked via Zod ladder: {s3Key, fileName, findingIdColumn, cveIdsColumn, assetMatchMappings[>=1], fieldMappings[{auditboard_field{fieldName,label,type,canonicalReference,isCustom,isCustomField}, external_field{fieldName,remoteKeyName,label,fieldType,displayName,isRequired}, sync_direction enum ab_to_external|external_to_ab|bidirectional}]}. Own CSV uploaded via signature flow (S3 201). Benign + SQL-injection mapping rounds BOTH ACCEPTED (jobId 31697/31698) — outcome UNVERIFIABLE: /api/v1/vulnerability_findings stays empty (even benign), no job-status route (vms/jobs|runs|csv 404), no error feed. LEAD not finding — needs enabled VMS/templates to demonstrate.
+- `regulatory-profiles/autofill` → 403 "Auto-fill from website is not enabled" — SSRF candidate if flag enabled (RECORDED watch-list).
+- `lucidcharts/import_into` → 404 (dead/moved). import_tools still ConfigurationError.
+
+### State
+- B(230) token live. Orphan S3 object bugbounty1120509_qa/undefined/null/ddee168a-…/zx-t044-findings.csv (no file record — harmless). VMS background jobs 31697/31698 accepted; no findings/rows created.
+- Reports updated; no state changes to business objects.
+
+### Next queue (u)
+1. BUG-011 resubmission-ready (operator decision) — impact chain now first-party.
+2. Watch-list: regulatory-profiles/autofill SSRF if flag enabled; VMS import with real template (needs feature enablement); we_* browser-session flows.
+3. Re-sweep bundles on next deploy (schemas actively changing: attachments/html, vms csv-import).

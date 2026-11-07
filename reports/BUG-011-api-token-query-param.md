@@ -60,6 +60,39 @@ session_token=...  → 401
 
 **5. Control (no credentials):** `GET /api/v1/users/230` without token → `401 Missing authentication`.
 
+## First-party token-in-URL usage (impact chain — the app itself does this)
+
+This is not only a server-side acceptance gap. The deployed SPA **actively transmits the permanent API token in URL query strings during normal usage**:
+
+**1. Rich-text editor image picker (TinyMCE "tinyvision") — every image search carries the session's permanent token in the URL:**
+
+```js
+// minified from deployed bundle (luna/editor chunks)
+tinyvision: {
+  source: `/api/v1${e.imagesSourceUrl}&token=${e.get(`session.token`)}`,
+  upload() { ... }
+}
+```
+
+`session.token` here is the same long-term `id:secret` API token used in the `token` header (minted by `POST /api/v1/users/login`, verified working as the header token). Every tinyvision image-source request issues a `GET /api/v1/...&token=<permanent token>` — the credential lands in web-server access logs, CDN/WAF logs, and APM/OpenTelemetry traces (the platform emits `traceparent` on internal calls) on **every editor interaction by every user**.
+
+**2. Report share links — `?token=` URLs are constructed and displayed to users for copying/sharing:**
+
+```js
+// report share-link component (deployed bundle)
+get apiEndpoint() {
+  return `https://${window.location.host}/api/v1/reports/${this.get(`report.id`)}/${this.get(`selectedOption.type`)}?token=`
+}
+// share token lifecycle endpoints (deployed bundle):
+//   POST /api/v1/reports/{id}/generate_share_token  → {share_token}
+//   POST /api/v1/reports/{id}/invalidate_share_token
+//   GET  /api/v1/reports/{id}/has_share_token
+```
+
+The share link (`/api/v1/reports/{id}/{type}?token=<share_token>`) is rendered into a UI input field (`reportsShareLink_apiEndpointField`) for users to copy — i.e., **credential-bearing URLs are a first-party, user-facing sharing pattern** on this deployment. Because the same `?token=` parameter simultaneously accepts the full-privilege permanent API token (proven above), the token-in-URL transport is normalized end-to-end: tokens transit log systems as a designed behavior, and the token that transits them is the non-expiring, full-privilege API credential.
+
+**Consequence:** any capture of a token-bearing URL (log aggregation, trace dashboards, SIEM, support tooling, shared/copied links) yields a permanent credential that the API accepts for **reads and writes** on every plane — including the user-record write surface that enables the account-takeover chain reported separately (BUG-008).
+
 ## What this is NOT (honest scoping)
 
 - Not claiming token brute-force feasibility (token space is large).
