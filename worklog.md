@@ -1048,3 +1048,40 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 2. Assistant conversation BOLA (A's AI threads via B) — still open.
 3. Narrative/issue cross-account write sweep with markers.
 4. we_* service — revisit once stable.
+
+---
+
+## Session 2026-11-07 (o): T-029/T-030 authorization sweep — role hunt CLOSED, assistant CID clean, BUG-008 BFLA still LIVE (unpatched)
+
+### Token forgery (id:secret prefix substitution) — NEGATIVE
+- {victim_id}:{attacker_secret}, {1}:{attacker_secret}, zero-pad/space variants => 404/401 uniformly.
+- Fastify attachments service validates full id:secret pair: token `1:garbage` -> 401, `1:Bsecret` -> 401, valid -> 422 Zod schema. No id-trust anywhere.
+
+### Assistant conversation CID scoping (user-embedded CID `conversation::user:{id}`) — CLEAN
+- POST /api/v1/assistant/conversations with A's CID as B => 403 "You do not have access to this conversation." (init enforces caller==CID-user).
+- chat/stream with correct schema (userMessage+context) into A's existing conversation => 403; own conversation => 200; Superuser space (user:1) => 403. Ownership enforced at BOTH init and stream.
+- Stream schema learned: userMessage(str)+context(obj){module:{name,route},attachments,fileAttachments}+X-Conversation-Id header.
+
+### Impersonation — 100% CLIENT-SIDE (definitive)
+- Bundle: `R?.isSuperUser && this.impersonatedRole ? (this.role=this.impersonatedRole) : this.role=R` — Ember session state only; server never receives any impersonation signal. Query params (?impersonate_role/?as_role/?role_id) ignored by policy (422 same).
+
+### Roles/permissions — role_id:6 hunt CLOSED (final vectors)
+- Module-scoped paths (/account/users, /admin/users) 404. Teams readable (id 1) but /teams/{id}/users 404, shares/permission_grants 404 — no object-grant write surface for users.
+- we_* Fastify flapping (health SPA-catch-all again); Rails we_resources stable, read-only.
+
+### Cross-account audit-object write sweep (B -> org objects) — no new bug
+- narratives/31: B lacks edit => 422 `narrative:action.edit` (clean policy).
+- issues/121 (B lacks edit): PUT => 500 generic (crash-deny; sloppy but secure, P5).
+- controls/1 (B HAS action.edit — org-shared intended): PUT name/description => 500 = payload-schema requirement (UI sends full nested payloads), NOT auth. No BFLA on audit objects.
+- Conclusion: cross-account write scoped to USER records only (BUG-008). Model-level policies functioning.
+
+### BUG-008 re-baseline (important for triage)
+- B(230) PUT first_name on A(231) => 200 persisted + reverted. **BUG-008 BFLA NOT YET FIXED** (team only rotated credentials). Cross-account user-record write + ATO chain still viable as of this session.
+
+### State
+- A(231) creds rotated by team (password unknown); B(230) intact. All sentinels reverted.
+
+### Next queue (p) — awaiting cross-org account from operator
+1. CROSS-ORG BOLA: read/write across org boundary on org-scoped objects (issues/narratives/files/controls/attachments) with the second-org account.
+2. Cross-org assistant CID + attachment pipeline tests.
+3. Parked: word-fetcher redirect SSRF (worker restart), we_* engine (stability), IDOR deep batch (now merged into #1).
