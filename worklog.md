@@ -890,3 +890,25 @@ Internet-reachable headless-Chrome SSRF primitive with external readback, intern
 ### Next queue (j)
 1. SQLi sweep — focus-list category never systematically tested: rag add_document/query params, ml-recommendations ids, generative promptAttributes, list-endpoint filter/sort strings. Error-based + boolean + timing, targeted.
 2. generative/stream promptUri chain enum via 422 (chain:narrative known; look for chain:verify_population_file and others).
+
+---
+
+## Session 2026-11-07 (j): SQLi/NoSQL injection sweep — ALL NEGATIVE (clean validation layer)
+
+### Probes (t023_sqli.py, t023b_sqli_enc.py, t023c_nosql.py)
+| Surface | Result |
+|---|---|
+| GET /issues /narratives sort= | param IGNORED entirely (sort=-id vs id vs name identical order) — no injection surface |
+| issues filter[...] | 400 InvalidRequestError, strict allowlist of filterable fields |
+| POST /api/v1/users/query (client uses Mongo-style ops: [ne]/[eq]/[exists]/$search/filter[or][0]) | operators REALLY applied & semantically correct: id $gt 300 => 17 rows, $ne 1 => 316, $eq 1 => 1. $where REJECTED 400 ("cannot be filtered by '$where'"), $regex REJECTED 400, top-level or[] REJECTED, type juggling ($gt [] / $gt {}) REJECTED 400, nested $ne{$ne:null} swallowed (no bypass). $search parameterized (NOT SQL LIKE: '%'/_' match 0 rows) |
+| POST /ml-recommendations/match-by-id/suggestions id | Zod strict number (NaN 422); match_model enum-validated ("id_model of narratives and match_model of controls_data are currently the only...") |
+| POST /generative/stream promptAttributes.narrative_id | string "31 OR 1=1" => ML service 400 fast (0.5s, no timing delta) — strong server-side conversion |
+| POST /rag/add_document documentType | Zod 500 with embedded ZodError array (minor error-shape leak, known family) |
+
+### Verdict
+No SQLi/NoSQLi found. Validation layer (Zod + Rails filter allowlist + parameterized queries + correct operator semantics) is clean across every injected surface tried. Focus-list SQLi category now covered with high confidence negative.
+
+### Intel for next technique
+- reactive_expressions (+/preview, /bulk_update, /output_models, /refresh_all) — server-side expression engine = RCE/injection candidate (T-024).
+- sigma_workbooks / sigma_bookmarks — Sigma reporting query surface.
+- users/query POST {filter:{field:{op}}, limit, order{}} — legitimate query DSL, no bypass.
