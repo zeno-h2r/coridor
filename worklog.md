@@ -971,3 +971,38 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 - Login flow: Ember SPA (no server-rendered form); /users/sign_in, /password/new, /password/edit all return SPA catch-all HTML; no /api/v1 login/session/tokens/authenticate routes (all 404). cfg.json: authTypes=[no-access,password] — NO SAML in QE => no SAML signature-bypass surface.
 - No alternate credentials in local state (cfg.json is public frontend config only).
 - CONCLUSION: 100% of the OWASP-scope surface (AI/authbypass/SQLi/RCE/SSRF/XSS) is behind authentication. Testing fully blocked until program issues fresh credentials.
+
+---
+
+## Session 2026-11-07 (m): T-027 cross-account authorization — 🏆 BUG-008 P1 FULL ACCOUNT TAKEOVER (confirmed end-to-end)
+
+### Credentials
+- Program issued TWO accounts: A(231) golden-snow-4771 + B(230) golden-leaf-3068, same org, both role_id=5 "Owner". New tokens replace revoked ones. Attacker role in tests: B(230); victim: A(231).
+
+### Discovery path (t027a → t027j)
+1. Identity: GET /users/{id} cross-account read => 200 full record (email, role, MFA state, lockout counters, _permissions). Same-org read likely intended → escalated straight to write testing.
+2. PUT /users/231 with B's token: `{}` => 500; `{"user":{}}` => **200 (endpoint processes VICTIM record with attacker creds — no ownership check)**; attribute ladder enumerated writable set.
+3. Attribute ladder (B→A): first_name/last_name/display_name/cell_phone/locale WRITABLE (persisted, reverted). email WRITABLE (200 + persisted + reverted). **password WRITABLE — no current_password required.** requires_password_change WRITABLE. role_id => 422 (NOT mass-assignable — blocked honestly).
+4. Password rotation proof (oracle differential): login as A with sentinel "ZzZtmpPw2!" => 401 `login_failed_password_change_required` ("Your password has expired...") vs garbage => 401 `login_failed` "No user found". Sentinel was never seen before the PUT ⇒ server accepted it as A's current password. A's original API token invalidated instantly (401) + record flipped requires_password_change:true.
+5. **Flag tampering:** `{"user":{"requires_password_change":false}}` via B => 200, flag cleared.
+6. **FINAL: POST /api/v1/users/login {"credentials":{email,password}} => 200 + session object containing `session.token` = FRESH API TOKEN FOR VICTIM (231:...)**. Verified working: GET /users/231 with minted token => 200. FULL ATO.
+7. Breadth: B reads A's uploaded file records (files/2660, 2661) => 200 metadata.
+8. Endpoint intel: login = POST /api/v1/users/login {credentials:{email,password}} (bundle luna: tokenEndpoint=/api/v1/users); password-reset = POST /api/v1/users/password-reset {credentials:{id,reset_token}}.
+
+### Impact
+- Any authenticated user (plain Owner) → ATO of ANY org user incl. Superuser (role_id 1, same 3 requests against enumerated id) ⇒ org-wide compromise.
+- Attacker ends with victim password + fresh victim API token + email control (reset-delivery hijack via same endpoint) + victim's own token invalidated (silent lockout, persistence).
+- Roster enumerable: users/query => 316 users. No MFA challenge anywhere in chain.
+
+### State restoration
+- A(231): names/email/display_name/role restored; password now ZzZtmpPw2! (attacker-set, disclosed to operator); old API token dead; fresh token captured (state/t027_victim_token.txt, local only). B(230): intact.
+
+### Deliverables
+- coridor/reports/BUG-008-ato-cross-account-user-write.md (full technical report)
+- coridor/reports/BUG-008-submission-draft.md (ready-to-paste)
+- Scripts t027a–t027j. Commits: session (m).
+
+### Next queue (n)
+1. Await operator submission of BUG-008; meanwhile: assistant conversation cross-account access with B's token (A's AI threads via B) — same BOLA family, separate object types.
+2. Narrative/issue object BOLA sweep with the two-account setup (write-level, non-destructive markers).
+3. we_* workflow session-flow tests (now reachable via real API tokens if we_* accepts them).
