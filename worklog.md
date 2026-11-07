@@ -600,3 +600,36 @@ Stage Summary:
 
 ### Note
 5 techniques run, all negative or sub-P3 as of this session. Continuing.
+
+## Session 2 — 2026-11-07: Full JS deep recon (74.1MB corpus)
+
+### Corpus
+- Crawled ALL frontend chunks: 1926 files / 74.1MB (main + runtime + 1888 lazy chunks via __vite__mapDeps closure). No sourcemaps deployed.
+- Full artifacts in recon/optro-2026-11-07/: api_paths_full_339.txt, external_hosts.txt, policy_models.txt (79 models), ember_routes.txt (471), ld_flag_candidates.txt (288), misc_file_ep.txt, server_config_leak.json.
+
+### Architecture (confirmed)
+- Ember SPA (Vite/rolldown, lazy engines per module) -> Rails JSON:API `/api/v1` + generic engines `/api/v1/table/{query,ids,export,_op/async_export,ethereal_action}` (body `{"ab:query":{entities,filter,limit,offset}}`, header `X-AuditBoard-Source: SchemaTable Rows`) + `/api/v2` (ml-trace, auditable-entity, auth) + `/api/v3` (encryption-keys, not deployed here).
+- Policy engine per model:action (ModelActionPermissionDenied 422 or 403), enforced on: direct GET, collection, table/query filter paths. NO bypass found at any layer tested.
+- Realtime: PoXA on /poxa (auth endpoint signs any private-* channel, but ws backend 503 in QE).
+- AI: `/api/v1/generative/{stream,batch-summaries,scoping-memo,dynamic-schema,create_entity,log}` — LIVE ML gateway (forwards to ML service), prompt templates addressed by `promptUri` (`template:<path>` registry: issues/description, ops_audit/scoping_memo, controls/objective, narrative.body, narrative.transcription, dynamic_schema.generate). Feature enum leaked via 422: AI Core Generative AI, Scoping Memo, Audio Transcription, Fieldwork Automation, Scenario Planning, Evidence Summary, Narrative and Flowcharts variants.
+- Auth: `token: uid:secret` header; `POST /api/v1/users/query` (sideload header X-AB-IS-AUTO-SIDELOAD); passwordless invitations redeem flow; SAML SSO (saml_host_override in config).
+
+### New intel
+- `/api/v1/config` (unauth'd? no — authed GET 200): full server config: version 47.1.0-dev branch develop sha e8c7de1, galaxy shard qe-us-west-2-tulip-0, LD dev-server relay (bugbounty1.launchdarkly-devserver.qe.optrostaging.ai, project auditboard env production), PDFTron/SpreadJS licenses, Amplitude token, Forethought key, authTypes, module.* + feature.* settings dump (excluded-category 3rd-party tokens; LD relay has real LD API behind auth: /sdk/flags 401 "project key not on Authorization header").
+- `/api/v1/table/ethereal_action?action=delete|update&entities=X` — GENERIC mutation engine, accepted no-op job (correlationId returned). Policy check location inside async job — UNVERIFIED for cross-tenant records (do NOT fire against real hidden records without plan).
+- `automation_credentials/{id}/param_options` + `/api/v1/automation_credentials/oauth`, `webhook_urls/{id}`, `ticketing/*?credentialId=`, `servicenow/cmdb/metadata?automationCredentialId=` — integration cred surfaces.
+- `attachments/html` POST {html,type,fileName,attachableType} — server-side HTML->attachment conversion = SSRF candidate (OAST).
+- `/api/v1/users/query` works with arbitrary filters (same directory data).
+
+### Policy probes this session (all negative)
+- table/query: baseline==filter($gt 0)==38 rows; explicit hidden ids [123,124,125,130] -> 0 rows. ml_traces -> 403. workspaces -> only 4 visible.
+- ethereal_action delete no-match -> 200 correlationId (engine reachable, records untouched).
+- generative/stream: 422 "Error from ML service: 422" with empty promptAttributes (live backend).
+
+### Next queue (revised)
+1. T-007 generative/stream deep: valid promptAttributes per template (promptUri template:issues/description + pageContext), then promptUri path traversal / template confusion, promptAttributes injection -> AI data pull across tenant? (AI = focus area #1, gateway LIVE)
+2. T-008 attachments/html SSRF: html <img src=https://jrb13rh3cjv7jhsplgfp8on25wzcro0pj.oast.site> + file:// probes (wkhtmltopdf-class RCE/SSRF/LFI chain per focus area).
+3. T-009 integration creds: automation_credentials list + param_options + oauth flow; ticketing credentialId probing.
+4. T-010 ethereal_action policy verification (controlled, own-record no-op first, then read-side oracle for hidden records).
+5. T-011 passwordless_invitations/redeem pre-auth flow analysis.
+6. T-012 stored XSS via attachments/html render path + issues rich text.
