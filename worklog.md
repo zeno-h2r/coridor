@@ -1171,3 +1171,43 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 2. BUG-008/BUG-009 retest after vendor patch waves (BFLA still LIVE as of session o).
 3. Cross-org BOLA — still blocked on operator account.
 4. Watch-list: server-side-id promptUris (needs stable ML service), we_* (needs browser session), word-fetcher redirect (worker restart), issues/controls attachment delete breadth (extends BUG-010 if vendor pushes back on narrative-only framing).
+
+## Session 2026-11-08 (s): FOCUS-LIST sweep (no BAC per operator directive) — 🔥 BUG-011 P3 (query-param token) + XSS/AI/RCE/SSRF negatives
+
+### Operator directive update
+- NO broken access control testing (no cross-account, no cross-org — operator confirmed no second-org account). Focus list: AI exploits, auth bypass, SQLi, RCE-class (SQLi/cmd/code/SSRF/LFI/file-read/XXE), SSRF, XSS (stored/reflected). All testing own-account (B/230) only. BUG-010 draft remains ready (operator decision).
+
+### T-038 stored/reflected XSS round 2 — NEGATIVE (server hygiene consistent)
+- Control 1 (B has action.edit) rich-field ladder: control_objective + risk_statement + description ALL html-encoded on write (`&lt;b&gt;...` stored). Reverted clean (state/t038a_results.json).
+- Comments (new surface): POST /api/v1/comments {comment:{message_raw,commentable_type,commentable_id}} — create on Issue/Control/Narrative 200 (comment:action.create per-object); TaskItem 422 (no perm). message_raw stored ENCODED; message_html = separate field.
+- **message_html mass-assignable via PUT (200) — stored RAW but through an ALLOWLIST SANITIZER**: fingerprint (t038b, 25 payloads): all event handlers stripped, javascript: URIs removed, svg/iframe/script/style/body/details/video/marquee subtrees removed, math/noscript mXSS normalized by HTML5-aware parser, only data-* attrs survive with arbitrary values. No XSS vector found.
+- Render path: client computes messageHtml=kt(messageRaw) from the ENCODED raw (bundle: messageHtml=kt(e.messageRaw)) — renderer fed escaped text.
+- Content-Disposition header-injection probe: CRLF/<script> fileName → WAF 403 (empty body); benign probe unused — P5 ceiling, not pursued further.
+- Probe comments 899/900/901 deleted. Verdict: XSS category CLOSED negative (extends session q).
+
+### T-039 generative AI gateway injection — NEGATIVE (ML back online, gpt-5.4)
+- ML service recovered from 503 flap; chain:narrative baseline streams normally.
+- promptUri traversal ladder (15 probes: ../, %2e%2e, absolute, suffix #/?, case, whitespace): uniform `{"data":"Error from ML service: 400 Bad Request"}` — enum-validated at ML service; one trivia: trailing space → Rails 500 generic.
+- promptAttributes injection (8 probes: str.format dunders, Jinja/Liquid/ERB, LangChain vars): all values pass through as inert data — no template evaluation, no error leaks. String narrative_id → ML 400 (server-side conversion, extends session j).
+- Verdict: AI gateway injection surface CLOSED negative.
+
+### T-040 word pipeline (SSRF/RCE) — NEGATIVE + intel
+- attachments/html schema CONVERGED with document_intelligence contract: attachableType (15-model enum) + attachableId now REQUIRED (service redeployed; Zod regenerated).
+- Word pipeline 409 lock STILL held 24h+ (t016b-era wedge) — BUT img fetches STILL FIRE before the save (direct + redirect imgs hit webhook.site under 409 = fetch-before-save confirmed).
+- **Redirect-follow: NEGATIVE** — `first` (redirect-to) hit, `after_redirect` target NEVER hit across 90s poll. Ruby Net::HTTP does not follow redirects. Word-fetcher SSRF vein CLOSED (last open SSRF item).
+- Filename cmd-injection on PDF pipeline ($(id), backtick, ;, |, &&): all 200, names stored VERBATIM as metadata, no exec, no output substitution. Probe attachments 11188-11192 created (names verbatim incl. metachars); files 2669-2673 DELETED (cleanup); attachment record shells remain (delete permission-gated — consistent with BUG-010).
+
+### T-041 auth bypass micro-batch — 🔥 BUG-011 (P3 rec) + rest clean
+- **QUERY-PARAM TOKEN ACCEPTED (CWE-598)**: `?token=id:secret` authenticates on ALL planes with ZERO headers — GET /users/230 (200 profile), PUT /users/230 (200 = authenticated WRITE), GET /roles (200), GET /we_tasks (200), Fastify files (auth passes, reached model layer). Param matrix: only `token` (api_token/auth_token/access_token/user_token/session_token all 401). Bounty/product headers NOT auth-relevant (no-header request succeeds). Long-term non-expiring credential in URLs = leaks via access logs/CDN/OTel traces (traceparent confirmed app-wide)/browser history/Referer/SIEM → full account compromise on capture. Reports: BUG-011-api-token-query-param.md + BUG-011-submission-draft.md. Rec: P3.
+- Login mass-assignment: credentials extras (role_id 6/1, requires_password_change, is_active, api_user) ALL IGNORED (role stays 5, flag unchanged) — clean.
+- Token transport variants: cookie/Basic/x-token header 401; Bearer real-token "Bad token" (Fastify parser, consistent w/ session l); login fuzz (type juggle/array/null/missing creds) Zod-strict 422 — clean.
+
+### State
+- A(231): password ZzZtmpPw5! still valid (login 200, role 5, flag clear); API token dead (rotation) — re-mint via login when needed.
+- B(230): token live. No unreverted writes (control fields reverted; probe comments/files deleted; 5 attachment name-shell records remain — benign, delete-gated).
+- New artifacts: t038a/b/c, t039a, t040a/b, t041a/b results JSONs + scripts; state/wh_t040.txt (fresh webhook channel, 4 hits logged).
+
+### Next queue (t)
+1. BUG-011 submission (operator decision) — draft ready.
+2. chain:verify_population_file / file-parse chain shapes (AI file-parse surface; keys undiscovered) — low priority.
+3. Watch-list: attachments/html regenerated schema → retest BUG-006 PoC against new contract (type field + attachable fields; verify html->pdf flow unchanged for report accuracy); we_* browser-session flows (unreachable token-only); retest BUG-008/009/011 after vendor patch waves.
