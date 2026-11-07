@@ -701,3 +701,44 @@ Stage Summary:
 
 ### Session verdict
 - BUG-006 (attachments/html SSRF) remains the ONE reportable finding (P3 rec). All other surfaces tested this session: enforced or inconclusive-with-honest-status.
+
+---
+
+## Session 2026-11-07 (d): BUG-006 deep-dive (SSRF/LFI/RCE hunt) + RAG POISONING CONFIRMED
+
+### Word pipeline forensics — SECOND, non-Chrome fetcher inside BUG-006
+- webhook.site log forensics: the `type:word` pipeline fetches `<img src>` URLs SERVER-SIDE (no UA, HTTP/1.1, accept-encoding `gzip, deflate` ×42 = Ruby Net::HTTP request-object reuse, `traceparent` = OTel) => Rails-side image downloader, separate from the HeadlessChrome renderer. Same egress IP 34.214.1.78 (AWS us-west-2).
+- Conversion flow order: images fetched BEFORE record save => 409 uniqueness responses still fire fetches; hung conversion jobs hold a single-flight lock => subsequent creates 409 "Lock conflict"... (word: `fileable_type must be unique`; RAG: `is_add_running`).
+
+### Word-pipeline fetch behavior matrix (timing/error-class oracle)
+| target | result | class |
+|---|---|---|
+| webhook.site img | 409@1.8s + callbacks x2 | fetch SUCCESS |
+| IMDS 169.254.169.254/latest/meta-data/ | 409@1.1s | fast HTTP response (IMDSv2 401) |
+| 127.0.0.1:3000/, :3000/api/v1/config, :9292 | 500@0.5s | instant fail (refused) |
+| 127.0.0.1:1 refused control | 500@0.6s | crash class |
+| no-such-host.invalid control | 500@0.6s | crash class |
+| ECS 169.254.170.2/v2/credentials | >90s hang => no docx | timeout/filtered |
+| midship.us.mt.qa.optrostaging.ai (public IP!) | 80s+ timeout | filtered/no listener |
+- CONCLUSION: Ruby fetcher adds NO internal reach beyond IMDS (IMDSv2 blocks creds). All "internal-looking" names (midship, ai_gov, finra) resolve PUBLICLY — no hidden internal DNS world. LFI via file:// in word pipeline: not demonstrated (fetcher is HTTP-only per fingerprints).
+- Chrome renderer ceilings unchanged (file:// blocked, localhost closed, IMDSv2 401-empty, k8s DNS unresolvable, ECS timeout). XXE: none. => BUG-006 stays P3; NO P1 escalation found despite 20+ new probes.
+
+### Upload chain CRACKED (new primitive, own-account)
+1. `POST /api/v1/files/s3_upload_signature` `{file_name, model_name, model_id, content_hash}` — content_hash = **MD5 base64** (hex => S3 400 Content-MD5 mismatch; the server copies it verbatim into the signed POST policy `["eq","$Content-MD5",...]`).
+2. S3 POST to `https://auditboard-files-qa-us-west-2.s3-accelerate.amazonaws.com/` with returned formData + `file` field => 201 (policy `starts-with $key bugbounty1120509_qa/<Model>/<id>/<uuid>/` — tenant/path scoped).
+3. `POST /api/v1/files` body `{"file":{name,fileable_id,fileable_type,creator_user_id,upload_user_id,size,type,storage_type:"s3",key,url,user_agent,meta:{},local_folder_path:""}}` => 200 file record (ids 2614/2615/2617/2621 created). Plain `{...}` / JSON:API `data` wrappers => 500.
+- `import_tools/validate|upload` => 400 ConfigurationError "feature not configured in this environment" (dead end in QE).
+
+### 🔥 RAG INDEX POISONING CONFIRMED (new finding — BUG-007 draft)
+- `POST /api/v1/rag/add_document` `{documents:[{fileId:"<real id>", url:"<presigned S3>", documentType:"<type>"}]}`.
+- Valid shapes leaked from JS: documents array; url = presigned file URL (fetch happens S3-only: webhook/OAST/IMDS urls => 500 "Failed to process all 1 document(s)" in 0.5s, NO callback => SSRF via url NEGATIVE, URL allowlist enforced).
+- Ingest CONFIRMED into SHARED org index: openpyxl xlsx w/ marker text => `200 {"status":"success","chunks":1}`; `rag/index/status` totalDocuments 4680 => 4681 (tprm_audit_survey_suggestion_contexts) => 4682 (knowledge_library). Both shared AI index types poisonable with attacker-controlled content (no content review, no owner binding beyond my own file id).
+- Impact: persisted attacker content inside retrieval context of AI features (TPRM audit survey suggestions, Knowledge Library QA) for ALL org users; classic LLM persistent prompt-injection/data-integrity sink. Rec: P3 (P2 if TPRM/knowledge QA surfaces live for users + suggestions rendered).
+- Ops notes: global `is_add_running` lock (one ingest at a time, 409 Lock conflict); index flips isReady:false while ingesting; XXE-bearing xlsx (DOCTYPE entity file:///etc/passwd) => ingestion HANG >80s then document NOT added (parser stalls on external entity — no readback, no crash) — OOXML XXE not demonstrated.
+- Report: reports/BUG-007-rag-index-poisoning.md
+
+### Next queue (e)
+1. Submit BUG-006 (P3 rec) + BUG-007 (P3 rec, P2 if consumer surfaces demo'd).
+2. generative/stream chain:verify_population_file promptAttributes — ML-side file parse surface (needs shape; 400s so far).
+3. document_intelligence/attachment {attachableType,attachableId,htmlContent,fileName} — second html->attachment sink (same renderer class presumably).
+4. RAG: attempt documentType policy_published_versions + cross-workspace file_id re-use (authz of fileId param).
