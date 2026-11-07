@@ -27,6 +27,30 @@ The RAG ingestion endpoint accepts documents from any authenticated user into **
 
 `documentType` is a free string parameter on a shared index — the client, not the server, decides which trust namespace a document lands in.
 
+## Session (f)+(g) — consumer hunt + systemic bypass confirmation
+
+**Ingest bypass is systemic (6 of 10 index types demonstrated, same endpoint, zero per-type permission checks):**
+
+| documentType | permission required for the REAL resource | rag/add_document check | result |
+|---|---|---|---|
+| knowledge_library | — (product module) | none | 200, index +1 (4681→4682) |
+| tprm_audit_survey_suggestion_contexts | — | none | 200, index +1 (4680→4681) |
+| controls_data | `controls:action.create` (denied for module-less tenants) | **none — bypass** | 200, 390→391 (fake control ZXPOISON-CTRL-7734) |
+| framework_items | framework module write | **none — bypass** | 200, 3629→3630 |
+| risks | `risk:action.create` | **none — bypass** | 200, 231→232 |
+| policy_published_versions | policy module (create DENIED to this account: `policy:action.create`) | **none — bypass** | 200, 0→1 (first-ever doc; fake "published policy" text incl. HTML payload) |
+
+Full enum leaked via `rag/index/status`: `policy_published_versions, knowledge_library, knowledge_library_answers, tprm_audit_survey_suggestion_contexts, controls, controls_data, framework_items, risks, program_regulation_items, auditable_entities`.
+
+**Consumer retrieval hunt — all four AI consumers checked, NONE retrieves poisoned content in QE (honest limitation):**
+
+1. `POST /api/v1/generative/stream` `chain:narrative` — baseline vs poisoned-regeneration diff for narrative 31 (29,633 → 33,437 chars): ZERO marker strings (ZX-TRACK-9Q, webhook.site, `<img`) — the narrative chain does not read these index types.
+2. Assistant (`POST /api/v1/assistant/chat/stream`, mode ask) — live-verified: tool `search_knowledge_base` executed server-side but searches the separate admin-managed `assistant_knowledge_files` corpus; poisoned `knowledge_library` chunk NOT retrieved ("I couldn't find that policy..."). Registering a file as assistant knowledge: `POST /api/v1/assistant_knowledge_files` → 403 Forbidden for Owner role (clean authz).
+3. `POST /api/v1/ml-recommendations/match-by-id/suggestions` (the ONLY supported pair: id_model `narratives` + match_model `controls_data`) — returns `{}` for all tested narratives (pre-poison too) and a persistent backend failure (`"Failure matching suggestions to id:57..."`) — matcher ML backend degraded/non-functional in QE; poisoned control not retrievable. Score 0.0/0.6/0.9 identical.
+4. Agentic TPRM survey suggestions — `audit_surveys` exist but `is_agentic_tprm: false` (feature flag OFF in QE).
+
+**Final severity: P3 stands.** Confirmed: persistent attacker-controlled content in shared AI indexes + ingest path bypasses resource-level permissions (notably `controls:action.create`, `policy:action.create`-gated content). NOT demonstrable in QE: end-user retrieval of poisoned content (all consumers off/gated/degraded) — reported honestly; P2 would require a live consumer demo.
+
 ## Impact (stated honestly)
 
 - Any authenticated user can persist arbitrary text into retrieval indexes consumed by AI features for **all org users** (TPRM audit survey suggestions; Knowledge Library Q&A), enabling persistent prompt-injection / misinformation / data-integrity attacks on AI outputs.

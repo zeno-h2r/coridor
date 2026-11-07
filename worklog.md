@@ -849,3 +849,22 @@ Internet-reachable headless-Chrome SSRF primitive with external readback, intern
 2. Assistant low-priv elevation test — NEEDS a second account (ask user for tester2 credential or request via program).
 3. Word fetcher redirect test (lock may need worker restart — lock held 1h+).
 4. Draft BUG-006 (P3) + BUG-007 (P3) submissions for user review.
+
+---
+
+## Session 2026-11-07 (h): BUG-007 systemic bypass hardened + both submissions drafted
+
+### T-021 ingest bypass — SYSTEMIC (6/10 types demonstrated, one endpoint, zero per-type authz)
+- framework_items 3629->3630 (ZXPOISON-FW-8801), risks 231->232 (ZXPOISON-RISK-8802), policy_published_versions 0->1 (ZXPOISON-POL-8803, first-ever doc in type, fake published-policy text incl. HTML payload). Scripts: t021_bypass_types.py, state/t021_bypass.json.
+- Remaining 3 types (knowledge_library_answers, program_regulation_items, auditable_entities) — same endpoint/code path, presumed identical; not separately ingested.
+
+### T-022 word fetcher redirect test — PERMANENTLY PARKED
+- Word pipeline single-flight lock held 1.5h+ after single malformed document_intelligence request (409 for all word creates). No lock timeout => reliability defect (availability-class, excluded from program) — noted in BUG-006 remediation section as lock-timeout recommendation.
+
+### T-023 submissions drafted (reports/)
+- BUG-006-submission-draft.md — P3: functional SSRF + external readback + internal liveness oracle + IMDS reachability; honest exclusions (LFI/RCE/VPC-lateral/XXE/IMDSv2 all tested-negative); lock-wedge remediation note.
+- BUG-007-submission-draft.md — P3: shared-index poisoning + resource-permission bypass on ingest (controls_data/policy_published_versions emphasized); honest limitation section (4 consumers checked, none retrieves in QE); SSRF-via-url explicitly excluded (allowlist).
+- BUG-007 report updated with session (f)+(g): systemic bypass table + consumer hunt results; final P3 verdict.
+
+### Status
+- Both drafts READY for user review/submit. Remaining test ideas needing resources: assistant low-priv elevation (needs 2nd account), word redirect (needs worker restart).
