@@ -817,3 +817,35 @@ Internet-reachable headless-Chrome SSRF primitive with external readback, intern
 1. Assistant forged-tool-result injection: POST /api/v1/assistant/tools/search_knowledge_base/result with fabricated content (needs live tool_call_id — run a plan-mode conversation with an interactive tool; body schema via Zod 422 probing).
 2. Poison controls_data/framework_items => re-run match-by-id/suggestions against a narrative with controls (needs a control in org — check controls:action.create as Owner).
 3. BUG-006/007 submission drafting (user decision): BUG-006 P3, BUG-007 P3.
+
+---
+
+## Session 2026-11-07 (g): assistant tool-pipeline audit + controls_data ingest bypass — both consumer chains NEGATIVE, BUG-007 verdict finalized
+
+### T-019 assistant forged-tool-result — NEGATIVE (state-tracked)
+- Interactive tool flow live-captured: plan mode => `interactive_tool` event {type:plan, tool_call_id call_..., status:pending, fields{id,name,description,context,steps[],values{}}}.
+- `POST /api/v1/assistant/tools/plan/result` Zod: {conversationId, context, status:"dismissed"|"completed"|"disregarded", values{steps:STRING}} — tool_call_id NOT validated by schema BUT backend enforces server-side state: forged "completed" result for a pending/unconfirmed tool_call_id => 404 MLServiceError Not Found (state-tracked; cannot inject fabricated tool outputs).
+- Conversation wedged after pending tool => chat/stream stream_failed (retryable); DELETE /api/v1/assistant/conversations/<id> => 204 resets cleanly.
+- Client tool registry (login chunk): CREATE_ENTITIES_TYPES=[create_issue,create_risk,create_control,create_instantiated_control], DESIGN_QUALITY=[rewrite_control_description], AssistantMode=ask|allow|plan, assistant file attach: .pdf/.docx <=25MB.
+- Privilege-elevation-via-assistant hypothesis (assistant tools running elevated) NOT testable with single Owner account — all create_* tools target surfaces my role can already write. Parked (needs low-priv account).
+
+### T-020 controls_data ingest bypass CONFIRMED — consumer retrieval NEGATIVE
+- `POST /api/v1/rag/add_document` with documentType:"controls_data" => 200 success, chunks:1, index 4683->4684 (file 2650, fake control ZXPOISON-CTRL-7734, topic-matched to narrative 31). NO controls:action.create permission check on the ingest path — third index type poisoned (knowledge_library, tprm_audit_survey_suggestion_contexts, controls_data).
+- Consumer ml-recommendations/match-by-id/suggestions (id_model:narratives + match_model:controls_data — the ONLY supported pair): narrative 31/38/39/40/47 => {} (no matches, pre-poison too); narrative 57 => persistent {"data":"Failure matching suggestions to id:57..."} backend error. Matcher ML backend degraded/non-functional in QE => poisoned control NOT retrieved. Score 0.0/0.6/0.9 identical.
+- TPRM agentic survey consumer: audit_surveys exist (id 4 "Cash Physical Security") but is_agentic_tprm:false — feature flag OFF in QE. tprm suggestion_contexts corpus has no active consumer.
+- Assistant corpus: separate (assistant_knowledge_files, admin-gated 403) — knowledge_library poison not in its search_knowledge_base corpus (live-verified session f).
+
+### BUG-007 FINAL VERDICT (P3 recommendation)
+- CONFIRMED: unauthenticated-to-permission-bypass ingest into SHARED org RAG index across 3 documentTypes (incl. controls_data bypassing controls:action.create; framework_items/risks/auditable_entities presumably identical — same endpoint, same code path).
+- NOT demonstrable in QE: any retrieval consumer returning poisoned content to users (4 consumers checked: narrative chain, assistant KB, ML matcher, agentic TPRM — all negative/off/degraded). Honest report must state this; severity stays P3 (data integrity of AI index + ingest authz bypass), NOT P2 without a live consumer.
+
+### Ops/intel
+- audit_surveys: JSON:API-ish flat list; is_agentic_tprm flag per survey.
+- matcher error message leaks backend operation names (info-leak trivia).
+- assistant chat/stream error events: {type:error, data:{message, error:"stream_failed", retryable:true}}.
+
+### Next queue (h)
+1. framework_items/risks/policy_published_versions ingest bypass demo (same endpoint — 10 min, strengthens BUG-007 report).
+2. Assistant low-priv elevation test — NEEDS a second account (ask user for tester2 credential or request via program).
+3. Word fetcher redirect test (lock may need worker restart — lock held 1h+).
+4. Draft BUG-006 (P3) + BUG-007 (P3) submissions for user review.
