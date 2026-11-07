@@ -777,3 +777,43 @@ Internet-reachable headless-Chrome SSRF primitive with external readback, intern
 2. BUG-007 chain: RAG poison -> chain:narrative generation -> does AI output embed attacker HTML into narrative body -> rendered/edited by victims (stored XSS potential, editor sanitization unknown).
 3. generative/stream chain:verify_population_file promptAttributes shape (ML file parse surface).
 4. Word fetcher redirect test (retry when lock releases).
+
+---
+
+## Session 2026-11-07 (f): RAG->AI consumer chain hunt (BUG-007 escalation) + assistant API mapped
+
+### Lazy chunk sweep (recon gap closed)
+- 909 chunks / 24MB fetched to state/lzchunks/ (t018_chunks.py). Full deployed API surface now greppable.
+
+### chain:narrative retrieval test — NEGATIVE (poison NOT retrieved)
+- Baseline: chain:narrative n31 => 29,633 chars pure structural HTML (h1/h2/p/ul/li/table/strong; no img/script).
+- Poison: topic-matched xlsx (marker ZX-TRACK-9Q + raw `<img src=webhook?ragxss=n31>` tag), file 2641, ingested knowledge_library => index 4682->4683 (tprm add deduped; totalDocumentsByType: knowledge_library=2, tprm=1).
+- Regenerate: 33,437 chars — ZERO markers (no ZX-TRACK-9Q, no <img, no webhook.site). chain:narrative does NOT read knowledge_library/tprm index types. Scripts t017/t017b/t017_gen_baseline.py.
+
+### RAG documentTypes FULL ENUM (status leak) — intel
+- policy_published_versions, knowledge_library, knowledge_library_answers, tprm_audit_survey_suggestion_contexts, controls, controls_data, framework_items, risks, program_regulation_items, auditable_entities.
+- Counts: framework_items 3629, controls_data 390, controls 299, risks 231, auditable_entities 131, knowledge_library 2 (mine), tprm 1 (mine).
+- ml-recommendations/match-by-id/suggestions match_model "controls_data" == RAG type => ML suggestion matching reads the RAG index family (poisonable in theory; my org has no controls to match => {} today).
+
+### Assistant (Pulse) API fully mapped (luna chunk + login chunk)
+- POST /api/v1/assistant/conversations {conversationId} — init (known).
+- POST /api/v1/assistant/chat/stream — body {forms, userMessage, context{module{...}}, conversationId, mode: "ask"|"plan"|"allow"}, header X-Conversation-Id. Zod 422 leaks shape.
+- POST /api/v1/assistant/tools/confirm (X-Conversation-Id) + POST /api/v1/assistant/tools/<tool>/result — interactive tool confirm/result submission (UNTESTED — forge-result injection is a dedicated next technique).
+- Tools observed live: search_knowledge_base (approval_mode:auto, server-side) — assistant IS a RAG consumer.
+
+### Assistant retrieval corpus test — NEGATIVE for my knowledge_library poison
+- Asked assistant "What does policy ZX-TRACK-9Q require..." => tool search_knowledge_base succeeded, answer: "couldn't find that policy in the Assistant knowledge base". My poisoned knowledge_library chunk NOT in assistant corpus.
+- Assistant corpus = admin-managed: POST /api/v1/assistant_knowledge_files {files:[{file_id}]} (admin bundle). Owner (role 5) => 403 Forbidden "You do not have permission to manage Assistant knowledge files." CLEAN AUTHZ (negative).
+- KL QA (knowledge-library/qa) ask API not present in deployed bundles (provider chunks only expose /count). Possibly feature-flagged off in QE.
+
+### BUG-007 verdict after chain hunt
+- Ingest poisoning CONFIRMED (unchanged). Consumer reach in QE: narrative chain NEGATIVE, assistant corpus separate + admin-gated, KL QA undiscoverable/off. Impact stays data-integrity-of-shared-index => P3 recommendation stands. No P2 evidence without a live retrieval consumer.
+
+### Ops notes
+- Word-pipeline global lock STILL held (35+ min) after the two 500'd document_intelligence probes (bogus attachableId). Single request wedges the DOCX conversion pipeline until worker restart => availability-class (excluded from program), noted for report enrichment only.
+- Word fetcher redirect-follow test remains parked (lock).
+
+### Next queue (g)
+1. Assistant forged-tool-result injection: POST /api/v1/assistant/tools/search_knowledge_base/result with fabricated content (needs live tool_call_id — run a plan-mode conversation with an interactive tool; body schema via Zod 422 probing).
+2. Poison controls_data/framework_items => re-run match-by-id/suggestions against a narrative with controls (needs a control in org — check controls:action.create as Owner).
+3. BUG-006/007 submission drafting (user decision): BUG-006 P3, BUG-007 P3.
