@@ -1006,3 +1006,45 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. Await operator submission of BUG-008; meanwhile: assistant conversation cross-account access with B's token (A's AI threads via B) — same BOLA family, separate object types.
 2. Narrative/issue object BOLA sweep with the two-account setup (write-level, non-destructive markers).
 3. we_* workflow session-flow tests (now reachable via real API tokens if we_* accepts them).
+
+---
+
+## Session 2026-11-07 (n): T-028 role-change hunt (role_id -> 6 External Auditor) — NEGATIVE, comprehensively closed + RBAC matrix read disclosure (info)
+
+### Gate identified
+- PUT /users/{id} role_id write => 422 `ModelActionPermissionDenied (Permission: user:action.administer)` — MODEL-LEVEL attribute-writer policy, not a params allowlist. Fires on: any role_id write (even same-value), any encoding.
+- role_id=1 separate check: "cannot set user to Superuser from non-Superuser account" (caller-role based). role_id=2: "must have System Admin privileges".
+
+### Bypass classes tested — ALL NEGATIVE
+| Vector | Result |
+|---|---|
+| JSON wrapper / form-encoded `user[role_id]=6` | 422 policy (policy at model writer, not params layer) |
+| Nested attrs (role_attributes/roles_attributes/user_role_attributes) | silently ignored (200, unchanged) |
+| Type confusion (str/float/array/obj), dup keys, case variants | deny / 500 / ignored |
+| `_permissions` / `hasPermission` self-grant in body | ignored (client-side fields) |
+| X-Auditboard-Module variations (admin/site-configuration/system/users) | 422 same |
+| Invite/create POST /users (role_id 6/2/1) | same user:action.administer gate |
+| 20 narrow sub-endpoints (preferences/settings/profile/roles/...) | all 404 |
+| relationship-style PATCH users/{id}/relationships/role | 404 |
+
+### role_permissions resource — READ-ONLY at REST (write walled)
+- GET /api/v1/role_permissions => **200 with 69,902 rows: the ENTIRE RBAC matrix for every role incl. Superuser** (section=user key=action.administer value=deny for role 5 row id=1497; allow only role 1). GET /api/v1/global_permissions => full permission catalog (allowed_values, default_value, descriptions).
+- Gate row model: {role_id, section:"user", key:"action.administer", value:"deny"->"allow"}.
+- Write routes: POST/PATCH /role_permissions => 404 (no Rails route); PUT /role_permissions/{id} => 403 uniform across ALL body shapes. NOTE: 404-vs-403 flip observed between runs on same request => gateway content rule deployed/flapping mid-test (post-BUG-008 hardening observed live).
+- roles PUT/POST => 403 (gateway-level, not Rails policy).
+
+### Other surfaces probed (fresh tokens)
+- SCIM: /api/v1/scim/Users LIVE (SCIM protocol 401s) — 9 auth variants (token/Bearer full/secret-only/Basic b64 both/X-API-Key) ALL uniform 401 => separate IdP-issued credential store. Clean. Parked.
+- we_* Fastify service: flapping (same path 403 Fastify vs SPA catch-all between calls) => mid-deploy; POST we_workflow routes => nginx 405. Not a stable surface yet.
+- switchRole/impersonatedRole in bundle = CLIENT-SIDE role simulation (Ember session state; no server endpoint found — all probes 404). Superuser UI preview only.
+- A(231) password ZzZtmpPw2! no longer valid + old session token dead => team rotated creds post-BUG-008 submission (login now "No user found"). B(230) intact.
+
+### Verdict (honest)
+- role_id:6 change: NOT achievable from attacker (role 5) position. The RBAC write surface is properly gated (only gap was the user-record BFLA = BUG-008, now fixed/mitigated).
+- The full RBAC matrix + global permission catalog readable by ANY authenticated user = information disclosure (P5 informational; recon value: attacker learns every gate key). Not a standalone report per P1-P3 rule; noted as hardening rec (restrict role_permissions/global_permissions reads to admin roles).
+
+### Next queue (o)
+1. Team-provided External Auditor (role 6) account => test role-6 privilege boundary from the legitimate side (cross-org/portal access, BOLA between auditor<->org).
+2. Assistant conversation BOLA (A's AI threads via B) — still open.
+3. Narrative/issue cross-account write sweep with markers.
+4. we_* service — revisit once stable.
