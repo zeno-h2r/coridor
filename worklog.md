@@ -564,3 +564,39 @@ Work Log:
 
 Stage Summary:
 - Round 11 complete: full spec-diff enumeration (524 methods → 10 never-probed families) + externalAuth end-to-end chain build. P1/P2 attempts: (1) cross-principal BA wallet takeover — BLOCKED by env feature flag (untestable via API), (2) assertion verifier confusion/replay/binding — ALL CLOSED (verifier solid), (3) console-scope escalation via externalAuth mint — CLOSED by scope allowlist, (4) cross-user export with valid elevated — CLOSED (404 user-scope). RESULT: BUG-004 upgraded IN STRENGTH (not severity): differential now proven at END-USER tier on both export+signMessage (report addendum pushed, commit bb96c1d8bf). New capability unlocked for future rounds: PoP-capable user sessions on own sandbox via externalAuth/signin (ev8_session.mini + ev8_session_key.priv.pem in recon/idor26/) — enables relay PoP composite experiments previously capability-blocked. Honest accounting: zero new P1/P2 found; verifier quality on externalAuth is high; primary remaining gap stays the relay PoP delivery gate
+
+---
+---
+
+# Optro Managed Bug Bounty — Engagement Worklog (ACTIVE)
+- Program: Optro Managed Bug Bounty (Bugcrowd, private)
+- Researcher: zeno0 (zeno0@bugcrowdninja.com) — header tag: `X-Optro-Bug-Bounty: zeno0`
+- Scope: `https://bugbounty1.qe.optrostaging.ai/sh/account` + listed app URLs, `/api/v1/`
+- Excluded: P5s, DoS/volumetric, rate-limiting, SE, MITM, blind SSRF w/o impact, email/user enumeration, self-XSS, subdomain takeover, headers/CORS/CSRF w/o impact, CVE<90d, etc.
+- Focus: AI exploits, auth bypass, SQLi, RCE-class (SQLi/os/code/SSRF/LFI/XXE), SSRF, stored XSS
+- Test account: user 231 (role 5 Owner), `token: <uid>:<secret>` header (value redacted)
+-|-----------|--------|
+| T-001 | Object-level authz on `/api/v1/users` (token format `uid:secret`) | Cross-account READ confirmed: `GET /api/v1/users/230,232` (other testers) + `GET /api/v1/users` (all 317 org users, 37 teams) with role-5 token. Fields incl. email, name, auth_type, mfa_enabled, login_attempt counters, scim ids, slack ids, `_permissions:{action.edit:true}` (not honored server-side). No API tokens/passwords returned. Write path NOT found: `PATCH`/`PUT /api/v1/users/230` → 404/500. Role escalation NOT achieved. Verdict: likely intended directory visibility + excluded email-enumeration category → P5, not submitted. |
+| T-002 | Cross-workspace IDOR (risks/issues/narratives/workspaces) | Collections filtered by policy (sparse id ranges). Direct GETs on collection-excluded ids → 404/410/422. `422 = ModelActionPermissionDenied (issue:action.view)` — explicit per-object policy enforcement. Hidden workspaces 5/7/12/14/15/16 direct GET → 404. Verdict: enforced, negative. |
+| T-003 | AI assistant / MCP / RAG | Assistant: `422 FeatureNotEnabled` (saved-prompts), conversations GET 404, mcp_tools 404, sox_ai_review 404, MCP POST 405. RAG index LIVE: `GET /api/v1/rag/index/status` → isEnabled:true, 4680 docs (policy_published_versions, knowledge_library, knowledge_library_answers). Candidate: `POST /api/v1/rag/add_document` (RAG poisoning into shared org index) — NOT fired yet, needs consumer analysis + benign marker plan. |
+| T-004 | PoXA realtime channel authz | `POST /api/v1/pusher/auth` signs ANY private channel for any authenticated user: got auth sigs for `private-user-230`, `private-user-1` (Superuser), `private-force-pull` with fabricated socket_id `1.1`. End-to-end BLOCKED: `wss://.../poxa/app/<key>` → 503 Service Unavailable (realtime backend down in QE). Signing flaw real, delivery path absent → no demonstrable impact → P4/P5, not submitted. |
+| T-005 | Filter operator injection / SQLi | Filter parser: strict allowlist. `filter={"id":{"$gt":0}}` etc → `400 InvalidRequestError "issues cannot be filtered by '0'"`. Rails-style `filter[id][$gt]` accepted but returns identical policy-scoped 38 issues. No operator bypass, no SQL error states. Export routes (`/api/v1/{model}/export/task/csv`) → 404 without task id. Negative. |
+
+### Confirmed facts for continuity
+- My account: id 231, "Bugcrowd Tester35", role_id 5 (Owner), no MFA, auth_type password. Other BB test accounts nearby ids: 230 (Tester34, golden-snow-4771), 232 (Tester36). Superuser = id 1, role 1 ("Superuser"/"god"); System Admin = role 2.
+- Roles visible via `GET /api/v1/roles` (any user): 1 Superuser, 2 System Admin, 3 Reviewer, 4 Tester, 5 Owner, 6 External Auditor, 10 Implementer, 11 Third Party User, 16 Hurtsec Test, 17 Without-"action.edit".
+- Policy error format: `422 {"errors":[{"code":"ModelActionPermissionDenied","detail":"...(Permission: <model>:action.<x>)"}]}` — useful oracle for probing authz boundaries.
+- PoXA app key candidates: `f2900c2481d645448bdb102abf6e0a03` (main bundle), `c1dfb07d783ad5325c245c1fd3725390` (luna). wsPath `/poxa`, authEndpoint `/api/v1/pusher/auth`.
+- CSP (enforced): `default-src *; script-src * 'unsafe-inline' 'unsafe-eval'` — permissive but CSP findings excluded by program.
+- LaunchDarkly in use (feature flags drive AI/MCP gating) — `https://bugbounty1.launchdarkly-devserver.qe.optrostaging.ai` referenced in CSP.
+
+### Priority queue (next)
+1. **T-006 file/attachment IDOR**: extract `imagesSourceUrl`/`attachments/html` shapes + probe `/api/v1/files/{id}`, `/api/v1/documents/{id}`, `document_versions/{id}` neighbor-id reads (narratives carry `latest_document_version_id`). viewFile permission exists per-object — classic bypass spot.
+2. **T-007 RAG poisoning**: `POST /api/v1/rag/add_document` with benign marker; check `rag/index/status` totalDocuments delta; determine retrieval consumers (knowledge QA surfaces). P2/P3 if other users' answers are influenced.
+3. **T-008 passwordless invitations**: `POST /api/v1/passwordless_invitations/request_new|redeem` pre-auth flow — invitation forging/reuse, token entropy, cross-user redeem.
+4. **T-009 import_tools/upload + document_intelligence**: upload → SSRF/OAST callback test (OAST: jrb13rh3cjv7jhsplgfp8on25wzcro0pj.oast.site), file-type validation, internal fetch on URL fields.
+5. **T-010 order/term/columns params**: same filter surface, `order=...` SQL ORDER BY injection spot (often less protected than filter).
+6. **T-011 stored XSS**: rich-text fields (issues descriptions, narratives, comments) — customer-controllable, rendered to other users; check sanitize boundary on render endpoints (`attachments/html`).
+
+### Note
+5 techniques run, all negative or sub-P3 as of this session. Continuing.

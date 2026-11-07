@@ -1,0 +1,26 @@
+{
+  "isEnabled": true,
+  "isReady": false,
+  "isLocked": true,
+  "totalChunks": 4680,
+  "totalDocuments": 4680,
+  "documentTypes": [
+    "policy_published_versions",
+    "knowledge_library",
+    "knowledge_library_answers",
+    "tprm_audit_survey_suggestion_contexts",
+    "controls",
+    "controls_data",
+    "framework_items",
+    "risks",
+    "program_regulation_items",
+    "auditable_entities"
+  ],
+  "totalDocumentsByType": {
+    "auditable_entities": 131,
+    "risks": 231,
+    "controls": 299,
+    "framework_items": 3629,
+    "controls_data": 390
+  }
+}
