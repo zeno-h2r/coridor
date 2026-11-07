@@ -912,3 +912,31 @@ No SQLi/NoSQLi found. Validation layer (Zod + Rails filter allowlist + parameter
 - reactive_expressions (+/preview, /bulk_update, /output_models, /refresh_all) — server-side expression engine = RCE/injection candidate (T-024).
 - sigma_workbooks / sigma_bookmarks — Sigma reporting query surface.
 - users/query POST {filter:{field:{op}}, limit, order{}} — legitimate query DSL, no bypass.
+
+---
+
+## Session 2026-11-07 (k): reactive_expressions formula engine — ALL NEGATIVE (clean DSL)
+
+### Recon (t024a_recon.py)
+- GET output_models => {risk, auditable_entity_risk, key_risk_indicator, auditable_entity, controls_datum, compliance_assessment_item}.
+- Existing expression id 87: formula "((((a + b) + c) * d) * (1 - (e / 5)))" model=auditable_entity; my perms: action.view ONLY (no edit => PUT path untestable).
+- preview schema cracked (Zod ladder): POST /api/v1/reactive_expressions/preview
+  {"reactive_expression":{"formula":"A","model":"auditable_entity","variables":{"A":{"name":"CountIssues","type":"CountIssues","parameters":{"IssueStatus":["Open"]}}}},"record_id":1}
+  => 200 {"variable_values":{"A":0},"result":0}. Variable KEY = formula symbol (single letter), .name must equal server variable enum (35 for auditable_entity; key must differ from enum name).
+
+### Injection probes — ALL NEGATIVE
+| Vector | Result |
+|---|---|
+| Formula parser | dedicated DSL parser: JS IIFE/this/template-literals/backticks/handlebars all "Can not parse formula" 422 — NO eval, NO stack traces leaked |
+| Engine fingerprint | abs()/max() work; string concat returns result:null with "not_finite" reason — typed numeric evaluator |
+| Variable values | injection unreachable — "Variable a does not exist" gate before evaluation; real vars require name==enum |
+| Parameters | strict per-parameter enum validation (IssueStatus leaks full enum: Draft/Inactive/Open/Pending Remediation/Remediated/Closed/Canceled), count validation ("expects 1 value(s)"), $ne object 400, SQL string 422 enum error |
+| Type juggling | value {}/[] rejected at Zod; parameters object 400 |
+
+### Verdict
+Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eval + no error leaks. No injection/RCE. reactive_expression_runs history + PUT require edit permission (Owner lacks).
+
+### Next queue (l)
+1. sigma_workbooks / sigma_bookmarks — Sigma reporting query surface (workbook data queries).
+2. we_workflow rerun/restart_task — workflow engine surfaces.
+3. Need resources: assistant low-priv elevation (2nd account), word redirect (worker restart).
