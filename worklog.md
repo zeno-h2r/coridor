@@ -1085,3 +1085,49 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. CROSS-ORG BOLA: read/write across org boundary on org-scoped objects (issues/narratives/files/controls/attachments) with the second-org account.
 2. Cross-org assistant CID + attachment pipeline tests.
 3. Parked: word-fetcher redirect SSRF (worker restart), we_* engine (stability), IDOR deep batch (now merged into #1).
+
+---
+
+## Session 2026-11-07 (q): BUG-009 — password-history enumeration oracle (rate-free credential recovery) + T-028 final closure waves
+
+### T-034 BUG-009 CONFIRMED (P2 rec) — password-history oracle via BUG-008 primitive
+- PUT /users/{id} with cross-account password (BUG-008 write, still unpatched) returns `422 "Password has been used. Please choose another."` when candidate == target's CURRENT **or PAST** password (history lookup, not just current: victim's t027-era password ZzZtmpPw2! — no longer current — still 422'd).
+- Candidates not in history → 200 + password applied. **Differential = enumeration oracle.**
+- **NO RATE LIMIT on the oracle path**: 3 rapid PUTs in 2.5s, zero 429 (contrast: POST /users/password-reset → 429 after ~3 rapid). Guessing is offline-rate-free, constrained only by the org password policy.
+- Attack tree: hit 422 → attacker recovers victim's REAL password → stealth UI login (no forced-change artifacts); miss 200 → attacker-set password + flag-clear → ATO anyway. Either branch = attacker access; hit branch = genuine credential disclosure (reuse risk across systems).
+- Scope: all 316 org users incl. Superuser (id 1). Owner-role attacker. No current-password check, no MFA on test accounts.
+- Victim state restored post-PoC: password ZzZtmpPw5!, requires_password_change=false, login 200 verified, fresh token minted.
+- Deliverables: reports/BUG-009-password-history-oracle.md + BUG-009-submission-draft.md. Disclosed dependency on BUG-008 for triage dedup (may be filed as impact amplification).
+
+### T-028 final closure (waves 2-4, extends session n)
+- Tiered role-assignment gate: role_id=2 → distinct error "must have System Admin privileges..."; role_id 3/4/6 → generic `user:action.administer` 422. Check is per-attribute (password-only PUT passes authz and reaches history validation).
+- Self-change blocked both directions (A→A, B→B). PATCH/relationships/user_roles/bulk_invite → 404 (no endpoints).
+- `POST /users/external_api_token` EXISTS → 422 `settings:addExternalApiUser` (new distinct permission Owners lack).
+- role_permissions/roles writes → hard 403 (read 200). SCIM under /api/v1/scim/* → 404 (feature absent on host; /api/v1/scim/Users LIVE per session n with protocol 401s — case-sensitive route, separate IdP cred store, uniform 401).
+- Gateway variants: X-Auditboard-Product (OpsAudit/TPRM/AuditBoard/Workflows/Sox/*), module variants, format suffixes (.json/.html/;format=) — uniform enforcement, no policy differential.
+- Verdict: role_id change properly gated everywhere; BUG-008 gap does NOT extend to role assignment/definition. Closed with high confidence.
+
+### T-029 stored XSS (rich-text) — NEGATIVE (server-side encoding)
+- B (action.edit on org-shared control 1) full-record PUT description with `<img src=x onerror=...>` payload → 200; stored HTML-ENCODED on write (`&lt;img...`). Ember-side auto-escape + server encoding = clean. Reverted.
+- Bundle render-path grep (innerHTML/htmlSafe/triple-stache): no unsafe sinks in available chunks.
+
+### T-031 sigma_workbooks/sigma_bookmarks — dead end (empty collections in QE; ModelNotFound on ids; count route is routing artifact)
+
+### T-032 AI service object-authz differential — no target, no leak
+- ops_audits: B and A visibility IDENTICAL (93 ids each) — no cross-account differential in our pair. Generative template:ops_audit/description {id} → 503 upstream reset (flapping ML service).
+- issue 123: denied for BOTH accounts (issue:action.view) — no differential. template:issues/issue_summary attr key still undiscoverable (4 key variants → ML 400); request builder in chunk absent locally. /generate_issue_summary_report focus_areas must be OBJECT (Zod leak), shape undiscoverable (no UI caller in deployed JS — dormant).
+- Bundle mining: 12 per-object promptUris found (controls/description+objective+test/procedure, issues/description, risks/description, esg/topic, ops_audit/*, rcw_library_requests, regulatory_compliance/regulation_interpretation, action_plans/remediation_action); key architecture split: ops_audit chains take promptAttributes[id] (server-side read) vs issue:description takes client-side values (no server read). Server-side id chains = the watch-list for future low-priv accounts.
+
+### T-033 pre-auth password-reset surface — P5-class intel, no P1-P3
+- PRE-AUTH user-id enumeration differential: password-reset with garbage token → existing user: 401 `login_failed_password_reset`; nonexistent id: 404 ModelNotFoundError "Could not locate model user". Below reporting threshold (program takes P1-P3 only) — recorded as recon aid.
+- Token verification rate-limited (429 after ~3 rapid). forgot_password/forgot-password initiation routes absent on API host (404) — reset initiation likely SSO-adjacent flow. No staging mail viewer (letter_opener|rails/mailers|sent_emails|mailcatcher all → SPA catch-all).
+- BUG-009 contrast fact: password-reset IS rate-limited; the user-update oracle path is NOT — implementation gap confirmed.
+
+### State
+- A(231): password ZzZtmpPw5! (tester-managed), flag clear, login verified. Tokens keep dying between sessions (~2-4h TTL observed across sessions; team rotation suspected) — re-mint via BUG-008 chain whenever needed.
+- B(230): intact. All probe artifacts reverted (control description '', role_id 5, permission records untouched — all writes refused by server).
+
+### Next queue (r)
+1. BUG-009 submission (user decision) — draft ready in reports/BUG-009-submission-draft.md.
+2. Cross-org BOLA — still blocked on operator account.
+3. Watch-list (needs low-priv account or stable ML service): server-side-id promptUris (ops_audit/description, controls/test/procedure, verify_population_file), we_* session flows (needs browser session cookie), word-fetcher redirect-follow (lock release).
