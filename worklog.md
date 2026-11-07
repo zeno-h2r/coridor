@@ -1283,3 +1283,39 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 2. klq-import-from-ml real shape (job queued with garbage — what does it process?).
 3. sox_ai_review/queue with Narrative/ControlsDatum entity (direction enum) — AI job-runner surface.
 4. autofill flag hunt (enable path); visual/import/xlsx other-route permissions; file_version creation path (parse-headers unlock).
+
+## Session 2026-11-08 (v): BUG-012 impact UPGRADE — internal port/service scan evidence (VRT P3 reframe) per operator directive
+
+### Operator directive
+- External SSRF = P5 per program VRT ("this's not impact bro please focus") → reframe BUG-012 to internal capability or drop.
+
+### T-050a — oracle fidelity (scripts/t050a_ssrf_upgrade.py, state/t050a_results.json)
+- PATCH /automation_credentials/{id} → 404 (no route); **PUT update works (200)** and triggers a synchronous server-side verify of the new host.
+- Error-body leak matrix: remote 500 → generic app 500; remote 403 → `403 ApiError "Forbidden"` passthrough; **response BODY never reflected**; `last_verified` persists only `{"results":[{"status":N}]}` or generic `"Something went wrong."` → Internal Data Exposure via error text = NEGATIVE.
+- `projects` endpoint rate-limits (429) after ~5 rapid calls; sustained hammering tarpits connections (curl 000 for minutes) — pacing required.
+- Redirect-following UNVERIFIED: httpbin.org/redirect-to returned 403 to axios UA (remote WAF or egress proxy); landing channel empty. Honest: unknown, not needed for scan (path injection covers arbitrary paths).
+
+### T-050b/c/d/e — INTERNAL scan PoC (scripts/t050b-e, state/t050b|c|d|e_results.json)
+- Single reusable probe cred id 76 (PUT data.host per probe). Internal results:
+  - `127.0.0.1:3000` + `localhost:3000` (/, /api/v1/users/me, /up, /api/v1/jira/credential/76/issues/X) → **404 ApiError — OPEN internal HTTP service**, 404s all probed paths (unidentified; GET on POST-only route also 404s → identity inconclusive)
+  - `169.254.169.254/latest/meta-data/` (+iam/security-credentials/) → **401 ApiError — AWS IMDS identified**, IMDSv2 enforced (tokenless GET)
+  - `integrations.qa.soxhubapp.com:80` → 404 — **integration service itself, plaintext listener**
+  - `127.0.0.1:6379/8080/9000/9001/9002` → generic 500 ~0.49s (refused class; t049f consistent)
+  - `kubernetes.default.svc`, `metadata.google.internal`, `169.254.170.2/v2` → 500-class → no k8s DNS / GCP / ECS-v2 → **EC2-instance-style topology**
+  - `10.255.255.1`, `172.31.0.1` → hang (filtered)
+- **Arbitrary-path injection**: backend string-concatenates `/rest/api/3/project/search?...` onto data.host → `host=http://localhost:3000/api/v1/users/me?zx=` fetches ANY internal path (suffix lands in query). Proven per-path status classes.
+- Remote 4xx → distinct ApiError classes (Unauthorized/Forbidden/NotFound/TooManyRequests) = repeatable open/closed/filtered scanner with service identification.
+
+### VRT-honest reframe (BUG-012 v2)
+- P2 Internal Secrets Exposure: NOT achieved (IMDSv2). P3 Internal Data Exposure: NOT achieved (no content readback; Jira-shape gate). **P3 Internal Port Service Scan: DEMONSTRATED** (IMDS + integrations service named; loopback port scan; arbitrary-path GET; POST via webhook registration). External full-read = P5 base capability, kept as supporting evidence.
+- Reports rewritten: BUG-012-ssrf-jira-credential-host.md + BUG-012-submission-draft.md (VRT mapping table inside).
+
+### State / cleanup
+- Creds 61-76 exist (no delete route) — all disclosed in report; 67-76 named t050a-zx-oracle, inert hosts. Cred 76 = reusable scanner probe (final host localhost:3000/up?zx=).
+- webhook.site channels: O=14820c97 (oracle, restored to Jira-200), L=bd2c3850 (landing).
+- No business objects touched; probe traffic paced after tarpit lesson.
+
+### Next queue (w)
+1. BUG-012 submission (P3, operator decision) — evidence table + copy-paste repro ready.
+2. If triage wants more: identify localhost:3000 (needs POST-capable probe — webhook registration to internal host with fixed path), or catch redirect-following with an axios-tolerant redirector.
+3. Watch-list unchanged: regulatory-profiles/autofill SSRF if flag enabled; klq-import-from-ml job shape; sox_ai_review/queue.
