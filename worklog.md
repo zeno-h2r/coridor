@@ -1243,3 +1243,43 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. BUG-011 resubmission-ready (operator decision) — impact chain now first-party.
 2. Watch-list: regulatory-profiles/autofill SSRF if flag enabled; VMS import with real template (needs feature enablement); we_* browser-session flows.
 3. Re-sweep bundles on next deploy (schemas actively changing: attachments/html, vms csv-import).
+
+## Session 2026-11-08 (u): 🔥 BUG-012 P2 — full-read SSRF via jira automation-credential host (CWE-918) + fresh-deploy JS dig round 3
+
+### Operator directive
+- "keep work new bug p1,p2" — continue hunting P1/P2 (SSRF/LFI/RCE/AI/auth-bypass focus, no BAC).
+
+### Bundle re-sweep (fresh deploy confirmed)
+- 34/41 entry chunks changed vs session-s cache; lazy-crawl downloaded full set to state/lzchunks2 (1872 js). Endpoint inventory: 320 /api/v1 strings (state/api_endpoints_prev.json).
+- New surfaces mapped: generative/{create,stream,structured,modify,log} (pageContext param), sox_ai_review/queue (entity_type enum Narrative|ControlsDatum), assessments/{id}/run_scoring_agent, automation preview_run, frameworks/custom-import/{parse-headers,validate}, {route}/visual/import/xlsx (controls|controls_data|auditable_entities|framework_items|issues|financial_accounts), ticketing/ticket_by_url, snow-integration/resource, document_intelligence/export/{pdf,docx}, automation_credentials, regulatory-profiles/autofill (client contract cracked: POST {website} → jobId → GET status → stagedAttributes readback — still flag-gated 403, no enable path found in bundles).
+
+### Negatives (closed fast)
+- ticketing/ticket_by_url: DB lookup only (uniform 404 for external/IMDS/file/localhost, zero webhook callbacks) — no server fetch.
+- snow-integration/resource: "Invalid ServiceNow url" validator + Rails route-normalization 307 dead-end (no fetch without configured integration).
+- automation_workflows/clone_template + preview_run: `automation_workflow:action.create` denied for Owner tier; org has zero workflows.
+- visual/import/xlsx: `visualImport.ux:issuesWorkbook` denied; other routes likely same. frameworks/custom-import/parse-headers: requires file_version id — file_versions plane hidden (index 403) and API-minted files get NO version → parse surface UNREACHABLE for self-minted files (XLSX/XXE vein INCONCLUSIVE). Test files 2678/2679 deleted.
+- import_tools: still ConfigurationError; pulse: FeatureNotEnabled; regulations/import: 403; sigma embeds: no reports in QE.
+- klq-import-from-ml: accepted garbage body → 200 {"status":"processing"} (job queued; real shape = follow-up lead).
+
+### 🔥 BUG-012 — full-read SSRF via jira automation-credential host (P2 rec)
+- POST /api/v1/automation_credentials accepts `data.host` = ARBITRARY URL (no scheme/host/IP validation; link-local/loopback/RFC1918 all accepted).
+- Backend Node/axios service (UA axios/1.20.0; sentry txn `GET /jira/projects`) fetches `{host}/rest/api/3/project/search?startAt=0&maxResults=50` on ticketing/projects + verification + webhook registration (`POST {host}/rest/webhooks/1.0/webhook`, UA node).
+- **FULL READBACK**: host → attacker server answering `{"isLast":true,"values":[{"id":"10001","key":"ZXSSRF","name":"ZX SSRF Readback Project",...}]}` → `GET /api/v1/ticketing/projects?credentialId=<id>` returns `{"projects":[{"id":"10001","name":"ZX SSRF Readback Project","description":"ZXSSRF"}]}` 200.
+- **Internal oracle**: host=169.254.169.254 → distinct 401 ApiError ~0.5s (IMDS REACHED, IMDSv2 stands); 127.0.0.1:9002 → 500 fast (refused); 172.31.0.1/10.255.255.1 → create/projects HANG (blackhole). Port/service scanner + status-code persistence in last_verified (readable).
+- **POST-SSRF + internal topology leak**: webhook registration body discloses `https://integrations.qa.soxhubapp.com/api/v1/jira/credential/{id}/issues/{issue.key}?instanceUrl=...` + event list.
+- Context: ~40 similar cred artifacts from other testers exist in-org (ssrf-test/poc-imds/poc-redis/poc-k8s) — vein known, but full readback chain not previously documented; my PoC proves it end-to-end POST-patch.
+- Reports: reports/BUG-012-ssrf-jira-credential-host.md + BUG-012-submission-draft.md. Tester creds 61-64 remain (DELETE route 404, disable PUT ignored) — disclosed in report for vendor cleanup.
+
+### BUG-006 amendment evidence (doc_intelligence/export)
+- NEW converter sink: POST /api/v1/document_intelligence/export/{pdf,docx} — raw htmlContent+fileName, NO attachable requirement, NO artifact records, sync presigned URL (7d expiry). PDF = same HeadlessChrome/155 Skia egress posture as BUG-006 (IMDS reachable 401-empty, VPC blackholed, localhost closed, external callbacks img/js/fetch confirmed). DOCX = lightweight converter, does NOT fetch remote resources (no SSRF). Strengthens BUG-006 (lowered access bar), ceiling unchanged (P3).
+
+### State
+- A(231): fresh token minted (rotation continues). B(230): token live.
+- Cleanup: test files 2678/2679 deleted; probe creds 61-64 left (no delete API — names t049e/t049f-prefixed); webhook channels 4a052ff6 (t040/t049) + 94b9212f (jira readback) used.
+- New scripts: t047a_resweep, t047b-f (bundle dig), t048a-c (xlsx), t049_newsurfaces, t049b-f (docintel + cred SSRF ladder).
+
+### Next queue (v)
+1. BUG-012 submission (operator decision) — draft ready. Pair with BUG-011 (credential-in-URL) chain narrative if triage wants P1 framing.
+2. klq-import-from-ml real shape (job queued with garbage — what does it process?).
+3. sox_ai_review/queue with Narrative/ControlsDatum entity (direction enum) — AI job-runner surface.
+4. autofill flag hunt (enable path); visual/import/xlsx other-route permissions; file_version creation path (parse-headers unlock).
