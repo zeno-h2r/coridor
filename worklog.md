@@ -964,3 +964,10 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. T-026 generative promptUri chain enum + promptAttributes injection (AI category).
 2. T-027 narrative editor sanitizer fingerprint (AI-generated HTML -> stored XSS persistence).
 3. With 2nd account: IDOR batch + assistant low-priv elevation + we_* session-flow tests.
+
+### Session (l) addendum — unauthenticated surface sweep while token dead (no creds available)
+- Re-verified token death (2nd pass, ~1h later): all endpoints 401 "Missing authentication"; `Authorization: Bearer <id:secret>` => "Bad token" — the gateway's Bearer path is a SEPARATE validation (JWT-ish) from the token-header path (id:secret). Two distinct schemes, both clean.
+- we_* service: NO unauthenticated endpoints (docs/openapi/metrics/version/ping/debug/config/swagger/schema/queue/status => 404; only count routes mirror 401 gate).
+- Login flow: Ember SPA (no server-rendered form); /users/sign_in, /password/new, /password/edit all return SPA catch-all HTML; no /api/v1 login/session/tokens/authenticate routes (all 404). cfg.json: authTypes=[no-access,password] — NO SAML in QE => no SAML signature-bypass surface.
+- No alternate credentials in local state (cfg.json is public frontend config only).
+- CONCLUSION: 100% of the OWASP-scope surface (AI/authbypass/SQLi/RCE/SSRF/XSS) is behind authentication. Testing fully blocked until program issues fresh credentials.
