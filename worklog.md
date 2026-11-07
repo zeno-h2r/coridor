@@ -742,3 +742,38 @@ Stage Summary:
 2. generative/stream chain:verify_population_file promptAttributes — ML-side file parse surface (needs shape; 400s so far).
 3. document_intelligence/attachment {attachableType,attachableId,htmlContent,fileName} — second html->attachment sink (same renderer class presumably).
 4. RAG: attempt documentType policy_published_versions + cross-workspace file_id re-use (authz of fileId param).
+
+---
+
+## Session 2026-11-07 (e): BUG-006 P1 escalation hunt — SSRF/LFI/RCE fully exhausted, P3 ceiling CONFIRMED
+
+Operator directive: deep-dig BUG-006 for SSRF->LFI->RCE -> P1. One technique at a time, OAST/webhook dual-channel, honest ceilings.
+
+### New primitive built: painted-DOM internal scan oracle
+- Chrome renderer JS (`fetch no-cors` + `AbortSignal.timeout`) probes arbitrary IP:port sets in parallel; results written to DOM -> painted into stored PDF -> presigned S3 readback (pdftotext). ~45-58 targets per single `POST /api/v1/attachments/html` call.
+- Scripts: t016c_vpc_sweep.py (RFC1918 sample), t016d_getpdf.py, t016e_sweep24.py (172.20.0.0/24), t016f_ports10.py (30-port sweep on .10/.1).
+
+### Results (all negative for P1, high confidence)
+| Surface | Result |
+|---|---|
+| RFC1918 VPC (10/8, 172.16-31/16, 192.168/16; AWS-default 172.31.0.0/16 @ 80/443/3000/8080) | ALL 1500-2500ms timeout = blackholed. Renderer has NO route to app/data tiers. Control IMDS REACHABLE 11-14ms each run (oracle valid). |
+| `*.us-west-2.compute.internal` | DNS query hangs (2500ms) vs public DNS-fail fast-fail 21-23ms — internal zone unusable. |
+| Worker sandbox | Docker container on 172.20.0.0/16. Gateway 172.20.0.1 instant-RST (2-7ms); suspected self-IP 172.20.0.10 instant-RST ALL 30 ports incl. 9222 CDP + 9229 node inspector => NO debugger RCE. No redis/pg/es locally. |
+| LFI | file:// blocked in Chrome; word fetcher HTTP-only (Net::HTTP). DEAD. |
+| IMDSv2 | PUT + custom header unreachable from no-cors fetch and single-GET fetcher. 401-empty stands. |
+| doc_intelligence/attachment (2nd HTML sink) | Shape cracked: {attachableType: ProjectPlanContainer|Policy, attachableId(string), htmlContent, fileName(no ext), attachmentId(PUT)}. QE tenant has ZERO such records; create permission-gated (policy:action.create / project_plan_container:action.create denied). Bogus id => 500 BEFORE conversion (no webhook callback) => authz precedes processing. Dead end. |
+| Stored XSS via attachments/html | type enum pdf|word only; attachment stores file_id (S3 binary); SPA previews via native viewers + view.officeapps.live.com (3rd-party). No raw-HTML render path in bundles. DEAD. |
+| Word fetcher redirect-follow | UNTESTED — global word pipeline lock held by hung DOCX job (409 fileable_type must be unique on every narrative). Low residual value. |
+
+### BUG-006 final severity: P3 (stands)
+Internet-reachable headless-Chrome SSRF primitive with external readback, internal liveness oracle, link-local metadata reachability — but egress-isolated from VPC, IMDSv2-enforced, no local services, no LFI, no RCE. Report updated: reports/BUG-006-ssrf-attachments-html-headlesschrome.md (Session (e) section).
+
+### Ops notes
+- t016b document_intelligence probes (bogus attachableId 999999 / PPC 1) left a HUNG DOCX conversion holding the global word-pipeline lock (all subsequent type:word creates => 409). PDF pipeline unaffected (sweeps ran fine).
+- Attachment ids created this session: 11169 (vpc-sweep-e1, file 2634), + e2/e3 (vpc-sweep-e2, vpc-sweep-e3 on narrative 62).
+
+### Next queue (f) — P1 hunt continues on fresh surfaces
+1. BUG-007 escalation: verify poisoned RAG content actually reaches AI consumer surfaces for other users (TPRM survey suggestions / Knowledge Library QA) => P2 if confirmed.
+2. BUG-007 chain: RAG poison -> chain:narrative generation -> does AI output embed attacker HTML into narrative body -> rendered/edited by victims (stored XSS potential, editor sanitization unknown).
+3. generative/stream chain:verify_population_file promptAttributes shape (ML file parse surface).
+4. Word fetcher redirect test (retry when lock releases).

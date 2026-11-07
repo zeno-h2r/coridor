@@ -57,6 +57,23 @@ Notes: `attachableType` accepts at least `Narrative` and `Policy` (and `OpsAudit
 - The no-cors fetch oracle yields a **full internal port scanner / service liveness oracle** from an internet foothold (distinguishes open/closed/filtered).
 - If any internal HTTP service returns content without requiring CORS, or IMDSv1 exists elsewhere in the fleet, this becomes full read SSRF (P1/P2). Current confirmed ceiling: internal reachability + external readback + persistent artifact.
 
+## Session (e) — P1 escalation hunt: ALL PATHS EXHAUSTED (final ceiling confirmed)
+
+Hunt order per operator directive: SSRF → LFI → RCE. Results:
+
+1. **Internal VPC lateral movement: ISOLATED (blackholed).** Painted-DOM sweep (JS `fetch no-cors` + `AbortSignal.timeout`, results rendered into the stored PDF, read back via presigned S3):
+   - Control `169.254.169.254` REACHABLE (11-14ms) — oracle validated every run.
+   - ALL RFC1918 samples (10/8, 172.16-31/16, 192.168/16 incl. AWS-default 172.31.0.0/16 on ports 80/443/3000/8080) => 1500-2500ms timeout = blackholed. No route from renderer to VPC app/data tiers.
+   - `*.us-west-2.compute.internal` names: DNS query hangs (2500ms, no answer) vs public-host DNS-fail fast-fail (21-23ms) — internal zone not usable.
+2. **Worker sandbox mapped, no exposed services:** the converter runs in a Docker container on network `172.20.0.0/16` — gateway `172.20.0.1` instant-RSTs every port (2-7ms); suspected self-IP `172.20.0.10` instant-RSTs all 30 probed ports incl. **9222 (Chrome DevTools) and 9229 (Node inspector) => no debugger/inspector RCE**. No Redis/Postgres/ES/other services on the local bridge.
+3. **LFI: dead.** Chrome `file://` blocked (origin policy). Word-pipeline Ruby fetcher is HTTP-only (Net::HTTP fingerprints; no file-scheme handler observed).
+4. **IMDSv2 stands:** token requires PUT + custom header — unreachable from no-cors fetch (methods restricted) and from the single-GET Ruby fetcher. `/latest/meta-data/` still 401-empty.
+5. **Second HTML sink `POST/PUT /api/v1/document_intelligence/attachment` (AI document editor): BLOCKED, no escalation.** Shape cracked via 422 enum leak: `{attachableType: "ProjectPlanContainer"|"Policy" (string attachableId), htmlContent, fileName (no extension), attachmentId (PUT)}`. QE tenant has ZERO Policy/ProjectPlanContainer records; creation denied (`policy:action.create`, `project_plan_container:action.create` permission-gated). Bogus attachableId => 500 BEFORE any conversion (no webhook callback fired) — authz/record lookup precedes HTML processing, so no unauthed conversion primitive either.
+6. **Stored-XSS via saved HTML: dead.** `attachments/html` always converts to PDF/DOCX (`type` enum `pdf`|`word` only); the attachment record holds only `file_id` (binary on S3). SPA previews documents via native viewers / `view.officeapps.live.com` (third-party) — no client-side DOCX-to-HTML renderer, no raw-HTML attachment view found in bundles.
+7. **Ruby fetcher redirect-following: UNTESTED** — global word-pipeline single-flight lock held by a hung DOCX job (409 `fileable_type must be unique` on every narrative); low residual value (direct arbitrary-host fetch already proven, and 307-redirect cannot supply the IMDSv2 PUT).
+
+**Final severity: P3 stands.** The renderer is an internet-reachable SSRF/browser primitive with external readback, internal port-liveness oracle and link-local metadata reachability — but it is egress-isolated from the VPC, IMDSv2-enforced, and exposes no local services. No LFI, no RCE, no credential theft demonstrated.
+
 ## Remediation suggestions
 
 - Render HTML with a network-isolated renderer (deny link-local/IMDS ranges, egress allowlist to S3 only), `--disable-local-file-accesss` equivalent, no JS (`--disable-javascript`) if possible.
