@@ -633,3 +633,38 @@ Stage Summary:
 4. T-010 ethereal_action policy verification (controlled, own-record no-op first, then read-side oracle for hidden records).
 5. T-011 passwordless_invitations/redeem pre-auth flow analysis.
 6. T-012 stored XSS via attachments/html render path + issues rich text.
+
+---
+
+## Session 2026-11-07 (b): JS deep recon + SSRF CONFIRMED
+
+### JS recon (all 38 shell assets + lazy refs)
+- Re-crawled SPA shell: 38 JS assets (23 vendor + 6 uncommon + login + rolldown-runtime). 2259 lazy chunk names mapped (state/js3/_lazy_refs.txt).
+- 211 API routes extracted with per-file attribution (state/js3/_routes_all.txt). 546 keyword strings (_keywords.txt).
+- Notable routes: assistant/files/{check,register}, document_intelligence/{attachment,export/pdf}, import_tools/{upload,validate}, rag/add_document, framework_items/download_files_zip, ops_audit_items/import/json, lucidcharts/import_into, vms/csv-import, regulatory-profiles/autofill.
+- `impersonatedRole` = client-side only (superuser UI role simulation; server role unchanged). users/me?encoded=true returns base64 JSON payload.
+- No hardcoded secrets beyond vendor keys already known (PDFTron/SpreadJS/Amplitude from config).
+
+### T-006 document_versions/files — ACL enforced (NEGATIVE)
+- `GET /api/v1/document_versions/{id}` + `GET /api/v1/files/{id}` DO enforce per-object ACL: 422 ModelActionPermissionDenied on other-tenant ids, 200 + `_permissions.action.view:true` on same-org. Collection scoping consistent with object fetch for files. Presigned S3 URLs minted on demand (valid 3600s). Not a finding.
+
+### T-010 order= — NEGATIVE
+- `order` param accepts only ASC/DESC (`400 Invalid query, order must be ASC or DESC`). No SQLi surface.
+
+### T-007 RAG add_document — pipeline rejects all URLs (NEGATIVE for now)
+- Zod schema: fileId must be string. All URL shapes (own presigned S3 URL of real file, webhook, OAST, metadata, localhost, file://) → `500 Failed to process all 1 document(s)` <2s, NO outbound callback (webhook 0 hits). Ingestion fails pre-fetch; no SSRF via RAG.
+
+### 🔥 T-009 attachments/html — SSRF CONFIRMED (BUG-006)
+- Server renderer = **HeadlessChrome/155 Skia/PDF**, loads HTML via setContent (about:blank origin).
+- CONFIRMED: external fetch callbacks (pdf AND word pipelines), inline JS execution, external script+iframe loads, cross-origin iframe content PAINTED into stored PDF (example.com full text readback), no-cors fetch reachability oracle, **IMDS 169.254.169.254 responds on all paths**.
+- Blocked: IMDSv2 (empty 401 bodies — no creds), file:// iframes, localhost CDP/ports (15 probed closed), k8s DNS unresolvable, ECS 169.254.170.2 timeout.
+- XXE: DOCTYPE/entities treated as HTML — no XML parse surface.
+- Report: reports/BUG-006-ssrf-attachments-html-headlesschrome.md — recommend P3.
+- Prereq: authenticated write-scope attachable (Narrative/Policy verified; OpsAuditItem demo rows read-only).
+
+### Next queue (c)
+1. Submit BUG-006 (user decision — P3 per program rules).
+2. T-008 passwordless_invitations pre-auth token analysis (request_new/redeem shape known: {token}→{sentTo}; redeem mints session).
+3. ethereal_action policy verification (generic mutation engine).
+4. automation_credentials/ticketing integration surfaces.
+5. generative/stream promptAttributes per-template (AI focus).
