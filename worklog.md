@@ -1353,3 +1353,30 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 
 ### State
 - B(230) token live; files 2680-2682 deleted; no business objects modified (Issue 121 untouched by file delete cascade — attachment removed only).
+
+## Session 2026-11-08 (x): AI ADMIN PLANE DISCOVERED + integrations svc direct-access mapped — then TOKEN LOCKOUT (env reseed/rotation) — honest stop
+
+### Operator directive
+- "kee going on Ai surface and internal integration service".
+
+### T-052 — integrations.qa.soxhubapp.com DIRECT EXTERNAL ACCESS (scripts/t052a|b|d; state/t052*)
+- Wildcard DNS *.qa.soxhubapp.com -> 18.246.124.104 / 35.92.27.97 / 32.187.226.247 (CloudFront/ALB); only integrations.* has a live listener.
+- Express/Node (helmet set, `{"error":"Not Found","message":"Cannot GET /"}`, **CORS: \***, allow-methods ALL). Public routes after ~130 probes (GET/POST/OPTIONS/contract shapes): ONLY
+  `GET /version` -> {"version":"v1.16.1","timestamp":...} and `GET /api/v1/health` -> "ok".
+- Contract routes (jira/verify/projects/webhooks/quickbooks/oauth/credentials, 30 POST shapes) all uniform 404 => service is queue-worker; no HTTP contract exposed externally.
+- **Request smuggling: NEGATIVE x2** (t052c + t053a, raw-socket unique-marker): ALB normalizes CL+TE both orders (single clean request), rejects space-colon/dual-CL/underscore-CL 400, TE-tab 501. Main app edge also normalizes CL+TE. Technique closed honestly on both edges.
+- OPTIONS-no-Origin route oracle idea dead: cors package 204s ALL paths.
+
+### T-053 — AI ADMIN PLANE (NestJS service behind main API) + generative API map (state/t053*)
+- **NEW SERVICE FOUND**: `/api/v1/ml_generative_prompts` + `/count` + `/{id}`, `/api/v1/ml_generative_logs` (+count), `/api/v1/ml_traces/count` -> NestJS-style 401 `{"statusCode":401,"error":"Unauthorized","message":"Missing authentication"}` — SEPARATE AI-admin service path-mounted under bugbounty1; token-header/query-param/cookie auth ALL rejected => gateway-level auth, browser session-based. GET /api/v1/ml_traces -> 404 (no GET route; count only).
+- Frontend (admin-11btR9W_.js): mlGenerativePrompt CRUD table (promptUri, promptAttributes, promptUriByName), mlGenerativeLog table (version_context.feature filter), ML_TRACE schema. `/generative/*` full endpoint map from chunks: create, test (promptAttributes+promptIds+promptUri), structured, stream, scoping-memo, batch-summaries, suggest-library-request, form-values, modify, log, transcription, dynamic-schema.
+- **promptUri scheme = `template:<name>`** (template:controls/description, template:ops_audit/description [id], template:ops_audit/scoping-memo, template:action_plans/remediation_action, template:risks/description, template:esg/topic/description, template:controls/test/procedure) — server-side template resolution => LFI/SSTI ladder pending valid-auth baseline (prompts stored via promptIds -> rendered server-side = RCE candidate if prompt body editable + ERB/Haml render).
+- CSP leak: *.launchdarkly-devserver.{pr,qa}.soxhubapp.com frame-src; auditboard-files-{qa,pr}-us-west-2 S3 (anon list/get: 403 locked, both buckets + accelerate); merge-api; forethought/birdie widgets; bugbounty1.launchdarkly-devserver.qe.optrostaging.ai (LD dev-server reads PROJECT NAME from Authorization header; 7 guesses missed; name not in bundles = runtime config).
+
+### TOKEN LOCKOUT (blocker)
+- Mid-session BOTH program tokens died: 230/231 + query-param + cookie variants -> uniform 401 "Missing authentication" on EVERY plane (users/me, roles, we_tasks, files, settings, table DSL). Login as golden-snow-4771 (ZzZtmpPw2!/3!/4!) -> login_failed (user deleted or DB reseeded). forgot_password 404; /users/password-reset needs emailed token (relay unreachable). => **QE staging reseeded OR program rotated brief tokens — need fresh tokens from brief to resume.**
+
+### Next queue (first 3 after creds return)
+1. /api/v1/generative/test|create with EXACT UI shape (promptAttributes array + promptUri template:controls/description) -> working baseline -> promptUri traversal ladder (template:../, absolute, file://) + promptIds rendering -> LFI/SSTI/RCE candidate (P1 if lands).
+2. ml_generative_prompts CRUD via browser-session auth: read prompt templates, check writable body -> stored-prompt RCE lead; ml_generative_logs/ml_traces = AI data exposure (P3) check.
+3. Retest flag-gated AI surfaces (evidence-search/run_scoring_agent/sox_ai_review/autofill) — flags may differ post-reseed.
