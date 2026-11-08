@@ -1380,3 +1380,28 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. /api/v1/generative/test|create with EXACT UI shape (promptAttributes array + promptUri template:controls/description) -> working baseline -> promptUri traversal ladder (template:../, absolute, file://) + promptIds rendering -> LFI/SSTI/RCE candidate (P1 if lands).
 2. ml_generative_prompts CRUD via browser-session auth: read prompt templates, check writable body -> stored-prompt RCE lead; ml_generative_logs/ml_traces = AI data exposure (P3) check.
 3. Retest flag-gated AI surfaces (evidence-search/run_scoring_agent/sox_ai_review/autofill) — flags may differ post-reseed.
+
+## Session 2026-11-08 (y): fresh token re-entry — AI surface swept to HARD GATES (no P1/P2; honest)
+
+### Operator
+- New token pasted: 230:030e... (user 230 survived; prior secret rotated). optro.sh updated.
+
+### T-054 re-entry + AI sweep (scripts/t054a|b|c|d|e; state/t054*.json)
+- **Auth planes re-mapped post-rotation**: ml_* NestJS plane now processes token header -> Rails perms apply. `ml_generative_prompts`(+count,+/{id}) & `ml_generative_logs`(GET) => 422 **ModelActionPermissionDenied (settings.ux:AITile:show)** — our tester lacks AI-admin perm. `ml_generative_logs/count` => **200 {"count":2} NO perm needed** (count-only leak, P5, not reported). `ml_traces/count` => 403 hard.
+- **WORKING AI PRIMITIVE**: `POST /api/v1/generative/modify` {promptUri:"template:controls/description", promptAttributes:RECORD, existingText, modifyAction:"polish"} -> **200 {"data":..., "meta":{"app_version":"43.3","model":"gpt-5.4-mini-2026-03-17","truncated":false}}**. promptAttributes is RECORD (array rejected; UI sends array, Rails expands client-side). Same shape works create/modify; test/create -> AI 400 without valid context.
+- **promptUri template-resolution ladder: ALL NEGATIVE** (t054c): `controls/../controls/description`, `/etc/hostname`, `../../etc/passwd` (6 deep), `file://`, `%00` (406), `.rb` suffix -> uniform 400 generic. `template:<name>` = DB-registry key match (ml_generative_prompt rows), NOT filesystem paths -> **LFI/SSTI via promptUri CLOSED**.
+- pageContext {chain:'issue',id:121} -> 400 (old id died w/ reseed; chain errors generic — no enum leak). create_entity (resourceType control/garbage) -> 500 generic both. generative/stream -> 400 raw "Error from ML service: 400 Bad Request" passthrough (P5 noise; create-shape also 400 — needs entitlement).
+- **run_scoring_agent re-map**: NOW NestJS-served w/ live Zod (pre-reseed was Rails 403 dev-flag). data_source_config entries must be OBJECTS; key enum FIXED (issues|kris|kpis|linked_controls|recent_audits|aer_with_effectiveness|prior_responses|linked_risks|cross_assessment_responses) — no attacker-controlled fetch targets; assessments table EMPTY post-reseed -> nothing to score. CLOSED.
+- evidence-search: route REMOVED post-reseed (404, was 422 flag). sox_ai_review/queue: REMOVED (404). regulatory-profiles/autofill: still 403 "Auto-fill from website is not enabled".
+- generative/log admin tile: `generatedOutput` renders as `text-multi-line` (escaped) in ml-generative-log-list schema -> stored-XSS-in-AI-tile NEGATIVE (static evidence).
+- LaunchDarkly devserver: reads PROJECT NAME from Authorization header; 7 name guesses 404; name = server-injected runtime env (`on.launchDarklyEnvironmentLink`), not in bundles. SPA shell has no config. CLOSED.
+- Integration svc re-checks: 130-path GET wordlist + 30 POST contract shapes + OPTIONS all 404; only /version + /api/v1/health public. localhost:3000 = the service itself (identical 404 fingerprints). Smuggling re-closed: ALB normalizes CL+TE both orders; space-colon/dual-CL/underscore -> edge 400; TE-tab -> 501.
+
+### Net
+- **No new P1/P2/P3 today — honest.** Both operator surfaces (AI, integration service) swept to hard gates: AI-admin plane needs `settings.ux:AITile:show` perm; evidence-search/sox_ai_review/autofill flag-gated or removed; scoring agent enum-fixed + empty data; template registry not filesystem.
+- Working primitives preserved: generative/modify 200 channel; BUG-012 SSRF fully re-armed w/ fresh token (P3-capped per VRT).
+
+### Next queue (z)
+1. ASK TRIAGE/PROGRAM: AI-entitled test account (settings.ux:AITile) OR enable autofill/evidence-search — 4 surfaces unlock simultaneously; evidence-search free-text agent = strongest P2/P3 candidate.
+2. Re-sweep flags on every redeploy (evidence-search REMOVED post-reseed = surface actively churning).
+3. If SSRF wanted: localhost:3000 identification queue (P3 ceiling) still open w/ POST-webhook oracle idea (404-vs-400 route diff on integration svc contract).
