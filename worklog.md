@@ -1405,3 +1405,88 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. ASK TRIAGE/PROGRAM: AI-entitled test account (settings.ux:AITile) OR enable autofill/evidence-search — 4 surfaces unlock simultaneously; evidence-search free-text agent = strongest P2/P3 candidate.
 2. Re-sweep flags on every redeploy (evidence-search REMOVED post-reseed = surface actively churning).
 3. If SSRF wanted: localhost:3000 identification queue (P3 ceiling) still open w/ POST-webhook oracle idea (404-vs-400 route diff on integration svc contract).
+
+## Session 2026-11-08 (z): NEW EXTERNAL SERVICES recon (aigov/finra/midship/cascade) + ASSISTANT ENTITLED deep-dive — no new P1/P2 (honest)
+
+### Operator
+- "i will ask the program and back to you. now test the more bugs" — operator pursuing AI-entitled account from program; continue hunting meanwhile.
+
+### T-055a — re-entry + config diff (scripts/t055a_reentry_cfgdiff.py)
+- Token A (231) DEAD; token B (230, role 5) ALIVE (`/users/me` returns users[] wrapper — liveness parser fixed).
+- Live config = stored cfg.json (0 diffs): all AI entitlement flags still true (auditboardAssistant, internetSearch+allowlist, ai.admin, all core entitled), `enable_scaffolds_route: true`, `restore_records: control,entity`, 4 never-tested external services configured: aigov (uswest2.api.aigov.auditboardapp.com), finra (finra.auditboardteam.com), cascade (test-security.auditboardanalyticstesting.com), midship (midship.us.mt.qa.optrostaging.ai).
+
+### T-055b/c — aigov API (scripts/t055b_newsites.py, t055c_aigov_auth.py; state/aigov_openapi.json, t055b|c_results.json)
+- FastAPI; PUBLIC /docs + /openapi.json (250KB, 92 paths, "Optro AI Governance API" 2026.04): applications(43)/access(12)/agents(9)/specifications(9)/frameworks/controls/notifications/vendors/company/documents. All ops spec-marked HTTPBearer.
+- Auth differential (noauth/garbage/empty/QE-token-as-bearer/token-header) on 10 read endpoints: uniform 401 — enforcement real. CORS `*` + bearer = not exploitable.
+- **Token exchange found**: main-app `GET /api/v1/ai-gov/auth` → 200 {token} for tester role-5. JWT HS256, 15-min TTL, iss=bugbounty1_120509, sub=230, claims/namespace=bugbounty1, claims/superuser=false, aud=aigov API.
+- **Exchanged token REJECTED by aigov API** (401 {"detail":"Unauthorized"} on all 10) — signature/registry validation fails. alg:none, kid=../dev/null empty-secret forgeries → 401. JWT confusion CLOSED (secret unknown; per-namespace key).
+- Client wiring (dist-BzOYIV2D → vendor-B1ZfFryj `kie`): aigov client = `Authorization: Bearer`; core client = `Token:` header (`application/vnd.api+json`).
+
+### T-055e — finra service (state/t055e_results.json)
+- Node/Express v1.3.1. Unauth: /health (DB connected, uptime), /version, /status (refresh job: records=182408, startedAt/finishedAt, percent). `/search` route EXISTS (400 {"data":[],"error_message":"Not Found"}) — 13 param-name guesses failed; frontend consumer chunk not in shallow graph. FINRA registry data = public anyway → P5 ceiling, PARKED.
+
+### T-055h-l — assistant ENTITLED post-reseed (scripts/t055f_newmodules.py, t055g_assistant_tools.py, t055h/i/j; state/t055f..l_results.json, assistant_t055g/i/j ndjson)
+- `POST /api/v1/assistant/conversations` → 200 (was FeatureNotEnabled pre-reseed). chat/stream works for user 230. Cross-user conversations (231, 1) still ForbiddenError (t029c reconfirmed shape).
+- **Tool inventory via prompts**: `internet_search` tool exists; emits `confirm_tool` {tool_call_id, tool_name, message}; NO direct URL fetch tool ("cannot fetch URLs directly") → assistant SSRF angle CLOSED (search is server-side, allowlisted domains in config).
+- **Confirm flow proven**: `POST /api/v1/assistant/tools/confirm` {conversationId, context, status:"accepted"|"rejected", toolId} → tool_executed (approval_mode user_confirmed, status succeeded) + `external_sources` event streams real web results.
+- **Fabricated client result injection CLOSED**: `POST /assistant/tools/{tid}/result` Zod {conversationId, context, status: dismissed|completed|disregarded} — 404 MLServiceError "Not Found" for confirm-type pending tools (endpoint serves interactive tools only, server-keyed).
+- **files/register org-scope CLOSED**: check {content_hash,filename,size} → {"duplicate":bool} (P5 dedup oracle, skipped). register {file_key,filename,size,content_hash} → DB-keyed lookup (real S3 object without record → 404; record deleted → 404; foreign prefix → 404). Single-company QE DB → cross-tenant unreachable. Upload flow: /files/s3_upload_signature {file_name,model_name:null,model_id:null,content_hash:md5-b64} → formData key = `bugbounty1120509_qa/undefined/null/<uuid>/<fn>` (model nulls leak "undefined/null" path segments — cosmetic).
+- `ai/recommendations` (api/v2): POST {id:int, id_model:str, match_model:str, params:{}} + `?fields[{entity}]=...`; entity key SINGULAR ("control" passes resource validation → 500 w/ fake model names; plural/other → 400 "Invalid resource type requested"). Q5e entity map harvested: auditable-entity, framework, framework-item, controls-datum, control, rcw-library-request, rcw-request, compliance-assessment-item, compliance-assessment, esg-metric, esg-topic, issue, program-regulation-item, risk, ops-audit-item, ops-audit, monitor, user, bcm-function.
+- promptUri registry EXPANDED (e7e map): template:ops_audit/scoping_memo_report, chain:narrative, chain:narrative.review, narrative/flowchart, narrative/flowchart/visio (+ prior template:controls/description etc.).
+- assistant_knowledge_files → 403 perm-gated; saved-prompts → 422 FeatureNotEnabled; sigma/debug → 200 config booleans/IDs only (P5, skipped); sigma/report_debug → ModelNotFoundError (no sigma workbooks in QE); CCM stats endpoint 200 (monitor ids [1]); ml_generative_* still perm-gated.
+
+### T-055m — MIDSHIP full recon (state/midship_openapi.json, midship_main.js)
+- `https://midship-api.us.mt.qa.optrostaging.ai` = FastAPI; PUBLIC /docs + /openapi.json: **473 paths / 551 ops, 0 open, global Bearer** — controls(140), matching(95), work-steps(89), admin(26: cache bust, eval runners, playground, schema generation), schemas(18), sessions(14), workspace(13), auth(11), approvals(10), api_keys(3), audit-logs, files.
+- Auth = `Authorization: Bearer <midship JWT>` + `X-Workspace-Id` (localStorage tokens; UI at midship.us.mt.qa...). optrooauth: `/auth/optrooauth/login?optro_base_url=<host>&state_binding=<sha256-hex>`:
+  - Host allowlist = SUFFIX check {optrostaging.ai, auditboardapp.com, soxhubapp.com}; userinfo/backslash/dot-suffix URL-confusion bypasses BLOCKED (server normalizes to matched vendor host — substring extraction).
+  - 302 → `{optro_base_url}/midship/v1/oauth2/authorize?response_type=code&client_id=midship&redirect_uri=<fixed midship callback>&code_challenge=<PKCE S256>&state=<rand>`. Wildcard DNS on all 3 suffixes resolves to vendor infra → no dangling DNS → provider-confusion requires subdomain takeover on vendor domains = CLOSED.
+  - OAuth callback enforces state ("Missing or invalid sign-in state"); refresh-tokens/reset-password validation solid (reset = uniform 500, no enum).
+- Midship = biggest MAPPED-but-locked surface; needs a midship access_token (optrooauth with valid optro instance + workspace). Candidate: ask program for midship/QA entitlement.
+
+### T-055n — cascade (test-security.auditboardanalyticstesting.com)
+- "AuditBoard Analytics" — separate product: own user system (/users/me), RTK Query client (/workbooks, /teams, /workspaceassets, /featureflag, /soxhub/assistant/conversations, /soxhub/config), Monaco editor. API base runtime-injected (not in bundles); all paths serve SPA HTML. Timeboxed LOW (likely distinct product/scope).
+
+### Cleanup / state
+- File 2683 created+deleted (register differential). Conversation::user:230 now has test messages (benign). No business objects modified. webhook.site token d8382db7 EXPIRED ("Token not found") — use OAST domain for future callbacks.
+- New bundles saved: state/js_aigov_*.js, midship_main.js, cascade_*.js, state/aigov_openapi.json, state/midship_openapi.json.
+
+### Next queue (aa)
+1. OPERATOR (waiting on program): AI-entitled test account (settings.ux:AITile:show) → unlocks ml_generative_prompts/logs CRUD + retest of flag-gated AI surfaces. Midship/Optro QA entitlement → 473-op spec surface.
+2. ai/recommendations with REAL model names (capture from browser session) → does it return cross-object recommendations (IDOR check) — low priority.
+3. Watch-list: assistant `plan` interactive_tool flow (tools/{id}/result legit path) — content injection only affects own conversation; monitor for shared/cross-org assistant contexts.
+4. scaffolds route (enable_scaffolds_route: true) — probe /rails/scaffolds-style paths if idle.
+
+### Addendum (z)
+- scaffolds route: /scaffolds, /rails/scaffolds, /qe_settings/scaffolds all = SPA HTML catch-all (200 shell) — NOT real routes. CLOSED.
+
+## Session 2026-11-08 (aa): NEW-FAMILIES sweep → 2 NEW FINDINGS (BUG-013 P3 cross-tenant metadata IDOR, BUG-014 P3/P2 SSRF w/ internal readback)
+
+### Operator
+- "keep work new surface" — sweep untested families until P1/P2.
+
+### T-056/058 — new-families baseline (scripts/t056a|b, t058a|b; state/t056*|t058*)
+- regulatory-signals: widget-metrics 200 (empty), scoring-status 403 perm, list 404. imported_third_parties: FeatureNotEnabled. usage (mcp_call): 403 "credits settings tile not enabled". vulnerability_import_runs/{id}/report: uniform "not found" (no IDOR provable). dip_configurations: empty list + org-scoped 404. markup_test_sheets/1 + markup_samples/1 exist; start_auto_annotate needs markup_file_tie_ids; bulk_upload_markup_files_to_toolkit → 200 {jobId:31739} (own sheet). project_plans/60 subresources 200 (viewer GET, OOS). queued send → perm modules:tprm. score_types/migrate/run 403. suggestions: 111 real AI match suggestions (view-only); bulk-accept 500 crash (P5). mcp/mcp_tools: gone post-reseed (404). documents/document_versions indexes 200 (bodies incl. user-1 docs = viewer GET OOS). timesheet_entries index returns user-65 rows (viewer GET OOS, seeded zeros).
+- generative/structured chain:verify_population_file → ML Pydantic enum leak survey_type∈(pbc|ops-audit-pbc); chain unreachable without real task_item graph (uniform 404) → AI-file-read-via-chain CLOSED. issue_summary needs focus_areas+issues arrays (org issue = viewer GET OOS).
+
+### T-057 — BUG-007 escalation attempt (scripts/t057a–g; state/t057*, assistant_t057*)
+- webhook.site fresh channel c0dce999 (old expired). Poison re-armed via LEGIT presign path: file 2685 → rag/add_document {documents:[{fileId,url(presign),documentType}]} → SUCCESS, index 4688→4689 (Zod shape changed post-reseed; url must be vendor-S3; webhook.site/file:///IMDS urls → "Failed to process" (no OOB) → add_document url-SSRF CLOSED).
+- assistant search_knowledge_base does NOT read the poisoned vector index (no results for exact markers or generic queries; likely searches QA-pair store, which is empty — QA create blocked: category store empty, nested create 400). → BUG-007 consumer still gated; STAYS P3. Poison chunk remains in index (4689) — disclosed as test artifact.
+
+### T-059/060 — table DSL entity sweep → file_version plane UNLOCK (scripts/t059*, t060*; state/t059*|t060*)
+- POST /table/count|ids|query?entities=X: ml_generative_prompt 422 perm; ml_generative_log count 200 (P5); **file_version rows+ids 200** (hundreds, global seq); document_version rows 200; vulnerability_import_runs only [1,2] (vms jobId≠run id); we_execution 1042 rows count-only.
+- 🔥 **BUG-013**: GET /api/v1/file_versions/{id} + /api/v1/files/{id} member routes NOT tenant-scoped: foreign-instance keys (demo-certs-dkim_demo, demo/test/4633, shqa-playwright14991), names/sizes/dates/uploader ids/presigned URLs incl. API role ARN; contrast in-org restricted 500/900 → 422 perm-denied (policy fails open out-of-org). CONTENT BLOCKED by S3: own presign 200/5278B, foreign presign 403 AccessDenied (role custrole-qe-bugbounty1-120509 prefix-scoped) → metadata-only = **P3**. Table DSL exposes same plane despite index 403. Report: reports/BUG-013-file-versions-cross-tenant-metadata.md.
+
+### T-062/063 — 🔥 **BUG-014: FULL-READ SSRF via assistant context.fileAttachments[].url**
+- Zod shape: {id:str, file_key:str, filename:str, url:str, size:num}; filename ext allowlist {xlsx,pdf,docx,md,html,pptx} checked BEFORE fetch; ingestion deduped by file_key (cache) → unique key per probe.
+- ML backend fetches url server-side (**aiohttp/3.14.5, egress 34.214.1.78**) and assistant returns content: EXTERNAL verbatim readback proven (webhook.site hit + marker quoted); **INTERNAL readback proven** (http://integrations.qa.soxhubapp.com/version → assistant quoted "v1.16.1"). No response-shape gate (unlike BUG-012 Jira gate). IMDSv2 stands (tokenless empty); file:// no content; localhost:3000 reachable set incl. Rails.
+- Any org user, zero victim interaction. Severity P3 (internal data/service exposure, honest) — P2-arguable. Report: reports/BUG-014-assistant-ssrf-full-readback.md.
+- Control checks: my own file+presign parsed & quoted (ZX-TRACK-9Q + img marker verbatim) — proves readback path before foreign/internal tests.
+
+### State / cleanup
+- Token B (230) live. Files 2684/2685 (poison xlsx, disclosed). RAG index 4689 docs (1 poisoned chunk, BUG-007 artifact). webhook.site channel c0dce999 retained (BUG-014 evidence). markup toolkit job 31739 fired (own empty sheet, inert). No business objects modified.
+- Both reports have copy-paste repro + honest constraint sections.
+
+### Next queue (bb)
+1. Operator: submit BUG-013 (P3) + BUG-014 (P3/P2) per decision; BUG-014 pairs with BUG-012 chain narrative (two independent SSRF sinks, one with shape-free readback).
+2. BUG-014 escalation candidates if triage pushes: enumerate internal HTTP surface via the readback (localhost:3000 unauth routes, other VPC services) — pace carefully.
+3. Watch: assistant attachment ingest dedup key (file_key-only) may enable cross-user attachment-content readback if file_keys enumerable — LEAD unproven.
