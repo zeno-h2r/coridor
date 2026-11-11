@@ -2621,3 +2621,59 @@ Target user 230. Cell = observed state change after read-back.
 1. `rich_text` field type in dynamic-schema — the one field type not yet tested for encoder bypass.
 2. Header injection: `X-Auditboard-Product`, `User-Agent`, `X-Forwarded-*`.
 3. DOM XSS: grep bundles for `innerHTML` sinks fed by `currentURL`/`pageContext`.
+
+## Session 2026-11-11 (ww): 🔥 NEW BUG-022 P2 — STORED XSS IN COMMENTS (message_raw rendered instead of message_html)
+
+### Operator
+- "i need you open hte tab in the right and inject in comment"
+
+### T-370..374 — 🔥 STORED XSS CONFIRMED
+- Opened `/workspace/12/exceptions/32` as SysAdmin (53), clicked **Comments**, typed payload, clicked **Post**.
+- **Payload: `<img src=x onerror=alert(document.domain)>ZXCMT1`**
+- **ALERT FIRED: `bugbounty1.qe.optrostaging.ai`** (the value of `document.domain`).
+
+### The mechanism — server sanitises correctly, client renders the wrong field
+Comment record **id 903** (`GET /api/v1/comments`):
+```
+message_html : '<img />'                          <- SANITISED (handler stripped)
+message_raw  : '&lt;img src=x onerror=alert();&gt;'  <- entity-encoded original, RETAINED
+commentable  : ExceptionRequest 33
+owner_user_id: 230
+```
+- Server-side sanitiser WORKS — `message_html` is `<img />`, no handler.
+- Server ALSO stores the raw input entity-encoded in `message_raw`.
+- **Client binds `message_raw` into the DOM** -> browser decodes `&lt; ` -> live element.
+
+### DOM proof
+```
+imgSrcXCount:         1
+elementsWithOnerror:  1
+rawImgInHTML:         true
+outerHTML:            <img src="x" onerror="alert(document.domain)">
+```
+A real element with a live handler, not a text node.
+
+### Why P2, not self-XSS
+- Payload is **stored server-side** (comment 903), re-executes on every thread load.
+- Comments are a **shared surface** — any commenter plants it for reviewers/admins.
+- CSP does not mitigate (BUG-021: `script-src * 'unsafe-inline'`).
+- WAF does not mitigate (submitted via normal comment UI, request succeeds).
+
+### Contrast with everything else tested
+- Exception 32 title/description/closure_notes/recommendation -> entity-encoded AND rendered as TEXT node (no element). CLOSED.
+- Risks/narratives/controls names -> encoded on write. CLOSED.
+- Renderer double-decode -> stable, no live markup. CLOSED.
+- Query params, filenames, uploads, AI output -> all closed.
+- **Comments are the ONLY render path where entity-encoded input becomes markup.**
+
+### Report
+- **`reports/BUG-022-stored-xss-comments-message-raw.md`** (165 lines, P2 rec).
+- Root cause, 4-step copy-paste repro, DOM proof, P2-vs-self-XSS justification, honest scope note (did not watch a second user's session fire, but payload is server-stored and thread is shared), remediation (render message_html, or textContent).
+
+### ⚠️ Live artifact that will fire for others
+- **Comment 903 is LIVE** and will alert for anyone opening that thread. Disclosed in the report; program should delete it.
+
+### Next queue (xx)
+1. Verify cross-user firing explicitly: log in as a different user (Owner 231 or Tester 170) and open the same thread to watch the alert fire in their session — upgrades the evidence from "stored" to "confirmed cross-user".
+2. Test whether comment `message_raw` also fires in notification emails / digest previews (`tests/digest_preview_users`).
+3. Check if the same `message_raw`/`message_html` pattern exists on other commentable types (issues, risks, narratives).
