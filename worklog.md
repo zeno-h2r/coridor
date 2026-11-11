@@ -2729,3 +2729,54 @@ A real element with a live handler, not a text node.
 1. Find a WAF bypass for an executing tag through `message_html` (the sink is proven; only the edge filter stands in the way).
 2. Test the four unsanitised client paths (ESG metric, task notes, review notes) — do they also accept caller-supplied message_html?
 3. Check whether `message_html` renders in **email notifications / digest** where no WAF applies.
+
+## Session 2026-11-11 (yy): comment XSS — mechanism fully mapped. Server ALSO sanitises message_html. BUG-022 stands, BUG-023 downgraded to non-finding.
+
+### Operator
+- "keep work" (continuing stored-XSS hunt from round 2)
+
+### T-390..391 — WAF header/content-type differential — ALL 403
+- Tried 8 combinations to replicate the UI's successful `<img onerror>` post: plain json, `application/vnd.api+json`, `X-Auditboard-Product`, `X-Auditboard-Source`, `X-Requested-With`, `Origin`/`Referer`, `Accept: vnd.api+json`, and all-UI-like.
+- **All 403.** The UI succeeds because it **sanitises before sending** — the WAF never sees the raw payload. That is the explanation, not a header bypass.
+
+### T-392 — entity-encoded payloads in message_html — ALL 403
+- `&lt;img onerror&gt;`, `&#60;img...&#62;`, `&lt;svg&gt;`, `&lt;script&gt;`, `&lt;a href=javascript&colon;` -> **all 403**.
+- **The WAF decodes entities before matching.** No entity bypass.
+
+### T-395 — deep WAF bypass attempts (18 variants)
+- **BYPASS FOUND at the WAF layer**: `<img/src=x/onerror=alert(1)>` (slash-separated attributes, no space) -> **200**.
+- Also passed: `<form><button formaction=javascript&colon;...>` and `<input type=image formaction=javascript&colon;...>`.
+- Still blocked: null/newline/tab-split tag names, `<img//src>`, `on&#101;rror`, `OnErRoR`, `&#97;lert`, `atob` wrapper, backtick call, `<svg><animate>`, `<svg><desc><img>`, `<math><mtext><img>`, `<isindex>`.
+
+### T-396/397 — 🔑 THE DECISIVE TEST: server sanitises message_html too
+- Sent the WAF-passing slash payload **directly as `message_html`** (bypassing the client sanitizer entirely):
+  | sent | stored `message_html` |
+  | --- | --- |
+  | `<img/src=x/onerror=alert(1)>ZXN...` | **`<img />ZXN...`** — handler stripped |
+  | `<img/src=x/onerror=alert(1) />` | **`<img />`** |
+  | `<img/src=x/onerror=alert(1)/>` | **`<img />`** |
+  | `<b>ZXL...</b>` | `<b>ZXL...</b>` — kept |
+  | `<i>ZXL...</i>` | `<i>ZXL...</i>` — kept |
+  | `<a href="https://example.com">` | **tag stripped, text kept** |
+  | `<a href="javascript&colon;alert(1)">` | **tag stripped, text kept** |
+- **The server sanitises `message_html` on write.** A caller-supplied `message_html` is NOT stored verbatim — it is re-sanitised server-side.
+
+### Correction to session (xx)
+- I reported "`message_html` is an unsanitised HTML sink" based on comment 916 storing `<b>ZXH0c999</b>` verbatim.
+- **That was wrong.** `<b>` is on the server's *allowlist* — it survived because it is permitted, not because sanitising was skipped. Every dangerous tag/attribute is stripped server-side regardless of what the client sends.
+- The live `<b>` element in the DOM is correct, intended behaviour (bold formatting in comments).
+
+### Net — honest
+- **BUG-022 (stored XSS via `message_raw`) STANDS** — confirmed with a live alert earlier; that is the real bug (client renders the raw field).
+- **BUG-023 (message_html HTML-injection sink) is NOT a finding.** Server-side sanitisation is present and effective. Downgraded to non-finding.
+- WAF has a real bypass (`<img/src=x/onerror=>`) but the server sanitizer catches the result, so it does not yield XSS.
+- Two independent sanitisation layers on the write path: edge WAF + server-side allowlist sanitizer.
+
+### Test artifacts
+- Comments 918-923 on ExceptionRequest 33: all sanitised to `<img />` or text. Inert.
+- Comment 903 remains the live XSS artifact from BUG-022.
+
+### Next queue (zz)
+1. BUG-022 is the confirmed finding — verify cross-user firing explicitly (log in as Owner 231 / Tester 170, open the thread, watch the alert).
+2. Check whether `message_html` renders in email notifications / digest preview where no client sanitizer runs.
+3. Test the four unsanitised client paths (ESG metric, task notes, review notes) via their own UI — do they render `message_html` without a server sanitize step?
