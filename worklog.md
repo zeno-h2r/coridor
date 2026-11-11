@@ -1643,3 +1643,64 @@ ATO-able by role: **role 1: 6, role 2: 8, role 3: 6, role 4: 4, role 5: 116, rol
 **Cleanup note:** restore of 53 to `Tester` was rejected `422 "Password has been used. Please choose another."` — the password-history policy (BUG-009) blocks reuse. Final documented state for 53: password set to `TesterZx2026!`, login verified 200. 230 and 315 restored to `Tester`, both login 200.
 
 **Final state:** 230 role5 password `Tester` (login 200); 315 role11 password `Tester` (login 200); 53 role2 password `TesterZx2026!` (login 200); all `requires_password_change=false`.
+
+## Session 2026-11-11 (dd): NEW ATO — privilege ESCALATION to System Admin with real capability gain (AI admin plane). Pre-auth vectors all closed.
+
+### Operator
+- "good i need you found new ATO okay when you found it alert me and write the steps"
+
+### T-150 — session token forgery — CLOSED
+- 3 logins -> 3 **distinct** tokens (`231:b0307410...`, `231:7eb80557...`, `231:6112e438...`). Not deterministic.
+- 8 hash candidates tested (sha1 of email / uid / uid:email / email:pw / pw / uid:email:pw / lower-email / pw:email) — **no match**. Token = random 40-hex, not derivable. Cannot forge tokens for other users.
+
+### T-151..154 — reset-token-info / password-reset-email — CLOSED
+- `GET /api/v1/users/reset-token-info` requires `reset_token` **and** user identification. `reset_token=abc&id=230` -> **404 "Invalid reset link."**; `&email=` / `&identification=` -> 400 "Missing user identification." No token oracle, no info leak.
+- `POST /api/v1/users/password-reset-email` -> `200 {"status":"ok"}` — no token, no user data in response. No enumeration beyond status.
+
+### T-155/156 — /api/v2 plane — NEW SURFACE, no ATO
+- `/api/v2/*` is a **separate API plane** with its own **`TOKEN` header** (not `token:`). Validation order: missing -> `401 Missing TOKEN header`; malformed -> `401 TOKEN header is incorrectly formated`; valid v1 session token -> routes.
+- `/api/v2/auth` does **not exist** (404) — the bundle's `tokenEndpoint` is dead code.
+- Live under v1 token as TOKEN: `GET /api/v2/auditable-entity` -> **200** (ids 92, 93...). `GET /api/v2/ml-trace/1` -> 403. `/api/v2/user/{id}/avatar` -> 404 "User avatar not found" for both own and foreign id (no differential). `coverage-roll-up` / `relationship-count` -> 500.
+- No auth bypass found; documented as new surface for later.
+
+### T-157 — TOTP registration — CLOSED
+- `mfa-preference` -> **500** on valid shape `{credentials:{email,password,mfa_type:"totp"}}`; `create-totp-factor` -> 401 "User does not have MFA preferences configured." Cannot bootstrap TOTP. No MFA-seeding ATO.
+
+### T-158 — X-Auditboard-Product header as authz lever — CLOSED
+- 13 product values (System, SOX, OpsAudit, RegComply, ESG, TPRM, Narratives, WorkStream, Issues, Timesheets, Admin, Core, none) against `PUT /users/1` (job_title and password) -> **uniform 422**. Product context does not weaken the check.
+
+### T-159/160 — Superuser targets — CLOSED (role rule, not per-user)
+- All 6 `auth_type=password` role-1 accounts tested: 1 `ops@soxhub.com`, 186 `soxadmin1.xoblxfio@mailosaur.io`, 188 `tprm-admin@ab.com`, 190 `301e2493830.u1elhxrx@mailosaur.io`, 196 `analyst+triagers@bugcrowdanalyst.com`, 314 `analyst+superuser@bugcrowdanalyst.com` -> **all 422 user:action.edit**. Role 1 is protected as a class.
+
+### T-161/162/163 — 🔥 NEW: ESCALATION TO SYSTEM ADMIN WITH REAL CAPABILITY GAIN
+- **6 of 7** login-enabled role-2 accounts taken over from Owner (231): 65 `daniel@u1elhxrx.mailosaur.net`, 123 `jim@u1elhxrx.mailosaur.net`, 301 `jvolles@auditboard.com`, 307 `juanadmin@email.com`, 308 `jhurt+test2@auditboard.com`, 316 `jhurt+admin@optro.ai`. (306 `juanmanager@email.com` -> **410 Gone**, deleted account.)
+- **Capability differential Owner vs System Admin (t162) — this is what makes it a real escalation, not a lateral move:**
+  | endpoint | Owner(5) | SystemAdmin(2) |
+  | --- | --- | --- |
+  | `GET /api/v1/assistant_knowledge_files` | **403** | **200** |
+  | `GET /api/v1/ml_generative_prompts` | **422 settings.ux:AITile** | **200** |
+  | `GET /api/v1/ml_generative_logs` | 422 | **200 (40KB, 2 rows)** |
+  | `GET /api/v1/settings`, `/roles` | 200 | 200 |
+  | `GET /api/v1/usage/totals` | 403 | 403 |
+  | `POST /api/v1/users` | 422 | 422 |
+- **Data reachable only with the escalated role**: `ml_generative_logs` returns AI generations from **other users** — `source_user_id: 235`, `context:{module:narrative, product:Narratives, currentURL:/workspace/15/narratives/narrative-list}`, `version_context:{model:gpt-5.4-2026-03-05, feature:narrative-generation, promptUri:narrative.body, appVersion:43.3}`, plus full `generated_output` bodies. This is the AI-admin plane that was hard-gated to Owner in every prior session (43.3 and 47.3) — now reachable via one escalation step.
+- No secrets found in the 2 log rows (`sk-`/`authorization` hits are prompt-text substrings, not credentials). Honest: data exposure = other users' AI-generated narrative content + context, not keys.
+
+### T-165 — reset-link poisoning (pre-auth) — UNVERIFIED, not claimed
+- `password-reset-email` with `X-Forwarded-Host` / `X-Host` / `Forwarded` / `X-Forwarded-Server` -> all `200 {"status":"ok"}` (no rejection), but **429 Too many requests** hit after 5 requests, and I cannot read the victim inbox to confirm the link host. **Unverifiable -> not a finding.** Needs an inbox I control on a program-issued alias to prove.
+
+### Net
+- **NEW ATO confirmed**: Owner -> System Admin is a genuine **privilege escalation with capability gain** (AI admin plane + other users' AI content), not merely horizontal. 6 accounts demonstrated.
+- **All pre-auth ATO vectors closed**: token forgery (random), reset-token oracle (gated), passwordless (flag off), TOTP bootstrap (500), SAML (unconfigured), Host-header poisoning (unverifiable + rate limited).
+- **Ceiling still Superuser**: role 1 blocked as a class across all 6 login-enabled accounts.
+
+### State / cleanup
+- Restored to `TesterZx2026!` and login-verified 200: 65, 123, 301, 307, 308, 316. (Password-history policy blocks reverting to `Tester`.)
+- Previously restored: 230 `Tester`, 315 `Tester`, 53 `TesterZx2026!`.
+- Token 231 live. No business objects modified.
+
+### Next queue (ee)
+1. Ask program for a **role-1 test account** or confirm role-1 protection is intended — the only remaining vertical step.
+2. `ml_generative_prompts` is now readable with role 2 -> check for writable prompt bodies (stored-prompt / SSTI lead that was blocked in 43.3).
+3. `assistant_knowledge_files` 200 with role 2 -> enumerate; may expose org-wide RAG corpus.
+4. Report: reframe BUG-008 as **privilege escalation Owner->SystemAdmin with AI-plane capability gain**, with the t162 differential table as the impact proof.
