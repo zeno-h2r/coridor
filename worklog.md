@@ -2882,3 +2882,64 @@ A real element with a live handler, not a text node.
 1. Re-audit the other reports for the same error class (claimed execution without second-user verification).
 2. If the operator wants to keep hunting XSS: the only remaining angle is the rich-text editor's own paste handling (client-side, not stored).
 3. Otherwise pivot to a bug class where impact is provable end-to-end.
+
+## Session 2026-11-11 (bbb): new-surface XSS hunt round 3 — ALL CLOSED. No stored XSS exists on this target.
+
+### Operator
+- "bro try again dont stop i you not found move to another place okay"
+
+### T-430 — tokens
+- OWNER(231,r5) SYSADMIN(53,r2) TESTER(170,r4) all login 200.
+
+### T-431 — linkifier (comment text -> anchors)
+- Posted 8 URL-shaped payloads as comments: plain https, `javascript:`, `javascript&colon; `, `data:text/html`, `vbscript:`, markdown `[click](javascript:)`, @mention, record-ref.
+- All stored (`message_html: ''` — client computes it).
+- **DOM audit: 26 comment spans, ZERO anchors created.** `javascriptAnchors: []`, `commentSpansWithAnchors: []`.
+- Bundle: DOMPurify's URI allowlist `YNn` permits only `(f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|matrix` and blocks `javascript:`/`data:`. **Linkifier is safe.**
+
+### T-432 — file-scoped comments
+- `POST /comments` with `origin_file_id` / `type: FileComment` -> **403** (WAF on the raw payload).
+- Files tab renders names as SVG buttons, no HTML injection.
+
+### T-433/434 — `/download?file_id=&name=`
+- Returns the SPA shell (`content-type: text/html`), `name` **not reflected** in body or headers.
+- No `Content-Disposition` emitted. CRLF/quote/semicolon in `name` -> no header injection.
+
+### T-435 — Audit Log tab
+- Changed exception 33 title to `<b>ZXAUDIT...</b>` -> stored `&lt;b&gt;...&lt;/b&gt;` (encoded).
+- Audit Log renders: `boldElsWithTag: 0`, `rawMarkupInHTML: false`, `literalTagInHTML: false`. **Values render as text.**
+
+### T-436 — 🔍 assistant markdown (the one promising lead)
+- `POST /assistant/chat/stream` — asked the model to emit a markdown link:
+  - `[click](javascript:alert(1))ZXM07a4f` -> **200, emitted verbatim by the model**.
+  - Raw `<img onerror>` -> 403 (WAF).
+- **UI test**: typed the payload into the Optro Assistant panel and sent it.
+- Assistant echoed `[ZXCLICK](javascript:alert(document.domain))`.
+- **DOM audit**: `zxclickAnchors: []`, `javascriptAnchors: []`, `renderedAsLiteralText: true`.
+- **The assistant renders markdown syntax as literal text — no anchor, no execution.**
+
+### Net — FINAL: no stored XSS on this target
+Every surface tested, all negative:
+| surface | defence |
+| --- | --- |
+| text fields (controls, risks, narratives, exceptions) | entity-encode on write |
+| comments `message_raw` | rendered as TEXT via `commentParagraphs` |
+| comments `message_html` | server-side allowlist sanitizer |
+| comment linkifier | DOMPurify URI scheme allowlist |
+| assistant output | markdown rendered as literal text |
+| AI generative output | entity-encoded |
+| document body | not writable by any role held |
+| uploads / filenames | WAF + private bucket + forced extension + attachment disposition |
+| audit log | values rendered as text |
+| `/download?name=` | not reflected |
+| CSP | permissive (BUG-021) but no injection to exploit it |
+
+**BUG-022 remains RETRACTED. Zero stored XSS claims stand.**
+
+### Two latent sinks (unfed, cannot be triggered from my access)
+1. `/documents/{id}/diff` -> `htmldiff` -> `setContent` (raw HTML sink). Needs document-body write.
+2. `dtLinkifyTitleDescription` -> interpolates `${description}` into raw HTML. Fed already-encoded data.
+
+### Recommendation
+- Stop XSS hunting on this target. 11 distinct surfaces, 3 rounds, all closed. The app encodes on write and sanitises on render consistently.
+- Pivot to a class where impact is provable: the confirmed findings are BUG-008 (submitted), BUG-015 (file-delete chain), BUG-016 (SSRF readback), BUG-017 (email hijack), BUG-018 (RBAC disclosure), BUG-019 (permission inversion).
