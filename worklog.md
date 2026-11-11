@@ -1754,3 +1754,44 @@ ATO-able by role: **role 1: 6, role 2: 8, role 3: 6, role 4: 4, role 5: 116, rol
 - Contents: root cause (3 compounding defects), preconditions, full copy-paste curl chain (steps 0-5), vertical escalation section, blast-radius table (145/317 ATO-able, 9 accounts taken), email-hijack second path, **honest negatives table (14 vectors)**, impact with explicit ceiling statement, remediation, cleanup disclosure.
 - Count corrected to **9 accounts** taken over (1 Owner + 1 role-11 + 7 role-2), matching the actual tested set.
 - Not submitted to Bugcrowd — awaiting operator review.
+
+## Session 2026-11-11 (gg): server-side sweep — 3rd SSRF sink confirmed, SSTI/LFI/vms-s3Key all CLOSED
+
+### Operator
+- "deep dig ... auth bypass, ato, ssrf, rce, ssti ... never stop until found p1,p2"
+
+### T-180 — tokens
+- owner 231 (role 5), r2-301 + r2-65 (role 2) all login 200. Cached /tmp/tok_*.
+
+### T-181/182/183 — 🔥 `document_intelligence/export/pdf` — 3rd SSRF SINK CONFIRMED
+- Shape `{htmlContent, fileName}` -> 200 `{url: <presigned S3>}`. Full artifact chain works (generate -> presigned -> download).
+- **SSRF CONFIRMED**: `<img src=webhook.site/...-di.png>` + `<iframe src=...-dif>` -> **both fetched 2026-11-11 05:06:39 UTC** (and 05:06:16 for the first probe). Third independent server-side fetch sink on this build, after assistant fileAttachments (04:01) and attachments/html (04:05).
+- **SSTI NEGATIVE (proven, not assumed)**: `{{7*7}}` and `#{7*7}` -> **403** (filtered at input). `<%= 7*7 %>` and `%{7*7}` accepted (200) but glyph-count analysis of the PDF content stream proves **literal rendering**: `<%= 7*7 %>` produces a 10-glyph run, `%{7*7}` a 6-glyph run, `49` a 2-glyph run, `ZXMARK` a 6-glyph run. No evaluation. (The earlier "contains 49" hit was PDF binary noise, not rendered text.)
+- **LFI NEGATIVE**: `<iframe src="file:///etc/passwd">` -> 200 but PDF contains no `root:` / `daemon`, 1 Tj run only. Same blank-placeholder behaviour as `attachments/html`. Headless Chrome does not embed `file://` or cross-origin bodies.
+
+### T-184 — server-side fetch sink sweep (18 caller-supplied-URL endpoints)
+- 403: regulations/import, regulations/sync, regulations/sync_ontologies, regulatory-signals/sync, regulatory-signals/sync_ontologies, lucidcharts/link, lucidcharts/import_into, regulatory-profiles/autofill.
+- 404: frameworks/custom-import, ticketing/ticket_by_url.
+- 400/422 gated: import_tools/upload + validate ("feature is not configured"), bcm_plans/import (FeatureNotEnabled), field_mappings/validate, ml-recommendations/files/generate_sample_file.
+- 200 but inert: ops_audit_items/import/json (`{results:[],summary:{},isRunningInBackground:true}` — no fetch), sigma/sync_workbooks ("Sigma is not provisioned").
+- **No new SSRF from this family.**
+
+### T-185..199 — `vms/csv-import` s3Key (BUG-013 content-bypass attempt) — UNVERIFIABLE
+- Schema fully cracked through Zod error leakage (9 iterations): `{s3Key, findingIdColumn, assetMatchMappings[{auditboard_field{fieldName,label,type,canonicalReference,isCustomField}, external_field{...fieldType,displayName,remoteKeyName,isRequired}, sync_direction}], fieldMappings[]}`.
+- Valid field names harvested from `GET /api/v1/asset_match_mappings/auditboard_fields?resource_type=auditableEntity` (cpe/fqdn/hostname/ipv4/ipv6/mac_address...) and `field_mappings/configuration?auditboardResourceType=vulnerabilityFinding` (ocsf_* fields).
+- **All three keys accepted -> 200 `{jobId, runId}`**: NONEXIST 31838/3, OWN 31839/4, **FOREIGN 31840/5**. The foreign key is the BUG-013 object (`demo-certs-dkim_demo/...`) the S3 role cannot presign.
+- **Readback UNVERIFIABLE**: `GET /vulnerability_import_runs/{3,4,5}` -> 404 (list route gone), `/{id}/report` -> 404 "Import report for run N not found", table/query `vulnerability_import_run` -> 400. No observable surface for the job result. Cannot prove the server read the foreign object, and cannot prove it didn't. **Not claimed.**
+- Note: the 200 on a nonexistent key proves the endpoint does NOT validate key existence synchronously — the read (if any) happens in the worker.
+
+### Net
+- **No new P1/P2 this session.** New durable intel: third SSRF sink (docintel export/pdf) with the same blind-only limitation; SSTI and LFI definitively closed with glyph-level proof rather than guesswork; vms s3Key is a genuine candidate for cross-tenant S3 read but has no readback channel.
+- The P1 already in hand remains BUG-008 v2 (ATO + Owner->SystemAdmin escalation), report at `reports/BUG-008-v2-submission-47.3.md`.
+
+### State / cleanup
+- Created vms import jobs 31838/31839/31840 (inert, own-org keys + one foreign key). No business objects modified.
+- Document-intelligence PDFs generated under own S3 prefix only.
+
+### Next queue (hh)
+1. vms s3Key: find a readback channel (job status endpoint, notification, or the finding records the import creates) — if the foreign object's rows appear, BUG-013 escalates from P3 metadata to P2 cross-tenant content read.
+2. docintel renderer: try `type:"word"` engine and a 302 redirector to internal — same readback question as attachments/html.
+3. Role-1 test account from program for the last vertical step.
