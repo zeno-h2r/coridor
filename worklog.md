@@ -1992,3 +1992,48 @@ Method: renderer fetches `<img src=...>`; unreachable host blocks until timeout,
 1. Same delete-verb sweep on remaining resource families not yet covered (attachments, document_versions, timesheet_entries, markup_samples, esg_metric_values, webhook_urls, api tokens).
 2. Test whether a **role-11 limited** token can delete an Owner's file (would raise severity — lower-priv attacker).
 3. Check if `DELETE /files/{id}` accepts an id range/bulk endpoint for mass destruction.
+
+## Session 2026-11-11 (ll): ROLE-11 TEST — BUG-015 does NOT extend to limited users. Severity confirmed P2 (Owner-to-Owner only).
+
+### Operator
+- "run role 11"
+
+### T-240 — tokens
+- R11 = **315** `analyst+member@bugcrowdanalyst.com` role **11** (Third Party User, `is_limited: true`), login 200.
+- B = 230 role 5, A = 231 role 5, both login 200.
+
+### T-241 — 🔑 role-11 vs an Owner's file (the severity question for BUG-015)
+- B(230) created file **2728** via `POST /attachments/html` (attachmentId 11214, attachableType AuditableEntity id 97).
+- B control `GET /files/2728` -> **200**.
+- **R11 `GET /files/2728` -> 422 `file:action.view`** — cannot even read it.
+- **R11 `DELETE /files/2728` -> 422 `file:action.delete`** — cannot delete it.
+- B re-read after the attempt -> **200**, file intact.
+- **Conclusion: BUG-015 does NOT extend to limited users.** The missing object-level check on `DELETE /files/{id}` is only reachable by roles that already hold `file:action.delete` (Owner and above). Severity stays **P2**, not P1.
+
+### T-242 — role-11 full sweep vs Owner content (8 resources)
+| resource | GET | PUT | DELETE |
+| --- | --- | --- | --- |
+| narrative 67 | 422 | 422 | 422 |
+| issue 121 | 422 | 422 | 422 |
+| control 1 | 422 | 422 | 422 |
+| risk 1 | 422 | 422 | 422 |
+| file 2728 | 422 | 422 | 422 |
+| attachment 11214 | 422 | 422 | 422 |
+| document_version 1402 | 422 | 422 | 404 |
+| user 230 | **403** | 422 | 422 |
+
+- **Role 11 is correctly scoped on every resource.** No read, no edit, no delete of Owner content. This is a clean negative and confirms the earlier finding that limited roles are properly isolated.
+
+### T-243 — further DELETE verb sweep (Owner attacker)
+- `attachment` id 1 -> **422** (enforced).
+- `document_version`, `timesheet_entry`, `markup_sample`, `esg_metric_value`, `webhook_url`, `brand_identity`, `user_skill`, `api_access_log`, `recurring_schedule` -> **no ids enumerable** via table/query (either empty or not exposed), so untestable this pass.
+
+### Net
+- **BUG-015 severity CONFIRMED at P2**, not P1. The attacker must already be an Owner with `file:action.delete`; the defect is the missing *object* check, not a privilege gain.
+- Role-11 isolation is solid across all 8 tested resources — no new finding there.
+- `DELETE /api/v1/files/{id}` remains the only resource/verb combination missing the object-level check, out of 18 tested.
+
+### Next queue (mm)
+1. Re-check `DELETE /files/{id}` with a **role-2 (System Admin)** token — if role 2 can delete an Owner's file, that pairs with the BUG-008 escalation chain (Owner -> role 2 -> delete any file).
+2. Look for a bulk/range delete on files for mass destruction.
+3. Move to a new bug class (SSRF readback via CSS, or the vms s3Key readback channel).
