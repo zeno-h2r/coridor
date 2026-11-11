@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : golden-snow-4771@bugcrowdninja.com
+Password  : Zx9!Owner2026
+Role      : Owner (role_id 5)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/sh/my-dashboard/my-tasks
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+Header only — inspect any response with `curl -i`.
+
+---
+
 ## 1. Summary
 
 The enforced `Content-Security-Policy` header on every API and application response permits arbitrary script execution:

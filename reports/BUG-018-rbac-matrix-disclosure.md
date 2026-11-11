@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : tester@soxhub.com
+Password  : Zx9!lower47
+Role      : Tester (role_id 4)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/sh/admin/settings
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+The leak is `GET /api/v1/role_permissions` and `?role_id=1`.
+
+---
+
 ## 1. Summary
 
 `GET /api/v1/role_permissions` is intended to return the caller's **own** role permission set. It does not scope the response to the caller.

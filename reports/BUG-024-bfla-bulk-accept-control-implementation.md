@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : zx-sysadm-66650c74@bugcrowdninja.com
+Password  : TesterZx2026!
+Role      : System Admin (role_id 2)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/sh/narratives/38
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+Right-hand toolkit → **AI Suggested Controls** → **Accept**.
+
+---
+
 ## 1. Summary
 
 `POST /api/v1/suggestions/bulk-accept-with-control-implementation` performs **no role or permission check**. A **Third Party User (role 11, `is_limited: true`)** — the lowest-privilege role in the product — reaches the same handler as an Owner and receives a **byte-identical response**.

@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : golden-snow-4771@bugcrowdninja.com
+Password  : Zx9!Owner2026
+Role      : Owner (role_id 5)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/workspace/7/risks/risk-list
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+Owner is denied `PUT /api/v1/risks/{id}`; Tester succeeds on the same object.
+
+---
+
 ## 1. Summary
 
 The RBAC configuration grants **edit** rights on `risk` and `narrative` to **Tester (role 4)** and **Reviewer (role 3)**, but **not** to **Owner (role 5)**. The result is a permission **inversion**: a lower-privileged role can modify records that a higher-privileged role is explicitly denied.

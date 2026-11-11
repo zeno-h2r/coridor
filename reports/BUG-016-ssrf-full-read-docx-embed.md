@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : golden-snow-4771@bugcrowdninja.com
+Password  : Zx9!Owner2026
+Role      : Owner (role_id 5)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/workspace/5/issues/issues?config=all-active
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+The renderer is `POST /api/v1/attachments/html`; the artifact is downloaded via `GET /api/v1/files/{id}`.
+
+---
+
 ## 1. Summary
 
 `POST /api/v1/attachments/html` renders attacker-supplied HTML to a DOCX/PDF using a headless browser. When the HTML references a sub-resource via `<img>`, the renderer **fetches that URL server-side and embeds the raw response bytes** into the generated document as `word/media/image.*`.

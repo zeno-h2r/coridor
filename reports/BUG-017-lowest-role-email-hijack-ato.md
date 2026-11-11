@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : tester@soxhub.com
+Password  : Zx9!lower47
+Role      : Tester (role_id 4)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/sh/admin/settings
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+Log in as the Tester, then `PUT /api/v1/users/{victim_id}` with `{"user":{"email":"..."}}`.
+
+---
+
 ## 1. Summary
 
 `PUT /api/v1/users/{id}` gates the **`password`** attribute behind `user:action.edit` (Owner and above), but **does not gate the `email` attribute at all**. Every authenticated role — including **Tester (role 4)** and **External Auditor (role 6)**, the lowest-privilege internal roles — can rewrite **any other user's email address**, including a Superuser's.

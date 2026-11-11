@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : golden-snow-4771@bugcrowdninja.com
+Password  : Zx9!Owner2026
+Role      : Owner (role_id 5)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/workspace/5/issues/issues?config=all-active
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+Files attach to any record; the delete call is `DELETE /api/v1/files/{id}`.
+
+---
+
 ## 1. Summary
 
 `DELETE /api/v1/files/{id}` performs **no object-level authorization check**. Any authenticated user can permanently delete **any other user's file** by id, with no ownership check, no scope check, and no confirmation.

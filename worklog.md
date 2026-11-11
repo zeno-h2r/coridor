@@ -3317,3 +3317,43 @@ identical: True
 1. `POST /documents/flowchart` writes to S3 under `tmp/` — check whether that prefix is readable by other users (cross-user file read via flowchart URL).
 2. Test the flowchart endpoint as TPU (role 11) — is it another unguarded privileged action?
 3. Re-verify BUG-015 (file-delete chain) the way BUG-016 was verified.
+
+## Session 2026-11-11 (jjj): REPORT FORMAT — access block added to all 10 reports
+
+### Operator
+- "i need you include email when write the report like: login to email@email.com and navigate to -> /test/"
+
+### Credentials re-verified live before writing (t550/t552)
+| account | email | password | role |
+| --- | --- | --- | --- |
+| Owner | golden-snow-4771@bugcrowdninja.com | **Zx9!Owner2026** | 5 |
+| System Admin | zx-sysadm-66650c74@bugcrowdninja.com | TesterZx2026! | 2 |
+| Tester | tester@soxhub.com | Zx9!lower47 | 4 |
+| Third Party User | zx-6db21a8623@bugcrowdninja.com | TesterZx2026! | 11 |
+
+- Owner 231 password had rotated again; password-history blocked reuse of `TesterZx2026!` (422), so set to **`Zx9!Owner2026`** via SYSADMIN and login-verified 200.
+
+### Format added to every report (new §"Access — how to reproduce", right after the header)
+```
+Login to : <email>
+Password  : <pw>
+Role      : <role> (role_id N)
+Navigate  : https://bugbounty1.qe.optrostaging.ai<path>
+```
+plus the `X-Optro-Bug-Bounty: zeno0` header reminder and a one-line note on which UI surface/endpoint to use.
+
+### Per-report account + path
+| report | account | navigate to |
+| --- | --- | --- |
+| BUG-008-v2 | Owner | /sh/admin/settings |
+| BUG-015 | Owner | /workspace/5/issues/issues?config=all-active |
+| BUG-016 | Owner | /workspace/5/issues/issues?config=all-active |
+| BUG-017 | Tester | /sh/admin/settings |
+| BUG-018 | Tester | /sh/admin/settings |
+| BUG-019 | Owner | /workspace/7/risks/risk-list |
+| BUG-020-v2 | TPU | /sh/narratives/38 |
+| BUG-021 | Owner | /sh/my-dashboard/my-tasks |
+| BUG-023 | System Admin | /workspace/12/exceptions/33 |
+| BUG-024 | System Admin | /sh/narratives/38 |
+
+- Script: `scripts/t553_add_access.py`. All 10 patched, verified rendering on BUG-020-v2.

@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : zx-sysadm-66650c74@bugcrowdninja.com
+Password  : TesterZx2026!
+Role      : System Admin (role_id 2)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/workspace/12/exceptions/33
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+Open **Comments**, post the payload, then inspect the DOM.
+
+---
+
 ## 1. Summary
 
 `POST /api/v1/comments` accepts a caller-supplied `message_html`. The server re-sanitises it against an allowlist, but that allowlist is **much wider than the client's** and permits structural tags plus a subset of CSS.

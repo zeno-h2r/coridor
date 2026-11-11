@@ -10,6 +10,21 @@
 
 ---
 
+## Access — how to reproduce
+
+```
+Login to : zx-6db21a8623@bugcrowdninja.com
+Password  : TesterZx2026!
+Role      : Third Party User (limited) (role_id 11)
+Navigate  : https://bugbounty1.qe.optrostaging.ai/sh/narratives/38
+```
+
+Header on every request: `X-Optro-Bug-Bounty: zeno0`
+
+Open the **Optro Assistant** button (top-right), type the prompt, press Send.
+
+---
+
 ## 1. Summary
 
 The Optro Assistant exposes data-retrieval tools (`get_schemas`, `query_data`, `list_entities`) that run **server-side with elevated data access** and perform **no object-level authorization check against the calling user's role**.
