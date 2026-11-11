@@ -2037,3 +2037,48 @@ Method: renderer fetches `<img src=...>`; unreachable host blocks until timeout,
 1. Re-check `DELETE /files/{id}` with a **role-2 (System Admin)** token — if role 2 can delete an Owner's file, that pairs with the BUG-008 escalation chain (Owner -> role 2 -> delete any file).
 2. Look for a bulk/range delete on files for mass destruction.
 3. Move to a new bug class (SSRF readback via CSS, or the vms s3Key readback channel).
+
+## Session 2026-11-11 (mm): 🔥 ROLE-2 DELETE CONFIRMED — BUG-015 upgraded to P1 CHAIN
+
+### Operator
+- "yes do it" (run the role-2 delete test)
+
+### T-250 — tokens
+- R2-301 `jvolles@auditboard.com` role 2; R2-65 `daniel@u1elhxrx.mailosaur.net` role 2; B-230 role 5; A-231 role 5. All login 200.
+
+### T-251 — 🔥 role-2 (System Admin) vs Owner's file — CONFIRMED
+- B(230) created file **2730** (attachment 11215, AuditableEntity 98).
+- B control `GET /files/2730` -> **200**.
+- **R2(301) `GET /files/2730` -> 200** — role 2 CAN read Owner files.
+- **R2(301) `DELETE /files/2730` -> 200** with `global_audit` object_id 2730, object_type file.
+- B re-read -> **410 "has already been deleted"**.
+
+### T-252 — reproduced on a second role-2 account
+- B created file **2732** (attachment 11216, AuditableEntity 99).
+- **R2(65) `DELETE /files/2732` -> 200**; B re-read -> **410**.
+- Two independent role-2 accounts, two independent victim files, same result.
+
+### T-253 — bulk delete paths — NONE EXIST
+- `DELETE /api/v1/files` 404; `POST /files/bulk_delete` 404; `POST /files/bulk-destroy` 404; `DELETE /files/1,2,3` 404 (parsed as id 1); `POST /files/_op/bulk_delete` 404.
+- Mass deletion requires a per-id loop.
+
+### 🔥 THE CHAIN (P1)
+1. Plain **Owner (role 5)** uses BUG-008 (`PUT /users/{id}` password write) to take over a **System Admin (role 2)**.
+2. The role-2 token **reads** any Owner's file (200).
+3. The role-2 token **deletes** any Owner's file (200) -> victim gets 410, unrecoverable.
+
+Both legs independently reproduced on build 47.3.0-dev. The chain converts the default business role into a role that can destroy files belonging to roles above it.
+
+**Honest framing kept in the report:** BUG-015 *alone* is P2 (Owner already holds `file:action.delete`; the defect is the missing object check). It is the **combination** with BUG-008 that makes it P1. Role 11 is properly blocked, so the floor is Owner — but 116 of 145 login-enabled accounts are role 5.
+
+### Report updated
+- `reports/BUG-015-cross-user-file-delete.md` -> now **266 lines**, severity header **P1 (chain)**, new **§5.1 Compound chain** with copy-paste steps A/B/C, the two-account reproduction table, the no-bulk-path table, role-11/role-2 rows added to the honest-negatives table, and the P2-alone vs P1-chain distinction stated explicitly in Impact.
+
+### Test artifacts (disclosed in report)
+- Files deleted during testing: **2726, 2712, 2730, 2732** (all created by user 230, unrecoverable).
+- issue 121 `Inactive` -> `Closed`; narrative 67 `ZX-B-NARRATIVE` undeletable.
+
+### Next queue (nn)
+1. Submit BUG-015 as the P1 chain, cross-referencing the already-submitted BUG-008.
+2. New bug class: SSRF readback via CSS (`@import`, `<link rel=stylesheet>`, `background-image`, SVG `xlink:href`).
+3. vms `s3Key` readback channel hunt.

