@@ -1745,3 +1745,12 @@ ATO-able by role: **role 1: 6, role 2: 8, role 3: 6, role 4: 4, role 5: 116, rol
 1. Report BUG-008 as **ATO + vertical escalation to System Admin**, using `prompts/count` 422-vs-200 as the single cleanest escalation proof, and stating the AI-plane data limitation honestly.
 2. Remaining vertical step needs a **role-1 test account** from the program (all 6 login-enabled role-1 accounts are 422 as a class).
 3. If program enables AI features on a later deploy, re-run t171/t172 — the differential is already mapped and will immediately show whether real data appears.
+
+## Session 2026-11-11 (ff): BUG-008 v2 submission report drafted for 47.3
+
+- Operator: "yes draft the bug with clear steps".
+- New artifact: `reports/BUG-008-v2-submission-47.3.md` (297 lines, 11 sections).
+- Framing: **P1 — ATO + vertical privilege escalation to System Admin**. Escalation proof = `POST /ml_generative_prompts/count` 422 (Owner) vs 200 (SysAdmin), plus `assistant_knowledge_files` 403 vs 200.
+- Contents: root cause (3 compounding defects), preconditions, full copy-paste curl chain (steps 0-5), vertical escalation section, blast-radius table (145/317 ATO-able, 9 accounts taken), email-hijack second path, **honest negatives table (14 vectors)**, impact with explicit ceiling statement, remediation, cleanup disclosure.
+- Count corrected to **9 accounts** taken over (1 Owner + 1 role-11 + 7 role-2), matching the actual tested set.
+- Not submitted to Bugcrowd — awaiting operator review.
