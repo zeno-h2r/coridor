@@ -153,6 +153,45 @@ Note: `project_plan` does not appear in the RBAC matrix returned by `role_permis
 
 ---
 
+## 4.2 Third affected resource: `suggestions/query-matches` — Owner silently filtered to zero rows
+
+`POST /api/v1/suggestions/query-matches` returns AI control-match results for a narrative. Owner receives an **empty array while the server reports the true match count**, so the response is internally inconsistent and the data is silently hidden.
+
+Request (identical for every caller):
+
+```http
+POST /api/v1/suggestions/query-matches HTTP/2
+Host: bugbounty1.qe.optrostaging.ai
+token: <token>
+X-Auditboard-Product: System
+Content-Type: application/json
+
+{"suggestable_type":"Narrative","suggestable_id":38,"suggested_type":"ControlsDatum"}
+```
+
+| role | HTTP | `data[]` | `meta.total` |
+| --- | --- | --- | --- |
+| **Owner (5)** | 200 | **0** | **24** |
+| System Admin (2) | 200 | 24 | 24 |
+| **Tester (4)** | 200 | **24** | 24 |
+| Third Party User (11) | 200 | 0 | 0 |
+
+Reproduced **3× on narrative 38** and across **5 narratives** — Owner is `data=0` every time while `meta.total` matches Tester's row count exactly:
+
+| narrative | Owner data / total | Tester data / total |
+| --- | --- | --- |
+| 38 | 0 / 24 | 24 / 24 |
+| 39 | 0 / 26 | 26 / 26 |
+| 40 | 0 / 25 | 25 / 25 |
+| 47 | 0 / 26 | 26 / 26 |
+| 31 | 0 / 10 | 10 / 10 |
+
+**Why this is worse than a plain denial:** the server *knows* there are 24 matches (it returns `meta.total: 24`) and returns an empty `data` array anyway. A client cannot distinguish "no matches exist" from "matches exist but you are not allowed to see them" — and in this case it is the latter. The rows contain full control records (`idCode`, `name`, `description`, and 15+ `controlCustomText*` fields).
+
+Owner *can* read the underlying suggestions (`GET /api/v1/suggestions` → 111 rows for both Owner and Tester), so this is not a data-existence problem — it is a filter applied to the result set for role 5 only.
+
+---
+
 ## 5. Impact
 
 - **A lower-privileged role holds capabilities a higher-privileged role lacks.** Tester (role 4) and Reviewer (role 3) can **modify** risk and narrative records that Owner (role 5) cannot. Tester can also **read** project plans (154, 155) that Owner is denied.
@@ -174,7 +213,7 @@ Note: `project_plan` does not appear in the RBAC matrix returned by `role_permis
 | Third Party User (role 11) — all edit attempts | **422** uniformly — correctly restricted |
 | External Auditor (role 6) — risks / narratives | **422** — matches Owner, also denied |
 
-**The inversion is specific to Tester and Reviewer on `risk` and `narrative` edit, and to Tester on `project_plan` read.**
+**The inversion affects three resources: Tester/Reviewer on `risk` and `narrative` edit, Tester on `project_plan` read, and Tester on `suggestions/query-matches` (where Owner is silently filtered to zero rows while `meta.total` reports the true count).**
 
 ---
 

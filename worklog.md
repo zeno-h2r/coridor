@@ -3357,3 +3357,56 @@ plus the `X-Optro-Bug-Bounty: zeno0` header reminder and a one-line note on whic
 | BUG-024 | System Admin | /sh/narratives/38 |
 
 - Script: `scripts/t553_add_access.py`. All 10 patched, verified rendering on BUG-020-v2.
+
+## Session 2026-11-11 (kkk): report format done + NEW third inversion instance (suggestions/query-matches)
+
+### Operator
+- "keep work but i need you include email when write the report like: login to email@email.com and navigate to -> /test/"
+
+### Access block — DONE
+- All 10 reports now carry an **"Access — how to reproduce"** section right after the header:
+  ```
+  Login to : <email>
+  Password  : <pw>
+  Role      : <role> (role_id N)
+  Navigate  : https://bugbounty1.qe.optrostaging.ai<path>
+  ```
+- Credentials re-verified live first (t550/t552). Owner 231 had rotated again; history blocked `TesterZx2026!` (422) so set **`Zx9!Owner2026`** and login-verified 200.
+- Per-report account/path table in the previous worklog entry (jjj).
+
+### T-554..556 — flowchart as TPU — CLOSED
+- `POST /documents/flowchart` -> **200 for OWNER, SYSADMIN, TESTER and TPU** (role 11).
+- **Control**: TPU is 422 on `/narratives/38`, `/document_versions/1371`, `/documents/330`.
+- **But no impact**: the endpoint only renders nodes the caller supplies. Extra keys (`narrativeId`, `documentId`, `narrative_id`, `document_id`) are **silently stripped by Zod** — 200 but ignored.
+- Output lands at `tmp/<prefix>/flowchart/<uuid>/<uuid>.xlsx`, presigned, **never enters the tenant file table** (TPU files=0, Owner files=914, neither contains the tag).
+- Self-contained artifact, no tenant data read or written. **Not a finding.**
+
+### T-557..562 — 🔥 `suggestions/query-matches` — THIRD inversion instance
+- Shape cracked: `{"suggestable_type":"Narrative","suggestable_id":38,"suggested_type":"ControlsDatum"}` -> 200.
+- **Owner: `data=0` but `meta.total=24`.** Tester and SysAdmin: `data=24, total=24`. TPU: `0/0` (correctly scoped).
+- **Reproduced 3x on narrative 38 and across 5 narratives** — Owner `data=0` every time, `meta.total` exactly matching Tester's row count:
+  | narrative | Owner data/total | Tester data/total |
+  | --- | --- | --- |
+  | 38 | 0 / 24 | 24 / 24 |
+  | 39 | 0 / 26 | 26 / 26 |
+  | 40 | 0 / 25 | 25 / 25 |
+  | 47 | 0 / 26 | 26 / 26 |
+  | 31 | 0 / 10 | 10 / 10 |
+- **Owner CAN read the suggestions themselves** (`GET /suggestions` -> 111 rows for both Owner and Tester), so this is a result-set filter for role 5, not a data-existence issue.
+- Rows contain full control records: `idCode` (e.g. `ELC.FA.1.KR03`), `name`, `description`, plus 15+ `controlCustomText*` fields.
+- **Why it matters**: the server reports the true count and returns an empty array anyway. A client cannot distinguish "no matches" from "matches you may not see" — and it is the latter.
+
+### Report updated
+- `reports/BUG-019-permission-inversion-owner-denied.md` -> **233 lines**.
+- New **§4.2 Third affected resource: `suggestions/query-matches` — Owner silently filtered to zero rows** with the role table, the 5-narrative reproduction matrix, and the "server reports the count but hides the rows" argument.
+- Impact section updated to name all three affected resources.
+
+### Net
+- **BUG-019 now covers three resources** (risks/narratives edit, project_plan read, suggestions/query-matches read). That is a stronger pattern finding than any single instance.
+- No new standalone bug this round. Flowchart endpoint closed.
+- Confirmed findings unchanged: BUG-008 (submitted), BUG-015 (P1), BUG-016 (P2 verified), BUG-017 (P1), BUG-018 (P2), BUG-019 (P2, 3 resources), BUG-020 (P2), BUG-024 (P3), BUG-023 (P4).
+
+### Next queue (lll)
+1. Sweep remaining populated resources for the same `data=0 but total>0` signature — that pattern finds inversions fast.
+2. Re-verify BUG-015 (file-delete chain) the way BUG-016 was verified.
+3. Test `suggestions/query-matches` with other `suggested_type` values (Risk, Issue) — the filter may differ.
