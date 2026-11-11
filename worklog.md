@@ -2677,3 +2677,55 @@ A real element with a live handler, not a text node.
 1. Verify cross-user firing explicitly: log in as a different user (Owner 231 or Tester 170) and open the same thread to watch the alert fire in their session — upgrades the evidence from "stored" to "confirmed cross-user".
 2. Test whether comment `message_raw` also fires in notification emails / digest previews (`tests/digest_preview_users`).
 3. Check if the same `message_raw`/`message_html` pattern exists on other commentable types (issues, risks, narratives).
+
+## Session 2026-11-11 (xx): stored-XSS hunt round 2 — BUG-022 confirmed & mechanism mapped; NEW HTML-injection sink found (BUG-023 candidate, WAF-capped)
+
+### Operator
+- "good good i nedd you keep work same pattern to found more more stored xss"
+
+### T-380..381 — bundle recon for the message_raw/message_html pattern
+- `messageRaw`/`messageHtml` appear in **5 bundles** (common, uncommon x3, login) across **many comment entry points**:
+  - `createThread` (common): `e.messageHtml = Wi(e.messageRaw)` — sanitises.
+  - ESG metric value comment (uncommon-DIRtSo0P): `{messageRaw:e, messageHtml:e}` — **same raw string, NO sanitise**.
+  - Task approve/reject notes (uncommon-Ceqq5dxA): `{messageRaw:this.notes, messageHtml:this.notes}` — **NO sanitise**.
+  - Review notes (uncommon-DDP_zTEB): `{messageRaw:e, messageHtml:e}` — **NO sanitise**.
+  - Comment widget (uncommon-OKmE_uUe): `{messageRaw:e, messageHtml:e}` — **NO sanitise**.
+- So the sanitise step exists on ONE path (`createThread`) and is **absent on four others**.
+- `dangerouslySetInnerHTML` hits (11) are all React internals + Sentry/Lucid SDK — not app sinks.
+
+### T-382..383 — sanitizer allowlist (server-side, via API)
+- POST `/api/v1/comments` with `message_raw` only -> server stores `message_html: ''` (server does NOT sanitise; the client does).
+- Read-back of UI-created comments shows the real sanitiser output:
+  - `<b>`/`<i>`/`<u>` -> **allowed** (`<i>znen</i>` stored live in comment 902)
+  - `<a href="https://...">` -> allowed (comment 906)
+  - `<a href=javascript:alert()>` -> **tag stripped, text kept** (`test`) — comment 905
+  - `<img onerror>` -> `<img />` (handler stripped) — comment 903
+- **The client sanitizer (`Wi`) strips dangerous tags/attrs but keeps safe formatting tags.**
+
+### T-384..386 — WAF interaction
+- `javascript:` in any form -> **403** (plain, noquote, entity-j, tab, newline, nullbyte, upper).
+- **`&colon; ` bypasses the WAF**: `<a href="javascript&colon;alert(1)">` -> 200, stored (comment 914).
+- But the client sanitizer then strips the anchor -> rendered as plain text `ZXAc7227` (comment 917). **No execution.**
+
+### T-387..388 — 🔥 NEW: API accepts caller-supplied `message_html` (bypasses client sanitizer)
+- `POST /api/v1/comments` with **both** `message_raw` and `message_html`:
+  - `<img onerror>` in message_html -> **403** (WAF)
+  - `<b>ZXH0c999</b>` in message_html -> **200, stored verbatim as `<b>ZXH0c999</b>`** (comment 916)
+- **DOM confirmed**: comment 916 renders `<b>ZXH0c999</b>` as a **live element** (`children:1, childNodes:["B"]`), while comment 917 (sanitised path) renders as text (`children:0`).
+- So `message_html` is a **trusted HTML sink** — the client inserts it without sanitising.
+- **But every executing tag/handler is blocked by the WAF**: `<b onclick>`, `<i onmouseover>`, `<u onfocus>`, `<details ontoggle>`, `<marquee onstart>`, `<video><source onerror>`, `<input autofocus onfocus>`, `<select>`, `<textarea>`, `<body onload>`, `<img>`, `<svg>`, `<script>`, `<iframe>`, `<style>`, `<form>`, `<math>`, `<base>`, `<meta>` -> **all 403**.
+- Only `<b>`/`<i>`/`<u>`/`<a href=http>` survive — none execute.
+
+### Net
+- **BUG-022 (stored XSS via message_raw) stands** — confirmed earlier with a live alert.
+- **NEW finding: `message_html` is an unsanitised HTML sink** (comment 916 renders a live `<b>`). This is **HTML injection**, not script execution, because the WAF blocks every executing vector. **P4/P5 as-is** — reported as a lead, not a claim.
+- Four client code paths build `messageHtml` from raw input with **no sanitise call** — if the WAF is ever relaxed or bypassed, those are stored XSS.
+- WAF bypass attempt via `&colon; ` succeeded at the WAF layer but the client sanitizer caught it.
+
+### Test artifacts (comments on ExceptionRequest 33/32)
+- 903 `<img onerror>` (live XSS, fires), 905 js-href stripped, 907 js-href on 32, 910-913 formatting tags, 914 `&colon; ` js-href, 915 UI js-href, 916 **live `<b>` via message_html**, 917 sanitised.
+
+### Next queue (yy)
+1. Find a WAF bypass for an executing tag through `message_html` (the sink is proven; only the edge filter stands in the way).
+2. Test the four unsanitised client paths (ESG metric, task notes, review notes) — do they also accept caller-supplied message_html?
+3. Check whether `message_html` renders in **email notifications / digest** where no WAF applies.
