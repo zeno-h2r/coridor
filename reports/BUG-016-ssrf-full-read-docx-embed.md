@@ -18,7 +18,7 @@ The response is embedded **regardless of its actual content type**. An internal 
 
 This turns a blind SSRF into a **full-read SSRF**: the attacker retrieves the body of any internal endpoint that returns a non-empty response, not just a timing signal.
 
-**Verified:** the application's own login page (`/login`) was fetched server-side and its complete 8,741-byte HTML source was recovered from the generated DOCX.
+**Verified:** the application's own login page (`/login`) was fetched server-side and its complete 8,741-byte HTML source was recovered from the generated DOCX. Re-verified 2026-11-11 by SHA-256 match against a direct fetch (`d98e403e...26b0d`, identical) — see §4.1.
 
 ---
 
@@ -107,6 +107,49 @@ b'<!doctype html>\n<html lang="en" dir="ltr">\n\t<head>\n\t\t<script'
 ```
 
 `media/image.ico` is **8,741 bytes** and is the complete HTML source of the application's login page, fetched server-side.
+
+---
+
+## 4.1 Independent verification (re-run 2026-11-11)
+
+The readback claim was re-verified from scratch with a control that rules out an artifact.
+
+### Control A — unique marker, same content, extension varied
+
+A unique marker (`ZXEXTbafaefcc`) was placed in the URL path of `httpbin.org/anything/`, which echoes the path back in the response body. Same host, same content, only the extension differs:
+
+| URL | media entry | marker inside embedded bytes |
+| --- | --- | --- |
+| `httpbin.org/anything/ZXEXTbafaefcc` | none | **False** |
+| `httpbin.org/anything/ZXEXTbafaefcc.ico` | `media/image.ico` (705 B) | **True** |
+| `httpbin.org/anything/ZXEXTbafaefcc.png` | `media/image.png` (720 B) | **True** |
+
+The extension alone decides whether the response body is packaged, and the marker proves the packaged bytes are the fetched response.
+
+### Control B — byte-for-byte hash match against a direct fetch
+
+Rendered `<img src="https://bugbounty1.qe.optrostaging.ai/login.ico">`, extracted `media/image.ico` from the generated DOCX, then fetched the same URL directly and compared:
+
+```
+embedded : 8741 bytes  sha256 d98e403e2d678376402d865da959064feb79034858cb7c276c9ed9c96e426b0d
+direct   : 8741 bytes  sha256 d98e403e2d678376402d865da959064feb79034858cb7c276c9ed9c96e426b0d
+identical: True
+```
+
+The embedded bytes are byte-identical to the live response. `<title>Optro</title>` is present in the embedded copy. This is not a placeholder or a template artifact — it is the server's fetched response, packaged into the document.
+
+### Control C — internal targets, extension lever applied
+
+| target | media | bytes |
+| --- | --- | --- |
+| `integrations.qa.soxhubapp.com/version.ico` | `media/image.ico` | **0** |
+| `integrations.qa.soxhubapp.com/api/v1/health.ico` | `media/image.ico` | **0** |
+| `bugbounty1.qe.optrostaging.ai/login.ico` | `media/image.ico` | **8,741** |
+| `bugbounty1.qe.optrostaging.ai/api/v1/users/me.ico` | `media/image.ico` | **0** |
+| `169.254.169.254/latest/meta-data/.ico` | `media/image.ico` | **0** |
+| `localhost:3000/version.ico` | render failed (500) | — |
+
+**Confirms the honest ceiling stated in §8:** the readback works for internal endpoints returning **HTML**. JSON endpoints (`/version`, `/api/v1/health`, `/api/v1/users/me`) and the IMDS metadata root return 0 bytes embedded.
 
 ---
 

