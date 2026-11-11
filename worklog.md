@@ -2082,3 +2082,57 @@ Both legs independently reproduced on build 47.3.0-dev. The chain converts the d
 1. Submit BUG-015 as the P1 chain, cross-referencing the already-submitted BUG-008.
 2. New bug class: SSRF readback via CSS (`@import`, `<link rel=stylesheet>`, `background-image`, SVG `xlink:href`).
 3. vms `s3Key` readback channel hunt.
+
+## Session 2026-11-11 (nn): 🔥 NEW BUG-016 P2 — FULL-READ SSRF: renderer embeds fetched internal HTML into the DOCX
+
+### Operator
+- "yes start on css readback"
+
+### T-260 — token
+- owner 231 role 5 login 200.
+
+### T-261 — CSS/asset vector sweep (12 vectors) vs internal targets
+- All 12 generated PDFs with **no** internal content (`v1.16.1` absent).
+- **But 4 of them fired server-side** (webhook, tag zxe272bea7, 05:48:48–05:49:04): `@import url()`, `<link rel=stylesheet>`, `background-image:url()`, `<svg><image href>`.
+- No callback: `<object data=type=text/css>`, `@font-face src:url()`, `cursor:url()`, `<svg><use>`.
+- **Total confirmed SSRF vectors on this sink: 6** (img, iframe, @import, link-stylesheet, background-image, svg-image).
+
+### T-262 — 🔥 THE BREAKTHROUGH: DOCX embeds fetched bytes
+- `<img src="https://httpbin.org/image/png">` -> DOCX contains `media/image.png` (**8,090 bytes**, real PNG).
+- `word/document.xml` has `<pic:cNvPr name="https://httpbin.org/image/png">` and `r:embed="img_..."`; rels map to `/media/image.png`.
+- **So the renderer fetches the URL and packages the raw response bytes into the document.**
+
+### T-263/264 — content-type boundary
+- Internal JSON endpoints (`/version`, `/api/v1/health`, `/api/v1/users/me`) -> **0 bytes embedded**.
+- `example.com` (HTML), `httpbin.org/json`, `robots.txt` -> **0 bytes embedded**.
+- Real PNG -> **8,090 bytes embedded**.
+- Conclusion at this point: only valid images embed.
+
+### T-265/266/267 — 🔑 EXTENSION LEVER FOUND
+- `https://bugbounty1.qe.optrostaging.ai/favicon.ico` -> `media/image.ico` **8,741 bytes**, head = `<!doctype html>` — **the app's login page HTML, fetched server-side and embedded**.
+- `/login` (no extension) -> 0 bytes. `/login.ico` -> **8,741 bytes**. `/login.png` -> **8,741 bytes**.
+- `/api/v1/users/me.ico` -> 0 bytes (JSON still not embedded).
+- **Root cause: the renderer packages the response as an image part based on the URL path extension, then writes whatever bytes came back — regardless of Content-Type.**
+
+### T-268/269 — reproducibility
+- `/favicon.ico` reproduced twice, identical 8,741-byte output.
+- Extension lever isolated on the same endpoint: no-ext 0, `.ico` 8741, `.png` 8741.
+- Static `.css`/`.js` paths -> 0 bytes (correct Content-Type, not packaged).
+
+### Report
+- **`reports/BUG-016-ssrf-full-read-docx-embed.md`** (214 lines, P2 rec).
+- Contents: root cause (unrestricted fetch + content-type confusion), copy-paste 3-step PoC, the extension-lever table, timing-oracle + port map as supporting evidence, all 6 SSRF vectors, honest negatives (SSTI literal-render proof, LFI blank, JSON not embedded), impact with explicit ceiling, remediation, cleanup.
+
+### Net
+- **NEW P2 FOUND.** Full-read SSRF: arbitrary internal **HTML** content retrievable + internal port map + metadata reachability.
+- Honest ceiling stated in report: JSON internal APIs are NOT readable via this path; the readback is HTML content.
+- This also upgrades the earlier "blind SSRF" assessment — the sink was never truly blind, the readback channel just needed the right extension.
+
+### Test artifacts
+- attachments 11217–11220 + associated files (own S3 prefix, inert).
+- Prior: files 2712/2726/2730/2732 deleted; issue 121 Closed; narrative 67 created.
+
+### Next queue (oo)
+1. Hunt an internal endpoint that returns HTML with sensitive content (admin pages, debug pages) to raise impact beyond the login page.
+2. Try `.svg` extension and `type:"pdf"` variant for the same lever.
+3. Submit BUG-016 alongside BUG-015 and BUG-008.
