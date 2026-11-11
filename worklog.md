@@ -2459,3 +2459,44 @@ Target user 230. Cell = observed state change after read-back.
 2. Stored XSS via the AI `generative/log` -> AI tile render path (needs SysAdmin token; log write route was 404 previously).
 3. Reflected XSS in error messages / redirect params.
 4. DOM XSS in the SPA: check `innerHTML` sinks in bundles for user-controlled data (e.g. `pageContext`, `currentURL`).
+
+## Session 2026-11-11 (tt): FULL-INPUT injection sweep — XSS closed, WAF solid, NEW BUG-021 P4 (CSP ineffective)
+
+### Operator
+- "bro the app is very big go test every thing in app inject of any input bro"
+
+### T-330..332 — query-param injection (12 endpoints x 4 params x 15 payloads)
+- Payloads: xss, ssti `{{7*7}}`, sqli `'||(SELECT 1)||'`, sqlerr, path traversal, cmd `; id; `, null byte, format string, CRLF, bigint, negative, float, bool, array, JSON object.
+- **All 12 endpoints CLEAN** — no status anomaly, no timing anomaly, no reflection, no SQL error.
+- Endpoints: users, issues, controls, risks, narratives, files, teams, roles, auditable_entities, role_permissions, score_types, processes (each with `filter[...]`, `sort`, `page[size]`).
+
+### T-333..336 — body-param injection (8 create endpoints x name/title/description x 8 payloads)
+- **All HTML is entity-encoded on write.** `<b>` -> `&lt; b&gt; `, `<img src=x>` -> `&lt; img src=x&gt; `.
+- Raw storage confirmed for non-HTML metacharacters: `{{7*7}}`, `${7*7}`, `'||(SELECT 1)||'`, `../../etc/passwd`, `; id; `, `%s%s%s%n` all stored verbatim.
+- **But no sink consumes them** — SSTI/SQLi/path/cmd all negative on read-back.
+
+### T-337..340 — 🔑 WAF + CSP discovery
+- **403 responses have `content-length: 0` and NO `x-request-id`** -> edge WAF, not the app (app returns JSON errors with `x-request-id`).
+- WAF blocks: `<svg`, `<script`, `onerror`, `onload`, `{{`. Allows: `<b>`, `<img src=x>`, `<style`, `<link`, `javascript`, `alert`, `__proto__`, `constructor`.
+- **WAF bypass attempts (14 encodings) ALL 403**: entity `&#60; `, hex-entity `&#x3c; `, null-byte split, case variation, space, newline, tab, `/**/` comment, UTF-7, overlong UTF-8. **WAF is solid.**
+- 🔥 **BUG-021: enforced CSP is `script-src * 'unsafe-inline' 'unsafe-eval'`** — blocks nothing. `object-src` and `base-uri` absent. `default-src *`.
+- A **stricter policy exists as `content-security-policy-report-only`** (`script-src 'self'`, `default-src 'none'`, `object-src 'none'`, `base-uri 'self'`, named CDN allowlist) — **not enforced**. The two appear swapped.
+
+### T-341 — encoding consistency across families
+- risks, narratives -> entity-encode on write. teams/controls/auditable_entities/esg_metrics -> 422 (perm or required field).
+- Encoding is consistent, so **no stored-XSS gap between resource families**.
+
+### Net — XSS CLOSED (again, deeper)
+- **No XSS achieved.** Three independent layers hold: (1) app entity-encodes on write, (2) edge WAF blocks tag/brace payloads with no bypass found, (3) AI strips HTML.
+- **BUG-021 (P4)**: CSP provides no script restriction. Latent defence-in-depth gap, no exploit chain. Report at `reports/BUG-021-csp-no-effective-script-restriction.md` (118 lines).
+- Honest: this is close to the excluded "missing security headers" category. Reported as an observation, not an exploitable bug.
+
+### Test artifacts
+- risks 306-312, 313, 367, 369; narratives 68, 69 created with test payloads.
+- controls/1 name/description/control_objective hold entity-encoded payloads.
+
+### Next queue (uu)
+1. Injection in file-upload paths: filename, metadata, SVG upload, CSV/XLSX import (parser-level).
+2. Injection in headers: `X-Auditboard-Product`, `X-Forwarded-*`, `User-Agent` -> any reflected in logs/UI?
+3. Rich-text / markdown fields (`rich_text` type) — bypasses the plain-text encoder?
+4. Injection into the AI `context`/`pageContext` fields -> does any reach a render sink?
