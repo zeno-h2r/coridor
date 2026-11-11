@@ -2251,3 +2251,69 @@ Target user 230. Cell = observed state change after read-back.
 1. Confirm Superuser email block is `user:action.edit` and not another uniqueness artifact (use unique address — already did; 422 detail says permission, so genuine).
 2. Check `mfa_*`, `scim_*`, `external_api_token` attributes for the same missing gate.
 3. Submit BUG-017 as P1 vertical ATO (role 4 -> role 2).
+
+## Session 2026-11-11 (qq): ATO LINE CLOSED per operator. Pivoting to BAC.
+
+### Operator
+- "close all ATO testing and focus on BAC"
+
+### ATO closure summary (all findings final)
+- **BUG-008** — `PUT /users/{id}` password write, Owner->System Admin escalation. SUBMITTED by operator.
+- **BUG-017** — `email` attribute unguarded for every role below Superuser; Tester(4)->SystemAdmin(2) vertical ATO proven. Report at `reports/BUG-017-lowest-role-email-hijack-ato.md` (236 lines).
+- **ATO ceiling confirmed**: Superuser (role 1) blocked on both `password` and `email` by `user:action.edit`. No further ATO vectors open.
+- **Closed ATO vectors** (no further work): token forgery (random), passwordless (flag off), TOTP bootstrap (500), SAML (unconfigured), reset-token oracle (gated), `password-reset-no-auth` (gated), Host-header poisoning (unverifiable), MFA endpoints (password-enforced), `auth_type`/`role_id` mass-assign (gated).
+
+### State carried into BAC phase (per operator: NO email reverts)
+- 230 email `zeno0@bugcrowdninja.com`, pw `TesterZx2026!`
+- 53 email `zx-sysadm-66650c74@bugcrowdninja.com`, pw `TesterZx2026!`
+- 171/313/172/315 emails `zx-*@bugcrowdninja.com`, pw `Zx9!lower47`
+- 231 email `golden-snow-4771@bugcrowdninja.com`, pw `TesterZx2026!`
+- No role permission sets edited.
+
+### BAC scope for this phase
+1. Cross-user IDOR read/write/delete across every resource family (BOLA).
+2. Nested/parent-object access (child referenced under a parent the caller cannot reach).
+3. Function-level access control (admin-only endpoints reached with low-role tokens) — BFLA.
+4. HTTP method tampering and path-normalisation bypasses.
+5. Parameter pollution / duplicate-key bypass.
+6. Bulk endpoints that skip per-object checks.
+
+### T-290..297 — BAC phase 1: BFLA sweep across 20 privileged endpoints x 6 roles
+- Tokens: OWNER(231,r5), SYSADMIN(53,r2), REVIEWER(171,r3), TESTER(170,r4), EXTAUD(172,r6), TPU(315,r11).
+- Recovered 171/172/315 by logging in with their hijacked emails (per operator: no email reverts).
+
+**BFLA matrix (GET, 20 endpoints x 6 roles):**
+| endpoint | OWNER | SYSADM | REVIEW | TESTER | EXTAUD | TPU |
+| --- | --- | --- | --- | --- | --- | --- |
+| roles / settings / teams | 200 | 200 | 200 | 200 | 200 | 200 |
+| usage/totals | 403 | 403 | 403 | 403 | 403 | 403 |
+| assistant_knowledge_files | 403 | **200** | 403 | 403 | 403 | 403 |
+| ml_generative_prompts / logs | 422 | **200** | 422 | 422 | 422 | 422 |
+| webhook_urls / tiering_rules / weight_sets / evidence-search | 422 all |
+| api_access_logs / brand_identities / dip_configurations / automation_workflows | 200 all — **but empty collections** |
+| **role_permissions** | 200 | 200 | 200 | 200 | 200 | 200 |
+| score_types | 200 all (static reference data) |
+
+### 🔥 T-295/296/297 — NEW BUG-018 P2: RBAC matrix disclosure (BFLA)
+- `GET /api/v1/role_permissions` is **not scoped to the caller** for roles 2–6.
+  - **TPU (role 11)**: correctly scoped -> 5,019 rows, `role_ids={11:5019}`.
+  - **Owner / SysAdmin / Reviewer / Tester / ExtAuditor**: **70,266 rows, all 14 role_ids** (1,2,3,4,5,6,10,11,12,13,14,15,16,17 x 5,019 each).
+- `?role_id=1` honoured for **every** role -> **Tester(4) and ExtAuditor(6) each pull Superuser's full 5,019-row permission set** (3,115 granted entries).
+- 1,807 distinct permission keys; values `edit|show|hide|allow|deny`; sections cover the whole product schema.
+- **Not writable**: `PUT /role_permissions/{id}` -> 403, `POST` -> 404, `DELETE` -> 404.
+- **Report: `reports/BUG-018-rbac-matrix-disclosure.md`** (157 lines, P2 rec, disclosure-only ceiling stated).
+
+### Correction made mid-sweep
+- First read of `role_permissions` (as TPU) showed 5,019 rows and looked like a cross-role leak. It was **TPU's own scoped set** — role 11 is correctly isolated. The real defect only appears for roles 2–6. Caught before reporting.
+
+### Net
+- **NEW P2: BUG-018** — complete RBAC matrix readable by every internal role, including Superuser's set from role 4 and role 6.
+- BFLA otherwise clean: `assistant_knowledge_files` / `ml_generative_*` correctly System-Admin-only; `usage/totals`, `webhook_urls`, `tiering_rules`, `weight_sets`, `evidence-search` uniformly gated.
+- Empty-but-200 collections (api_access_logs, brand_identities, dip_configurations, automation_workflows) noted, not reported — no data.
+
+### Next queue (rr)
+1. BOLA: cross-user read/write/delete on every resource family with the 6 role tokens (not just role vs role — object vs object).
+2. Nested-object access: child under a parent the caller cannot reach (e.g. `/workspaces/{id}/issues/{id}`).
+3. Method tampering: `PUT`/`PATCH`/`POST` on read-only routes; `X-HTTP-Method-Override`.
+4. Path normalisation: `/api/v1/users/230` vs `/api/v1/users/230/` vs `/api/v1//users/230` vs case variants.
+5. Bulk endpoints skipping per-object checks (`suggestions/bulk-accept`, `bulk_update`, `bulk_set_disabled`).
