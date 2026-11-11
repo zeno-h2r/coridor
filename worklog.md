@@ -2560,3 +2560,64 @@ Target user 230. Cell = observed state change after read-back.
 2. `rich_text` field type in dynamic-schema — bypasses the plain-text encoder?
 3. AI `context`/`pageContext` -> any render sink?
 4. DOM XSS in SPA bundles: `innerHTML` sinks fed by `currentURL`/`pageContext`.
+
+## Session 2026-11-11 (vv): XSS on exception 32 — CLOSED (honest negative, DOM-verified)
+
+### Operator
+- "i need you test xss here https://bugbounty1.qe.optrostaging.ai/workspace/12/exceptions/32"
+
+### T-360..362 — access to exception 32
+- **Owner (231): 422 `exception_request:action.view`** — cannot view exception 32 at all.
+- **Tester (170): 422** — same denial.
+- **System Admin (53): 200** — can view. Used SysAdmin token for all injection.
+- List scope differs by role: Owner sees 1 exception (id 31), SysAdmin sees 22, Tester sees 0.
+
+### T-363 — exception 32 fields
+- Writable: `title`, `description`, `closure_notes`, `recommendation`. (`business_unit` 422.)
+- `field_data` is a JSON blob but **not writable** through PUT — stays `{}`.
+- `_permissions` for SysAdmin: view/create/delete/edit/uploadFile/viewFile/createForOthers all true.
+
+### T-364 — injection + read-back
+| field | PUT | stored | encoded |
+| --- | --- | --- | --- |
+| title | 200 | `&lt; b&gt; ZXZXE5646c&lt; /b&gt; ` | **YES** |
+| description | 200 | `&lt; b&gt; ZXZXE5646c&lt; /b&gt; ` | **YES** |
+| closure_notes | 200 | `&lt; b&gt; ZXZXE5646c&lt; /b&gt; ` | **YES** |
+| recommendation | 200 | `&lt; b&gt; ZXZXE5646c&lt; /b&gt; ` | **YES** |
+| business_unit | 422 | — | — |
+
+### T-364b — browser DOM verification (the decisive test)
+- Swapped browser session to SysAdmin (53) so the page renders; navigated to `/workspace/12/exceptions/32`.
+- Page renders: title, description, closure rationale, and the "Request Closed" banner all show the payload.
+- **DOM analysis:**
+  ```
+  rawMarkupInHTML (escaped &lt; b&gt; ): true
+  literalTagInHTML (<b> parsed):   false
+  boldElementsWithTag:             0
+  elementsWithEventHandlers:       0
+  spansWithRawText: 2 spans, childNodes=["TEXT"], hasElementChild=0
+  elementsWithParsedBold:          0
+  ```
+- Each span holds a **single TEXT node with zero element children**; `innerHTML` reads `&lt; b&gt; ZXZXE5646c&lt; /b&gt; `. The `<b>` visible in `textContent` is the browser decoding entities for display, not markup being parsed.
+- **No element was ever created from the payload.**
+
+### T-365 — field_data JSON blob
+- `PUT` with `field_data: {"zx_probe": "<img onerror>"}` -> **403** (WAF) for img/svg; `<b>` -> 200 but `field_data` stayed `{}` — not persisted through this endpoint.
+
+### T-366 — entity double-decode via renderer
+- Fed `&amp; lt; img src=x onerror=alert(1)&amp; gt; ` into `attachments/html` to test whether the renderer decodes entities into live markup.
+- Rendered run: `&amp; lt; img src=x onerror=alert(1)&amp; gt; ZXDc3855` — **no decode to `<img`**, no live markup. Decoding is stable at one level.
+
+### Net — XSS on exception 32: CLOSED
+- **No XSS.** Four independent checks all negative: API entity-encodes on write, DOM renders as text node, no element created, renderer does not double-decode.
+- Also found: **Owner cannot view exception 32 at all** (`exception_request:action.view` denied) — that is a permission gap, not a bug (SysAdmin owns this resource family).
+- WAF still blocks `<img>`/`<svg>` payloads at the edge.
+
+### Test artifacts
+- Exception 32 title, description, closure_notes, recommendation now contain `&lt; b&gt; ZXZXE5646c&lt; /b&gt; ` (entity-encoded test payload). Original values were `tes` / `zf` / `dfsz`.
+- Attachment 11254 / file created for the decode test.
+
+### Next queue (ww)
+1. `rich_text` field type in dynamic-schema — the one field type not yet tested for encoder bypass.
+2. Header injection: `X-Auditboard-Product`, `User-Agent`, `X-Forwarded-*`.
+3. DOM XSS: grep bundles for `innerHTML` sinks fed by `currentURL`/`pageContext`.
