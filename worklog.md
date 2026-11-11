@@ -2500,3 +2500,63 @@ Target user 230. Cell = observed state change after read-back.
 2. Injection in headers: `X-Auditboard-Product`, `X-Forwarded-*`, `User-Agent` -> any reflected in logs/UI?
 3. Rich-text / markdown fields (`rich_text` type) — bypasses the plain-text encoder?
 4. Injection into the AI `context`/`pageContext` fields -> does any reach a render sink?
+
+## Session 2026-11-11 (uu): UPLOAD-PATH injection sweep — CLOSED (honest negative)
+
+### Operator
+- "go to num 1" -> item 1 from prior queue: file-upload paths (filename, SVG upload, CSV/XLSX import).
+
+### T-350 — tokens
+- OWNER(231,r5) SYSADMIN(53,r2) TESTER(170,r4) all live.
+
+### T-351 — filename injection via `s3_upload_signature`
+| filename | result |
+| --- | --- |
+| `zx-<tag>.pdf` | 200, key clean |
+| `<img src=x onerror=...>.pdf` | **403** (WAF) |
+| `<svg onload=...>.svg` | **403** (WAF) |
+| `"><svg onload=...>.pdf` | **403** (WAF) |
+| `{{7*7}}<tag>.pdf` | **403** (WAF) |
+| `../../../../etc/<tag>.pdf` | 200 — slashes stripped: `........etcZXF8380d.pdf` |
+| `zx-<tag>.pdf\x00.html` | 200 — key `zx-...pdf.html` |
+| `zx-<tag>.pdf.html` | 200 — **double extension survives** |
+| `zx-<tag>\r\nX-Injected:1.pdf` | 200 — CRLF flattened to `zx-...X-Injected1.pdf` |
+| `zx-<tag>\u202e.html` | 200 — RTL override URL-encoded in key |
+
+- Path traversal sanitized (slashes stripped, key pinned to caller prefix). CRLF flattened. No header injection.
+
+### T-352..353 — HTML/SVG upload + anonymous serve
+- Uploaded real `.html`, `.htm`, `.svg` files containing `<script>` to S3 via presigned POST -> **all 201**.
+- **Anonymous GET on the bucket -> 403 AccessDenied** for all three. Bucket is private; no public serving.
+
+### T-354..356 — presigned serve + Content-Type
+- `POST /api/v1/files` register -> **500** (shape unknown; not the mechanism the app uses).
+- Via `attachments/html` renderer (proven file-creation path): the server **overrides the extension** — `fileName: "zx-<tag>-html"` still produced `zx-<tag>-html.docx` with `type: application/vnd.openxmlformats-officedocument.wordprocessingml.document`.
+- Presigned GET headers:
+  ```
+  content-type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+  content-disposition: attachment; filename="zx-...docx"
+  ```
+- **`Content-Disposition: attachment` + server-forced extension** -> an uploaded HTML file cannot be served as `text/html`. No stored XSS via upload.
+
+### T-357 — import parsers
+- `ops_audit_items/import/json` -> 200 but `{results:[],summary:{},isRunningInBackground:true}` — inert, no parse of supplied items.
+- `vms/csv-import` with `s3Key: "../../../../etc/passwd"` -> 200 `{jobId:31844,runId:6}` (queued; no readback channel — same limitation as prior session).
+- `vms/csv-import` with `{{7*7}}` in s3Key -> **403** (WAF).
+- `frameworks/custom-import` 404; `bcm_plans/import` 422 FeatureNotEnabled; `regulations/import` 403.
+
+### Net — upload path CLOSED
+- **No XSS, no traversal, no header injection, no parser exploit.**
+- Three defences: (1) WAF blocks tag/brace payloads in filenames, (2) S3 bucket is private (anon 403), (3) server forces the file extension and serves with `Content-Disposition: attachment`.
+- The `vms/csv-import` s3Key traversal remains **unverifiable** (no readback channel) — unchanged from prior session.
+
+### Test artifacts
+- S3 objects uploaded under own prefix: `zx-ZXH22b1d.html`, `.htm`, `.svg` (inert, unreachable anonymously).
+- Files 2805, 2807 (renderer output); attachments 11252, 11253.
+- vms import job 31844 / run 6.
+
+### Next queue (vv)
+1. Header injection: `X-Auditboard-Product`, `User-Agent`, `X-Forwarded-*` -> reflected in logs/UI?
+2. `rich_text` field type in dynamic-schema — bypasses the plain-text encoder?
+3. AI `context`/`pageContext` -> any render sink?
+4. DOM XSS in SPA bundles: `innerHTML` sinks fed by `currentURL`/`pageContext`.
