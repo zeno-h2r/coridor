@@ -3007,3 +3007,49 @@ Sent as `message_html`, read back after server sanitisation:
 1. If operator wants P1/P2: pivot off XSS entirely. Confirmed findings are BUG-008/015/016/017/018/019.
 2. Re-verify BUG-016 SSRF readback the way BUG-022 was re-verified (same inference risk).
 3. BUG-023 could be raised if a spoofing scenario is built (e.g. fake approval banner in an audit thread) — but P4 is honest.
+
+## Session 2026-11-11 (ddd): NEW SURFACE SWEEP — GraphQL absent; timesheet wide-read (not a bug); 🔥 project_plan read inversion (extends BUG-019)
+
+### Operator
+- "good move to another surface to found more bugs okay"
+
+### T-450 — tokens
+- OWNER(231,r5) SYSADMIN(53,r2) TESTER(170,r4) + TPU(315,r11) all login 200.
+
+### T-451 — 41-endpoint new-surface probe
+- **GraphQL: absent.** `POST /graphql` 405, `/api/graphql` 404, `/api/v2/graphql` 404. No GraphQL surface.
+- `/api/v1/search` 404. `/api/v1/integrations` 404.
+- `webhook_urls` 422 FeatureNotEnabled. `assistant/saved-prompts` 422.
+- `table/export` + `_op/async_export` -> 500 (shape still wrong).
+- **Populated & reachable**: timesheet_entries (1050), audit_surveys (160), project_plans (102/104), bookings (34), financial_applications (12), skills (122), markup_test_sheets (6, empty shells), markup_samples (6, empty).
+- Empty: we_tasks, sigma_reports, sigma_workbooks, rcw_requests, rcw_library_requests, financial_accounts, user_skills, import_records, guided_summary_reports, cross_audit_summaries, project_plan_containers.
+
+### T-452..458 — timesheet_entries — investigated, NOT a bug
+- Tester reads **1050 entries across 9 users** (incl. user 1 Superuser 385 entries, user 235). Owner identical. SysAdmin 0.
+- Single-entry IDOR: Tester `GET /timesheet_entries/43` (user 1) -> **200**.
+- **But the control kills it**: Tester also reads `GET /users/1` -> 200, `/issues/121` -> 200, `/controls/1` -> 200, `/risks/1` -> 200. Tester is a **wide-read role** by design.
+- **Role 11 (limited) is correctly scoped**: `timesheet_entries` -> 0 rows, `/timesheet_entries/43` -> **422**, `/users/1` -> **403**.
+- Write: Tester `PUT /timesheet_entries/43` -> 422 validation; `DELETE` -> 422 permission. Read-only.
+- **Verdict: not a finding.** Wide-read role, not a scoping failure.
+
+### 🔥 T-459..463 — project_plan READ INVERSION (extends BUG-019)
+- `GET /api/v1/project_plans`: **Owner 102 plans, Tester 104 plans** — Tester sees MORE.
+- Tester-only plans: **154, 155**. Owner-only: none. Owner's list is a strict subset.
+- **Direct IDOR**: `GET /project_plans/154` -> Owner **422 `project_plan:action.view`**, Tester **200 full record**, TPU **422**.
+- Tester reads: `title='Emplovee Information Assessment'`, `budget_hours=100`, `total_hours=200`, `start_date=2024-01-01`, `end_date=2024-12-31`, `plannable_type=ControlsDatum`, `plannable_id=38`.
+- Write denied for both roles (`PUT` -> 422 `project_plan:action.edit`) — **read-only inversion**.
+- **`project_plan` has ZERO rows in the RBAC matrix** for roles 2/4/5 — the permission is enforced outside the exposed permission table, which is why an admin reviewing the matrix cannot see the inversion.
+
+### Report updated
+- `reports/BUG-019-permission-inversion-owner-denied.md` -> **179 lines**.
+- New **§4.1 Second affected resource: project_plan (read inversion)** with the role/plan matrix, the direct-IDOR proof, and the RBAC-matrix-absent note.
+- Impact section updated: Tester/Reviewer modify risks+narratives that Owner cannot; Tester also reads project plans Owner is denied.
+
+### Net
+- **No new standalone bug.** The project_plan inversion is the same root cause as BUG-019 (role config where a mid-tier role exceeds a higher tier), so it is folded into that report rather than filed separately — better for triage dedup.
+- GraphQL absent. Timesheet wide-read is intended. Markup rows are empty shells.
+
+### Next queue (eee)
+1. Sweep the remaining populated resources for the same inversion pattern (audit_surveys 160, bookings 34, skills 122) — compare Owner vs Tester ID sets.
+2. Re-verify BUG-016 SSRF readback (same inference risk that cost BUG-022).
+3. `table/export` shape — get the exact `ab:export.header` array from the bundle to unblock mass export.

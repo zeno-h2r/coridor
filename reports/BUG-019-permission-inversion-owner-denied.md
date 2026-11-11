@@ -119,9 +119,28 @@ Reproduced on **six independent objects** — risks 1, 2, 3 and narratives 31, 3
 
 ---
 
+## 4.1 Second affected resource: `project_plan` (read inversion)
+
+The same inversion appears on `project_plan`, in the read direction.
+
+| role | `GET /api/v1/project_plans` | `GET /api/v1/project_plans/154` |
+| --- | --- | --- |
+| Owner (5) | 200, **102 plans** | **422 `project_plan:action.view`** |
+| Tester (4) | 200, **104 plans** | **200 — full record** |
+| Third Party (11) | 200, 5 plans | 422 |
+
+- Plans **154** and **155** are visible to Tester and **not** to Owner. Owner's list is a strict subset of Tester's (Tester-only: 154, 155; Owner-only: none).
+- Owner denial is a genuine authorization check: `422 ModelActionPermissionDenied (Permission: project_plan:action.view)`.
+- Tester reads the full record: `title='Emplovee Information Assessment'`, `budget_hours=100`, `total_hours=200`, `start_date=2024-01-01`, `end_date=2024-12-31`, `plannable_type=ControlsDatum`, `plannable_id=38`, `project_plan_container_id=1`.
+- **Write is denied for both roles** (`PUT` -> 422 `project_plan:action.edit`), so this is read-only.
+
+Note: `project_plan` does not appear in the RBAC matrix returned by `role_permissions` for roles 2, 4 or 5 (0 rows matched), so the permission is enforced by a path outside the exposed permission table — which is itself why the inversion is not visible to an administrator reviewing the matrix.
+
+---
+
 ## 5. Impact
 
-- **A lower-privileged role holds a write capability a higher-privileged role lacks.** Tester (role 4) and Reviewer (role 3) can modify risk and narrative records that Owner (role 5) cannot.
+- **A lower-privileged role holds capabilities a higher-privileged role lacks.** Tester (role 4) and Reviewer (role 3) can **modify** risk and narrative records that Owner (role 5) cannot. Tester can also **read** project plans (154, 155) that Owner is denied.
 - **Owner is the default business role** — 116 of 145 login-enabled accounts. The inversion affects the majority of the tenant's users, not an edge case.
 - **Content integrity.** Risks and narratives are the core audit artefacts in this product. A role that is meant to be read-restricted on them can alter their content.
 - **Indicates a misconfigured RBAC model.** A role matrix where a mid-tier role exceeds a higher tier is a configuration defect that will produce further unintended grants as roles evolve.
@@ -140,7 +159,7 @@ Reproduced on **six independent objects** — risks 1, 2, 3 and narratives 31, 3
 | Third Party User (role 11) — all edit attempts | **422** uniformly — correctly restricted |
 | External Auditor (role 6) — risks / narratives | **422** — matches Owner, also denied |
 
-**The inversion is specific to Tester and Reviewer on `risk` and `narrative` edit.**
+**The inversion is specific to Tester and Reviewer on `risk` and `narrative` edit, and to Tester on `project_plan` read.**
 
 ---
 
