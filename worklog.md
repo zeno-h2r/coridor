@@ -1899,3 +1899,49 @@ Method: renderer fetches `<img src=...>`; unreachable host blocks until timeout,
 1. Test the same `status` mass-assignment on a **lower-privilege** token (role 11) against an issue they shouldn't touch — if a limited user can close an arbitrary issue, that is a real P3.
 2. Re-test `table/export` shape using the exact `ab:export.header` array from the bundle.
 3. Role-1 account from program for the last vertical step.
+
+## Session 2026-11-11 (jj): CROSS-OWNER CONTENT TEST — Owner 231 CANNOT edit Owner 230's content. Read is org-wide (intended). NEGATIVE.
+
+### Operator
+- "i submited youre report okay and you have two email try to learn the owner 1 can edit owner2 content or not and use youre browser to understand the app"
+
+### Setup
+- Two Owner (role 5) accounts, both `auth_type:password`, both login 200:
+  - **A = 231** `golden-snow-4771@bugcrowdninja.com` (Tester35)
+  - **B = 230** `golden-leaf-3068@bugcrowdninja.com` (Tester34)
+- Browser confirms A's dashboard shows **"My Issues: 0"** -> A owns no content, so any B-owned object is a clean test target.
+
+### T-221..223 — B(230) creates owned content
+- Issue creation blocked by required `issuesourceable_type` (must be Test|ControlsDatum) — not pursued.
+- **Narrative created**: `POST /api/v1/narratives` `{"narrative":{"name":"ZX-B-NARRATIVE","uid":"zx-b-narr-1"}}` -> **200, id 67**, `scopes: {"owner_users":{"all":[230]}}`, `alias_latest_document_version_id: 1402`.
+
+### T-224 — 🔑 THE ANSWER: A(231) vs B(230)'s narrative 67
+| action | A(231) result |
+| --- | --- |
+| `GET /api/v1/narratives/67` | **200 — full read**, name + description visible |
+| `PUT /api/v1/narratives/67` (rename) | **422 `narrative:action.edit`** |
+| `PUT` scopes.owner_users.all -> [230,231] | **422 `narrative:action.edit`** |
+| `PUT` scope_users / owner_users variants | **422 `narrative:action.edit`** |
+| `DELETE /api/v1/narratives/67` | **422 `narrative:action.delete`** |
+| `GET /api/v1/document_versions/1402` | **200 — body readable** |
+
+- **Browser corroboration**: narrative list at `/workspace/15/narratives/narrative-list` as A shows **"ZX-B-NARRATIVE"** in the table alongside all other org narratives (15 rows). A can see B's narrative in the UI.
+- **Content confirmed**: B wrote `description = "ZXSECRET-230-ONLY-CONTENT"`; A read it back verbatim via `GET /narratives/67`.
+
+### Verdict
+- **Owner 1 CANNOT edit Owner 2's content.** Write, scope-change and delete are all blocked by `narrative:action.edit` / `narrative:action.delete`. Cannot add itself to the scope either.
+- **Owner 1 CAN read Owner 2's content**, including the document body. This is **org-wide read for the Owner role** — consistent with every prior session's finding that Owner sees all tenant data. **Intended behaviour, not a vulnerability.**
+- Contrast with the user-record plane: `PUT /api/v1/users/{id}` has **no** object-level check (BUG-008), but content resources like narratives **do** enforce `action.edit` per role. So the authorization model is inconsistent by resource, not uniformly broken.
+
+### Cleanup
+- Could not delete narrative 67: B(230) itself lacks `narrative:action.delete` (Owner role has no delete on narratives). **Test artifact remains: narrative id 67 `ZX-B-NARRATIVE` / uid `zx-b-narr-1`, owned by user 230, description `ZXSECRET-230-ONLY-CONTENT`.** Disclose in any report.
+- No other business objects modified.
+
+### Net
+- **No new bug.** The cross-Owner edit question is answered: read-only across Owners, writes properly gated.
+- This *strengthens* BUG-008's framing: the user-record endpoint is the outlier. Content resources enforce object-level role permissions; `PUT /users/{id}` does not.
+
+### Next queue (kk)
+1. Same cross-Owner test on **issues** (needs `issuesourceable_type: Test` + a Test id) — narratives are one resource; issues may differ.
+2. Test whether a **role-11 limited** token can read Owner content (that would be a real P2/P3, unlike Owner-to-Owner).
+3. Role-1 account from program for the last vertical step.
