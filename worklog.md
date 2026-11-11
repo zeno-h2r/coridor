@@ -2195,3 +2195,59 @@ Target user 230. Cell = observed state change after read-back.
 1. Test `email` write against a **Superuser (role 1)** target explicitly — confirm the gate is absent there too (would make the chain reach role 1 end-to-end).
 2. Check whether `email` change invalidates sessions / sends notification (impact on detectability).
 3. Look for other unguarded attributes on `PUT /users/{id}` (mfa fields, scim, external_api_token).
+
+## Session 2026-11-11 (pp): BUG-017 CORRECTED + vertical ATO to System Admin PROVEN. Operator: do NOT revert emails.
+
+### Operator
+- "bro never change the email back all thing bro" — **stop reverting email changes**. Left in place.
+
+### T-280/281 — live chain, emails left hijacked
+- Tester(170, role 4) `PUT /users/230 {"user":{"email":"zeno0@bugcrowdninja.com"}}` -> **200, landed**, LEFT IN PLACE.
+- Victim 230's pre-existing token -> **401** (session killed by the email change).
+- `POST /password-reset-email` -> 200 `{"status":"ok"}`.
+- **Login with the hijacked address + known password -> 200, id=230 role=5.** Old address -> 401.
+- **So the reset link is not even required when the password is known — email alone is the identity switch.**
+
+### T-282..285 — ⚠️ SECOND FALSE POSITIVE CAUGHT (uniqueness, not authz)
+- First pass showed Superuser targets 422 and I concluded "role 1 protected".
+- **Actual cause: `422 "Email address already in use!"`** — every row reused the same target address, so all targets after the first failed on a uniqueness constraint, not authorization.
+- Re-ran with a **unique address per attempt**:
+  | target | role | PUT | result |
+  | --- | --- | --- | --- |
+  | 1 | Superuser (1) | 422 | `user:action.edit` — genuinely blocked |
+  | 53 | System Admin (2) | 200 | **landed** |
+  | 171 | Reviewer (3) | 200 | **landed** |
+  | 313 | Tester (4) | 200 | **landed** |
+  | 230 | Owner (5) | 200 | **landed** |
+  | 172 | Ext Auditor (6) | 200 | **landed** |
+  | 315 | Third Party (11) | 200 | **landed** |
+- **Correct conclusion is STRONGER than the first draft: the email gate is absent for every role below Superuser.**
+
+### T-286 — 🔥 VERTICAL ATO PROVEN: Tester(role 4) -> System Admin(role 2)
+- `PUT /users/53 {"user":{"email":"zx-sysadm-66650c74@bugcrowdninja.com"}}` -> **200, read-back landed**.
+- `POST /users/login` with the hijacked address -> **200, id=53 role=2**.
+- Original address -> **401** (legitimate owner locked out).
+- **Role 4 takes over role 2 — a role that outranks it.** Ceiling is role 2; Superuser (role 1) is the only protected tier.
+
+### Report updated
+- `reports/BUG-017-lowest-role-email-hijack-ato.md` -> **236 lines**.
+- New §3 split into 3.1 (attacker role vs attribute), 3.2 (Tester vs target role), **3.3 method note disclosing BOTH false positives** (status-code-only, and the uniqueness collision).
+- New Step 5 in reproduction: verified System Admin takeover.
+- Impact/blast-radius corrected: **139 of 145** login-enabled accounts reachable (all but the 6 Superusers); ceiling is role 2, not role 1.
+
+### Two false positives caught this session — process lesson
+1. Status code 200 != write landed (Reviewer password probe).
+2. 422 != authorization denial (email uniqueness collision).
+**Rule adopted: verify every write by read-back, and use a unique value per attempt.**
+
+### State (per operator instruction: NO email reverts)
+- **230 email = `zeno0@bugcrowdninja.com`** (left hijacked, deliberate).
+- **53 email = `zx-sysadm-66650c74@bugcrowdninja.com`** (left hijacked, deliberate).
+- 171/313/172/315 emails = random `zx-*@bugcrowdninja.com` (left hijacked).
+- 231 email intact `golden-snow-4771@bugcrowdninja.com`, pw `TesterZx2026!`.
+- No role permission sets edited (per operator instruction).
+
+### Next queue (qq)
+1. Confirm Superuser email block is `user:action.edit` and not another uniqueness artifact (use unique address — already did; 422 detail says permission, so genuine).
+2. Check `mfa_*`, `scim_*`, `external_api_token` attributes for the same missing gate.
+3. Submit BUG-017 as P1 vertical ATO (role 4 -> role 2).

@@ -39,22 +39,41 @@ The `email` attribute bypasses the `user:action.edit` check that the other ident
 
 ---
 
-## 3. Capability matrix (verified by read-back, not status codes)
+## 3. Capability matrix (verified by read-back, unique address per attempt)
 
-Target: user 230. Each cell is the **observed state change after read-back**, not the HTTP status.
+Target: one login-enabled account per role. Each cell is the **observed state change after read-back**, not the HTTP status.
+
+### 3.1 Attacker role vs attribute (target = Owner, user 230)
 
 | attacker role | GET | `password` | `job_title` | `role_id` | **`email`** |
 | --- | --- | --- | --- | --- | --- |
-| Owner (231) | 200 | **200 / landed** | 422 | 422 | **200 / landed** |
-| Reviewer (171) | 200 | 422 | 422 | 422 | **200 / landed** |
-| **Tester (170)** | 200 | 422 | 422 | 422 | **200 / landed** |
-| **External Auditor (172)** | 200 | 422 | 422 | 422 | **200 / landed** |
+| Owner (231) | 200 | **landed** | 422 | 422 | **landed** |
+| Reviewer (171) | 200 | 422 | 422 | 422 | **landed** |
+| **Tester (170)** | 200 | 422 | 422 | 422 | **landed** |
+| **External Auditor (172)** | 200 | 422 | 422 | 422 | **landed** |
 
-All four roles successfully changed another user's email. Only Owner could change the password.
+### 3.2 Tester (role 4) email write vs **target** role
 
-**Note on method:** earlier status-code-only probing produced a false positive (Reviewer received HTTP 200 on a password write that did not take effect). Every row above was confirmed by reading the record back before and after.
+| target id | target role | PUT | result |
+| --- | --- | --- | --- |
+| 1 | **Superuser (1)** | 422 | `user:action.edit` — **blocked** |
+| 53 | **System Admin (2)** | 200 | **landed** |
+| 171 | Reviewer (3) | 200 | **landed** |
+| 313 | Tester (4) | 200 | **landed** |
+| 230 | Owner (5) | 200 | **landed** |
+| 172 | External Auditor (6) | 200 | **landed** |
+| 315 | Third Party User (11) | 200 | **landed** |
 
----
+**A Tester can rewrite the email of every role except Superuser** — including System Admin, which outranks Tester.
+
+### 3.3 Method note — a false positive was caught and corrected
+
+Two earlier probes produced wrong answers, both disclosed here for transparency:
+
+1. **Status-code-only probe.** Reviewer received HTTP `200` on a password write that **did not take effect** (login with that password returned `401`). Every row above is confirmed by reading the record back before and after.
+2. **Email-uniqueness collision.** An early matrix reused the same target address for every row, so all targets after the first returned `422 "Email address already in use!"` — which looked like an authorization denial but was a uniqueness constraint. Re-run with a unique address per attempt, six of seven targets accepted the write.
+
+**The correct conclusion is stronger than the first draft:** the email gate is absent for every role below Superuser, not merely for the Owner tier.
 
 ## 4. Reproduction — copy-paste
 
@@ -133,6 +152,20 @@ curl -s -X POST "$H/api/v1/users/login" -H "$BB" \
 
 **Chain complete: Tester → Owner email hijack → reset link to attacker → Owner session.**
 
+### Step 5 — verified vertical takeover of a System Admin (role 2)
+
+Executed live, no reset link required because the account's password was already known:
+
+```
+Tester(170, role 4)  PUT /api/v1/users/53  {"user":{"email":"zx-sysadm-<rand>@bugcrowdninja.com"}}
+  → 200, read-back confirms the change landed
+
+POST /api/v1/users/login  {"credentials":{"email":"zx-sysadm-<rand>@bugcrowdninja.com","password":"<known>"}}
+  → 200, session.token, role_id: 2
+```
+
+Observed: `*** TAKEOVER: id=53 role=2 ***`. The System Admin's original address then returned `401` — the legitimate owner is locked out of their own account.
+
 Steps 0–3 were executed and verified live. Step 4 uses the reset flow whose token delivery is to the attacker's own inbox; the reset endpoint itself was confirmed correctly gated in prior testing (`password-reset-no-auth` rejects invalid tokens with `400 Invalid reset link`).
 
 ---
@@ -143,7 +176,7 @@ Login-enabled accounts by role (from `GET /api/v1/users`, 317 accounts):
 
 | role | login-enabled | reachable as a victim by a Tester |
 | --- | --- | --- |
-| Superuser (1) | 6 | **yes** |
+| Superuser (1) | 6 | no — `user:action.edit` blocks email writes |
 | System Admin (2) | 8 | **yes** |
 | Reviewer (3) | 6 | **yes** |
 | Tester (4) | 4 | **yes** |
@@ -151,9 +184,9 @@ Login-enabled accounts by role (from `GET /api/v1/users`, 317 accounts):
 | External Auditor (6) | 4 | **yes** |
 | Third Party User (11) | 1 | **yes** |
 
-**145 accounts** are login-enabled and therefore reachable. The attacker needs only the weakest internal role (Tester, 4 accounts) to reach the strongest (Superuser, 6 accounts).
+**139 of 145** login-enabled accounts are reachable by a Tester (all except the 6 Superusers). The attacker needs only the weakest internal role (Tester, 4 accounts) to reach System Admin (role 2) and every role below it.
 
-Superuser *password* writes are blocked by `user:action.edit`. **Superuser *email* writes are not** — the email path bypasses that gate entirely, which is why this reaches role 1 where the password path cannot.
+Superuser (role 1) is protected on **both** `password` and `email` by `user:action.edit`. Every role below it — including System Admin (role 2), which outranks the attacker — is **not** protected on `email`. The escalation ceiling is therefore **role 2**, reached from role 4.
 
 ---
 
