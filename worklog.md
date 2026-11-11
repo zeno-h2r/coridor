@@ -2780,3 +2780,54 @@ A real element with a live handler, not a text node.
 1. BUG-022 is the confirmed finding — verify cross-user firing explicitly (log in as Owner 231 / Tester 170, open the thread, watch the alert).
 2. Check whether `message_html` renders in email notifications / digest preview where no client sanitizer runs.
 3. Test the four unsanitised client paths (ESG metric, task notes, review notes) via their own UI — do they render `message_html` without a server sanitize step?
+
+## Session 2026-11-11 (zz): NEW SURFACE — narrative/document body + linkifier sink. All CLOSED. BUG-022 remains the only stored XSS.
+
+### Operator
+- "okay keep work new surface to find stored xss"
+
+### T-400..402 — narrative document body (rich-text, renders by design)
+- `GET /api/v1/document_versions/1402` -> 200, keys include `body`, `flat_body`, `page_layout`, `is_published`.
+- `PUT /api/v1/document_versions/{id}` with `body`/`flat_body` -> **403** for Owner AND Tester (narrative 70 created by Tester, docver 1405 -> PUT 403).
+- **Document body is not writable through the REST API by any role I hold.**
+
+### T-403..405 — `/documents/{id}/diff` (the real render sink)
+- Bundle: `getDiff()` calls `/documents/{id}/diff` and passes `htmldiff` straight into **`setContent`** (an HTML sink).
+- `GET /api/v1/documents/330/diff?from=1371&to=1371` -> **200**:
+  ```
+  htmldiff = '<h2>Click the link below to view report</h2><p><a href="javas%63ript:alert(document.domain)">View Quarterly Report</a></p>'
+  ```
+- **`htmldiff` echoes the document body verbatim, unescaped** — including a pre-existing `javas%63ript:` payload in document 330 (user_id 235, is_published false).
+- Document 330 belongs to narrative 31 (which also holds an escaped `<img onerror>` title from my earlier test).
+
+### T-406..408 — can I write a body? NO
+- `PUT /document_versions/1371` with `<img onerror>` -> **403** (WAF).
+- `PUT` with `javas%63ript:` / `javascript&colon; ` -> **200 but NO-OP** (body unchanged on read-back — the write is silently ignored).
+- `POST /api/v1/document_versions` -> **403**.
+- So the diff sink is real but **I cannot inject into it** — the body is read-only for my roles.
+
+### T-409 — AI generative log
+- `POST /api/v1/generative/log` -> **403** (all shapes).
+- `GET /api/v1/ml_generative_logs` (SysAdmin) -> 200, 2 rows, `generated_output` stored **entity-encoded** (`&lt; h1&gt; ww&lt; /h1&gt; `). Sanitised.
+
+### T-410..411 — narrative description + control description
+- narrative `description`: `<b>` -> 200 stored `&lt; b&gt; ...&lt; /b&gt; `; `<img>`/`javas%63ript:` -> 403.
+- control `description`: `<b>`, `<strong>`, `<a href=http>`, `<span>` -> 200 all stored **entity-encoded**; `<img>` and `javas%63ript:` -> 403.
+- **Every text field entity-encodes on write.**
+
+### Bundle sink analysis — `dtLinkifyTitleDescription`
+- `login-CFjJ4EX6.js` builds an HTML string with `${V}` (description) interpolated raw into a `<div>`, and the same bundle has `HPn(e,{ALLOWED_TAGS:[a,span,br,strong,hr], ALLOWED_ATTR:[href,title,class,tabindex,target,rel]})` — a DOMPurify-style sanitiser.
+- The description reaching it is **already entity-encoded at write time**, so the sink receives `&lt; b&gt; ` not `<b>`. **Not exploitable.**
+
+### Net — honest
+- **No new stored XSS.** Every writable text surface entity-encodes on write; the two raw-HTML sinks (`/documents/{id}/diff` -> `setContent`, `dtLinkifyTitleDescription`) are fed by data I cannot write.
+- **BUG-022 (comments `message_raw`) remains the only confirmed stored XSS.**
+- New durable intel: `/documents/{id}/diff` returns unescaped `htmldiff` into an HTML sink — a genuine latent sink if document-body write permission is ever obtained (e.g. a role with `document:action.edit`, or an import path).
+
+### Test artifacts
+- narrative 31 description now `&lt; b&gt; ZXD8357a&lt; /b&gt; `; control 1 description `&lt; span class="x"&gt; ZXCbb724&lt; /span&gt; `; narrative 70 created by Tester.
+
+### Next queue (aaa)
+1. Find a role/path that CAN write a document body (import, template, AI scoping-memo) -> then `/documents/{id}/diff` becomes stored XSS.
+2. Verify BUG-022 cross-user firing (Owner 231 / Tester 170 opening the exception 33 thread).
+3. Check `message_html` in email notifications / digest where no client sanitizer runs.
