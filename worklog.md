@@ -2943,3 +2943,67 @@ Every surface tested, all negative:
 ### Recommendation
 - Stop XSS hunting on this target. 11 distinct surfaces, 3 rounds, all closed. The app encodes on write and sanitises on render consistently.
 - Pivot to a class where impact is provable: the confirmed findings are BUG-008 (submitted), BUG-015 (file-delete chain), BUG-016 (SSRF readback), BUG-017 (email hijack), BUG-018 (RBAC disclosure), BUG-019 (permission inversion).
+
+## Session 2026-11-11 (ccc): 🔥 HTML INJECTION CONFIRMED (P4) — server allowlist far wider than client; CSS subset live in DOM
+
+### Operator
+- "try again any html injection or xss alert me keep work bro"
+
+### T-440 — tokens
+- OWNER(231,r5) SYSADMIN(53,r2) TESTER(170,r4) all login 200.
+
+### T-441/442 — JSON blob fields — CLOSED
+- risks/1 `custom_json1`/`formula_data`/`field_data`/`reference_meta` -> 422 (not writable).
+- controls/1 same fields -> 200 but stored `null` (no-op).
+- exception_requests/33 -> 422.
+- **JSON blobs are not writable through these endpoints.**
+
+### T-443 — 🔑 SERVER ALLOWLIST MAPPED (message_html)
+Sent as `message_html`, read back after server sanitisation:
+| tag | result |
+| --- | --- |
+| b, i, u, strong, em | kept |
+| span, div, p, br | kept |
+| **h1, table/tr/td, ul/li, code, pre, blockquote** | **KEPT** |
+| img (src) | kept as `<img />` — src stripped |
+| a (href) | tag stripped, text kept |
+| form, input | stripped |
+
+- **The server allowlist is far wider than the client's** (`ALLOWED_TAGS=[a,span,br,strong,hr]` in the bundle).
+
+### T-444/445 — 🔥 CSS INJECTION CONFIRMED
+- `style` attribute **survives** on div/span.
+- Survives: `display:block`, `width`, `height`, `background:red`, `margin:-500px`, `font-family:x`, `width:9999px;height:9999px`.
+- Stripped: `background-image:url()`, `position:fixed`.
+- **DOM proof (live thread, comment 967):**
+  ```json
+  {"style":"width:100%;height:100%;background:red","text":"ZXZXC2b956","rect":18.5703125}
+  ```
+  Comment 968: `<span style="font-family:x">` renders live.
+
+### T-446 — CSS weaponisation probe — UI REDRESS BLOCKED
+- **Stripped**: `position:absolute`, `z-index:99999`, `opacity:0`, `transform`, `visibility:hidden`, `overflow:hidden`, `pointer-events:none`, `mix-blend-mode`, `clip-path`, `filter:blur()`, `content:"x"`.
+- **Survives**: `display:block`, `margin:-500px`, `width/height:9999px`.
+- `width:expression(alert(1))` -> **403** WAF.
+- **No overlay, no hiding, no CSS exfiltration possible.** Only cosmetic sizing/colour.
+
+### Verdict — BUG-023: HTML injection, P4
+- **Real, confirmed, live in the DOM**: attacker-controlled structural tags + cosmetic CSS in a shared comment thread.
+- **No script execution** (WAF blocks every handler/tag; sanitizer strips the rest).
+- **No UI redress** (all dangerous layout properties stripped).
+- Impact: content spoofing — a styled `div` inside a comment can mimic a warning banner.
+- **Report: `reports/BUG-023-html-injection-comments-allowlist.md`** (134 lines, P4 rec, full allowlist map, honest ceiling).
+
+### Net
+- **BUG-022 (stored XSS): RETRACTED** — did not survive verification.
+- **BUG-023 (HTML injection): CONFIRMED, P4.** Real but low impact.
+- **Zero script execution achieved on this target** across 3 rounds and 12+ surfaces.
+
+### Test artifacts
+- comments 940-968 on ExceptionRequest 33 (allowlist probes + live CSS divs 966/967/968). Inert.
+- exception 33 title `&lt;b&gt;ZXAUDITZXA19307&lt;/b&gt;` (encoded).
+
+### Next queue (ddd)
+1. If operator wants P1/P2: pivot off XSS entirely. Confirmed findings are BUG-008/015/016/017/018/019.
+2. Re-verify BUG-016 SSRF readback the way BUG-022 was re-verified (same inference risk).
+3. BUG-023 could be raised if a spoofing scenario is built (e.g. fake approval banner in an audit thread) — but P4 is honest.
