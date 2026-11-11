@@ -1613,3 +1613,33 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 2. Test whether `PUT` accepts `auth_type` to flip a `no-access` account to `password` (would restore vertical escalation to role 2).
 3. `requires_password_change` + `login_attempt` reset -> lockout bypass angle.
 4. Report: rewrite BUG-008 for 47.3 with the auth_type root cause and the honest horizontal-only ceiling.
+
+### T-136..142 — 🔥 VERTICAL ESCALATION CONFIRMED: Owner -> System Admin (role 2). Superuser still blocked.
+
+**Blast radius (t138, from `GET /api/v1/users`, 317 accounts):**
+| auth_type | count | note |
+| --- | --- | --- |
+| password | **145** | login-enabled = ATO-able |
+| no-access | 146 | never loginable |
+| galaxy | 17 | role 1 SSO |
+| external_api_admin | 5 | |
+| chips_federated_jwt | 4 | |
+
+ATO-able by role: **role 1: 6, role 2: 8, role 3: 6, role 4: 4, role 5: 116, role 6: 4, role 11: 1** = 145.
+
+**Vertical escalation — CONFIRMED (t139/t140):**
+- Target **user 53 `steve@u1elhxrx.mailosaur.net`, role 2 (System Admin), auth_type=password**.
+- `PUT /api/v1/users/53 {"user":{"password":"Zx9!chain47"}}` -> **200**; clear `requires_password_change` -> 200; `POST /users/login` -> **200, token issued as role 2**.
+- So an Owner (role 5) escalates to **System Admin (role 2)** — a higher-privilege role — with the same two requests. This is **vertical**, not just horizontal.
+
+**Superuser ceiling — still blocked (t140):**
+- With the role-2 token: `GET /users/1` and `/users/168` -> 200 (readable), but `PUT` job_title AND `PUT` password -> **422 (user:action.edit)** on both.
+- Direct from Owner: ids 1/168/173 -> 422 on every writable field.
+- `auth_type` is **NOT writable** (`user:action.administer`) — cannot flip a `no-access` account into a login-enabled one (t137). So the chain stops at role 2.
+
+**Root cause, final form:**
+`PUT /api/v1/users/{id}` gates the *password attribute* on a weaker check than `user:action.edit`, and never validates (a) the caller's ownership of the target, (b) the target's `auth_type`, or (c) the caller's role relative to the target's role. Role 1 targets happen to be protected by a separate `user:action.edit` check; role 2..6 and 11 are not.
+
+**Cleanup note:** restore of 53 to `Tester` was rejected `422 "Password has been used. Please choose another."` — the password-history policy (BUG-009) blocks reuse. Final documented state for 53: password set to `TesterZx2026!`, login verified 200. 230 and 315 restored to `Tester`, both login 200.
+
+**Final state:** 230 role5 password `Tester` (login 200); 315 role11 password `Tester` (login 200); 53 role2 password `TesterZx2026!` (login 200); all `requires_password_change=false`.
