@@ -1,0 +1,224 @@
+[
+ {
+  "m": "GET",
+  "p": "/api/v1/evidence-search/status",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"FeatureNotEnabled\",\"detail\":\"There was an error\",\"source\":{\"pointer\":\"data/attributes/featureNotEnabled\"},\"_growl\":\"There was an error\"}]}"
+ },
+ {
+  "m": "POST",
+  "p": "/api/v1/evidence-search",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"FeatureNotEnabled\",\"detail\":\"There was an error\",\"source\":{\"pointer\":\"data/attributes/featureNotEnabled\"},\"_growl\":\"There was an error\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/sox_ai_review",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/sox_ai_review/queue",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/webhook_urls",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"FeatureNotEnabled\",\"detail\":\"You do not have this feature enabled. Please contact your administrator.\",\"source\":{\"pointer\":\"data/attributes/featureNotEnabled\"},\"_growl\":\"You do not have this feature enabled. Please contact your administrator.\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/table/export",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "POST",
+  "p": "/api/v1/table/export",
+  "code": "500",
+  "body": "{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}"
+ },
+ {
+  "m": "POST",
+  "p": "/api/v1/table/_op/async_export",
+  "code": "500",
+  "body": "{\"statusCode\":500,\"error\":\"Internal Server Error\",\"message\":\"An internal server error occurred\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/processes/1",
+  "code": "200",
+  "body": "{\"processes\":[{\"id_string\":\"FR FR Financial Close & Reporting\",\"id\":1,\"created_at\":\"2016-06-15T22:17:09.216Z\",\"updated_at\":\"2026-11-03T20:53:49.178Z\",\"deleted_at\":null,\"child_count\":0,\"id_code\":\"FR\",\"name\":\"FR Financial Close & Reporting\",\"uid\":\"FR\",\"parent_id\":null,\"_permissions\":{\"action.create\":true,\"action.view\":true,\"action.edit\":true},\"process_type_ids\":[1],\"workspace_ids\":[1]}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/amendments",
+  "code": "200",
+  "body": "{\"amendments\":[],\"meta\":{\"resourceNames\":{\"dasherized\":\"amendment\",\"camelized\":\"amendment\"}}}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/crosscomply",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/teams",
+  "code": "200",
+  "body": "{\"teams\":[{\"id\":1,\"_permissions\":{\"action.view\":true},\"created_at\":\"2017-01-25T01:15:06.679Z\",\"updated_at\":\"2021-11-24T20:11:25.589Z\",\"deleted_at\":null,\"description\":null,\"is_reserved\":false,\"name\":\"Internal Audit\",\"sort_order\":0,\"uid\":\"TEAM-1\",\"user_ids\":[22,53,65,141,165,170,171,178],\"owner_user_ids\":[]},{\"id\":2,\"_permissions\":{\"action.view\":true},\"created_at\":\"2017-01-25T01:15:20.736Z\",\"updated"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/tiering_rules",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"FeatureNotEnabled\",\"detail\":\"You do not have this feature enabled. Please contact your administrator.\",\"source\":{\"pointer\":\"data/attributes/featureNotEnabled\"},\"_growl\":\"You do not have this feature enabled. Please contact your administrator.\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/mcp_tools",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/usage/totals",
+  "code": "403",
+  "body": "{\"errors\":[{\"code\":\"ForbiddenError\",\"detail\":\"The Usage Dashboard feature is not enabled.\",\"source\":{\"pointer\":\"data/attributes/forbiddenError\"},\"_growl\":\"The Usage Dashboard feature is not enabled.\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/usage/top-users",
+  "code": "403",
+  "body": "{\"errors\":[{\"code\":\"ForbiddenError\",\"detail\":\"The Usage Dashboard feature is not enabled.\",\"source\":{\"pointer\":\"data/attributes/forbiddenError\"},\"_growl\":\"The Usage Dashboard feature is not enabled.\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/scores/latest",
+  "code": "400",
+  "body": "{\"errors\":[{\"code\":\"InvalidRequestError\",\"detail\":\"Parameter :id must be of type integer.\",\"source\":{\"pointer\":\"data/attributes/invalidRequestError\"},\"_growl\":\"Parameter :id must be of type integer.\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/threats/count",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"FeatureNotEnabled\",\"detail\":\"There was an error\",\"source\":{\"pointer\":\"data/attributes/featureNotEnabled\"},\"_growl\":\"There was an error\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/auditable_entities/count",
+  "code": "400",
+  "body": "{\"errors\":[{\"code\":\"InvalidRequestError\",\"detail\":\"Parameter :id must be of type integer.\",\"source\":{\"pointer\":\"data/attributes/invalidRequestError\"},\"_growl\":\"Parameter :id must be of type integer.\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/auditable_entity_types/count",
+  "code": "400",
+  "body": "{\"errors\":[{\"code\":\"InvalidRequestError\",\"detail\":\"Parameter :id must be of type integer.\",\"source\":{\"pointer\":\"data/attributes/invalidRequestError\"},\"_growl\":\"Parameter :id must be of type integer.\"}]}"
+ },
+ {
+  "m": "POST",
+  "p": "/api/v1/ml-recommendations/init",
+  "code": "200",
+  "body": "{}"
+ },
+ {
+  "m": "POST",
+  "p": "/api/v1/ml-recommendations/match-by-text",
+  "code": "422",
+  "body": "{\"errors\":[{\"detail\":\"Invalid input: expected object, received undefined for value of 'id_properties'\",\"source\":{\"pointer\":\"data/attributes/idProperties\"},\"disableGrowl\":true},{\"detail\":\"Invalid option: expected one of \\\"controls\\\"|\\\"esg_metrics\\\"|\\\"rcw_library_requests\\\"|\\\"issues\\\"|\\\"risks\\\"|\\\"program_regulation_items\\\"|\\\"bcm_functions\\\" for value of 'id_model'\",\"source\":{\"pointer\":\"data/attribut"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/ml-recommendations/files/generate_sample_file",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "POST",
+  "p": "/api/v1/files/copy_files_to_fileable",
+  "code": "200",
+  "body": "{\"files\":[]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/regulatory-profiles/me",
+  "code": "200",
+  "body": "{\"data\":{\"id\":\"1\",\"type\":\"regulatory-profile\",\"attributes\":{\"company_name\":\"\",\"company_website\":\"\",\"selected_values\":{},\"resolved_values\":{\"jurisdiction\":[],\"agency\":[],\"issuance_type\":[],\"industry\":[],\"compliance_domain\":[],\"data_processing\":[],\"product_service\":[],\"legal_entity_type\":[],\"customer_types\":[],\"business_activities\":[],\"distribution_channels\":[],\"data_types_handled\":[],\"business_unit"
+ },
+ {
+  "m": "POST",
+  "p": "/api/v1/regulatory-profiles/autofill",
+  "code": "403",
+  "body": "{\"message\":\"Auto-fill from website is not enabled\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/regulatory-signals/widget-metrics",
+  "code": "200",
+  "body": "{\"totalCount\":0,\"unreadCount\":0,\"highRelevanceCount\":0,\"programRegulationItemCount\":0}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/regulatory-signals/scoring-status",
+  "code": "403",
+  "body": "{\"statusCode\":403,\"error\":\"Forbidden\",\"message\":\"Forbidden\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/sigma/health_check",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/assistant_knowledge_files",
+  "code": "403",
+  "body": "{\"errors\":[{\"code\":\"ForbiddenError\",\"detail\":\"You do not have permission to manage Assistant knowledge files.\",\"source\":{\"pointer\":\"data/attributes/forbiddenError\"},\"_growl\":\"You do not have permission to manage Assistant knowledge files.\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/ui-schema.json",
+  "code": "200",
+  "body": "{\"resources\":[{\"type\":\"actionPlan\",\"actionPermissions\":{\"find\":\"action.view\",\"create\":\"action.create\",\"destroy\":\"action.delete\"},\"fieldSection\":\"action_plan.field\"},{\"type\":\"actionPlansArchive\",\"actionPermissions\":{\"find\":\"action.view\"}},{\"type\":\"amendment\",\"actionPermissions\":{\"find\":\"action.view\",\"create\":\"action.create\",\"destroy\":\"action.delete\"}},{\"type\":\"apiAccessLog\",\"actionPermissions\":{\"fi"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/ticketing/projects",
+  "code": "500",
+  "body": "{\"errors\":[{\"detail\":\"There was an error processing your request.\"}],\"message\":\"There was an error processing your request.\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/ticketing/ab_resource_types",
+  "code": "200",
+  "body": "{\"resources\":[{\"resourceType\":\"actionPlan\",\"resourceDisplayName\":\"Action Plan\"},{\"resourceType\":\"rcwRequest\",\"resourceDisplayName\":\"RCW Request\"},{\"resourceType\":\"taskItem\",\"resourceDisplayName\":\"Workstream Task\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/monitor-results/1/insights",
+  "code": "404",
+  "body": "{\"statusCode\":404,\"error\":\"Not Found\",\"message\":\"Not Found\"}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/imported_third_parties/count",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"FeatureNotEnabled\",\"detail\":\"There was an error\",\"source\":{\"pointer\":\"data/attributes/featureNotEnabled\"},\"_growl\":\"There was an error\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/ml_generative_prompts/count",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"ModelActionPermissionDenied\",\"detail\":\"You do not have permission to perform this action. (Permission: settings.ux:AITile)\",\"source\":{\"pointer\":\"data/attributes/modelActionPermissionDenied\"},\"_growl\":\"You do not have permission to perform this action. (Permission: settings.ux:AITile)\"}]}"
+ },
+ {
+  "m": "GET",
+  "p": "/api/v1/ml_generative_logs/count",
+  "code": "422",
+  "body": "{\"errors\":[{\"code\":\"ModelActionPermissionDenied\",\"detail\":\"You do not have permission to perform this action. (Permission: settings.ux:AITile)\",\"source\":{\"pointer\":\"data/attributes/modelActionPermissionDenied\"},\"_growl\":\"You do not have permission to perform this action. (Permission: settings.ux:AITile)\"}]}"
+ }
+]

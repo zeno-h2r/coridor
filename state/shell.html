@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+	<head>
+		<script>globalThis.EmberENV = Object.assign(globalThis.EmberENV || {}, {"_DEFAULT_ASYNC_OBSERVERS":true});</script>
+
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Optro</title>
+		<style>
+			@layer bootstrap, vendor, legacyStyles, legacyStyles.base, legacyStyles.ember-power-select, legacyStyles.icons, legacyStyles.luna, legacyStyles.modal, modules, soxhub-client, sol, luna;
+		</style>
+		<meta name="description" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<script type="text/javascript">
+			// Set the theme before the first stylesheet, so a dark choice does not paint light first.
+			// The application wrapper in @auditboard/application-shell writes this key from the saved setting and owns data-theme after boot.
+			(function () {
+				let theme = 'light';
+				try {
+					const colorMode = localStorage.getItem('luna-color-mode');
+					if (colorMode === 'dark' || (colorMode === 'system' && matchMedia('(prefers-color-scheme: dark)').matches)) {
+						theme = 'dark';
+					}
+				} catch {
+					// The browser can block storage, for example in a private window. Then the first paint is light.
+				}
+				document.documentElement.setAttribute('data-theme', theme);
+			})();
+		</script>
+		<style>
+			body {
+				background: #0f172a;
+			}
+		</style>
+		<link rel="shortcut icon" href="/assets/custom/images/favicon.ico" type="image/x-icon" id="dynamic-icon" />
+
+		<link rel="preload" href="/api/v1/config" as="fetch" crossorigin="usecredentials" />
+
+		<script type="text/javascript">
+			performance.mark('content-for-head-start');
+		</script>
+		<script type="text/javascript">
+			performance.mark('css-start');
+		</script>
+		<link integrity="" rel="stylesheet" href="/assets/fonts/material-icons.css" type="text/css" />
+		<link integrity="" rel="stylesheet" href="/assets/fonts/auditboard-icons.css" type="text/css" />
+		<script type="text/javascript">
+			performance.mark('inline-css-start');
+		</script>
+
+		<!-- include logo image base64 in index.html so it's always loaded -->
+		<style type="text/css">
+			#soxhub-loading > .logo > .img {
+				width: 100px;
+				height: 100px;
+				display: block;
+				margin: auto;
+				background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMTAwIDEwMCI+CiAgPHBhdGggZmlsbD0iIzNGODVCNCIgZD0iTTMxLjM2OCAzMS4wODZjLTMuNTA3IDMuNTktNS40MSA3LjQ3LTYuOTc1IDExLjc1NWwtNC43MzItNC44NDVhMzQuMiAzNC4yIDAgMCAxIDcuMzUyLTExLjM2OWM2LjI3Ny02LjQyOCAxNC42MS05Ljk2IDIzLjQ2OS05Ljk2czE3LjE5MiAzLjUzMiAyMy40NjkgOS45NmwyNi4wNTEgMjYuNjc2LTQuMzU1IDQuNDU5LTI2LjA1LTI2LjY3NmMtNS4xMS01LjIzMS0xMS44OTUtOC4xMDctMTkuMTE1LTguMTA3cy0xNC4wMDYgMi44NzYtMTkuMTE0IDguMTA3Ii8+CiAgPHBhdGggZmlsbD0iIzNGODVCNCIgZD0iTTc5LjA3NSA0NS45NDkgNjcuMDg2IDMzLjY1M2MtNC40NDktNC41NTUtMTAuMzQ5LTcuMDQ1LTE2LjYwNy03LjA0NS02LjI1OSAwLTEyLjE0IDIuNTI4LTE2LjYwNyA3LjA0NS0zLjU4MiAzLjYxLTUuOTM4IDguODAyLTYuNTA0IDEyLjIzOGw1Ljg0NCA1Ljk4My0uMDIzLS40MDVjLS4wMTctLjI3LS4wMzQtLjU0LS4wMzQtLjgxIDAtNC43MyAxLjgxLTkuMTg5IDUuMDcxLTEyLjU0N3M3LjYxNi01LjE5MyAxMi4yNTMtNS4xOTMgOC45NzMgMS44NTMgMTIuMjUzIDUuMTkzTDgyLjc1IDU4LjY0OXYtLjAzOGw2LjAzMiA2LjE3NiA0LjM1NC00LjQ1OC0xNC4wNjItMTQuNHoiLz4KICA8cGF0aCBmaWxsPSIjM0Y4NUI0IiBkPSJtMzIuOTEyIDY2LjM0OC0xMS45OS0xMi4yOTV2LjAxOUw2Ljg2IDM5LjY3Mmw0LjM1NS00LjQ1OCA2LjAzMiA2LjE3NnYtLjAzOGwyMC4wMiAyMC41MzdjMy4yOCAzLjM0IDcuNjE1IDUuMTkzIDEyLjI1MiA1LjE5M3M4Ljk5Mi0xLjgzNCAxMi4yNTMtNS4xOTMgNS4wNy03LjgxNyA1LjA3LTEyLjU0NmMwLS4yNy0uMDE2LS41NC0uMDMzLS44MXEtLjAxMy0uMjA0LS4wMjMtLjQwNmw1Ljg0MyA1Ljk4M2MtLjU2NSAzLjQzNi0yLjkyMSA4LjYyOS02LjUwMyAxMi4yMzgtNC40NjcgNC41MTctMTAuMzQ5IDcuMDQ2LTE2LjYwNyA3LjA0NnMtMTIuMTU5LTIuNDktMTYuNjA3LTcuMDQ2Ii8+CiAgPHBhdGggZmlsbD0iIzNGODVCNCIgZD0iTTY4LjYzNCA2OC45MTdjMy41MDctMy41OSA1LjQxLTcuNDcgNi45NzUtMTEuNzU2bDQuNzMyIDQuODQ1YTM0LjIgMzQuMiAwIDAgMS03LjM1MiAxMS4zN2MtNi4yNzcgNi40MjctMTQuNjEgOS45Ni0yMy40NjkgOS45NnMtMTcuMTkyLTMuNTMzLTIzLjQ2OS05Ljk2TDAgNDYuNjk4bDQuMzU0LTQuNDU4IDI2LjA1MiAyNi42NzZjNS4xMDggNS4yMyAxMS44OTQgOC4xMDYgMTkuMTE0IDguMTA2czE0LjAwNi0yLjg3NiAxOS4xMTQtOC4xMDYiLz4KPC9zdmc+Cg==')
+					no-repeat;
+			}
+		</style>
+		<script type="text/javascript">
+			performance.mark('global-vendored-assets-start');
+		</script>
+		<script type="text/javascript">
+			performance.mark('content-for-head-footer-start');
+		</script>
+		<script type="module" crossorigin src="/assets/main-CfpJ2FXC.js"></script>
+		<link rel="modulepreload" crossorigin href="/assets/rolldown-runtime-BCiCTKAo.js">
+		<link rel="modulepreload" crossorigin href="/assets/luna-CXcmGr2g.js">
+		<link rel="modulepreload" crossorigin href="/assets/login-CFjJ4EX6.js">
+		<link rel="modulepreload" crossorigin href="/assets/admin-DmOXmKqu.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-B2Tf4V6E.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-BPsbCar9.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-ibQY2jFK.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-DtC3oF0X.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-BHFWr6dL.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-DdEd9ScT.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-D9TDj0MA.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-Cf_cD4XN.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-B7YLZ0vF.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-lwltomKv.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-DDugqKhE.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-CKbOZ1Z-.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-fV_5WLuO.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-WnucAb6f.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-CNBJtBsw.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-D3DAR-8P.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-BVdBStLd.js">
+		<link rel="modulepreload" crossorigin href="/assets/common-JLqFq6K5.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-BT49yfAI.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-Dhbv4Z3n.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-DGXPQNEw.js">
+		<link rel="modulepreload" crossorigin href="/assets/uncommon-DYpRBwEG.js">
+		<link rel="modulepreload" crossorigin href="/assets/vendor-CjX2oxJc.js">
+		<link rel="modulepreload" crossorigin href="/assets/uncommon-BKAGv4gq.js">
+		<link rel="modulepreload" crossorigin href="/assets/uncommon-DIRtSo0P.js">
+		<link rel="modulepreload" crossorigin href="/assets/uncommon-DDP_zTEB.js">
+		<link rel="modulepreload" crossorigin href="/assets/uncommon-BHCIHAFH.js">
+		<link rel="modulepreload" crossorigin href="/assets/uncommon-Ceqq5dxA.js">
+		<link rel="modulepreload" crossorigin href="/assets/uncommon-OKmE_uUe.js">
+		<link rel="stylesheet" crossorigin href="/assets/luna-Cmsp1hXD.css">
+		<link rel="stylesheet" crossorigin href="/assets/login-CniZYWn2.css">
+		<link rel="stylesheet" crossorigin href="/assets/admin-BARSnnc4.css">
+		<link rel="stylesheet" crossorigin href="/assets/vendor-WJM7ddKn.css">
+		<link rel="stylesheet" crossorigin href="/assets/vendor-xx_EK7Tt.css">
+		<link rel="stylesheet" crossorigin href="/assets/common-B6AlNpSB.css">
+		<link rel="stylesheet" crossorigin href="/assets/uncommon-6Vtbq1S9.css">
+		<link rel="stylesheet" crossorigin href="/assets/uncommon-5yNnXsKT.css">
+		<link rel="stylesheet" crossorigin href="/assets/uncommon-Ck4PjGex.css">
+		<link rel="stylesheet" crossorigin href="/assets/uncommon-32ny-01X.css">
+		<link rel="stylesheet" crossorigin href="/assets/uncommon-D2fuijHR.css">
+		<link rel="stylesheet" crossorigin href="/assets/uncommon-B9T9mOel.css">
+		<link rel="stylesheet" crossorigin href="/assets/uncommon-D6VneWkV.css">
+		<link rel="stylesheet" crossorigin href="/assets/main-CDW_8nVX.css">
+	</head>
+	<body class="body-dark">
+		
+		<script type="text/javascript">
+			performance.mark('content-for-body-start');
+		</script>
+
+		<script type="text/javascript">
+			performance.mark('preload-translations-start');
+		</script>
+
+		<script type="text/javascript">
+			performance.mark('vendor-start');
+		</script>
+
+		<script type="text/javascript">
+			performance.mark('config-start');
+		</script>
+
+		<script type="text/javascript">
+			performance.mark('app-start');
+		</script>
+
+
+		<!-- Must stay after the boot script: setupWebMcp reads globalConfig for the mode. -->
+
+		<script type="text/javascript">
+			performance.mark('body-footer-start');
+		</script>
+		<script type="text/javascript">
+			performance.mark('body-end');
+		</script>
+	</body>
+</html>

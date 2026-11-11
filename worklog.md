@@ -1490,3 +1490,68 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 1. Operator: submit BUG-013 (P3) + BUG-014 (P3/P2) per decision; BUG-014 pairs with BUG-012 chain narrative (two independent SSRF sinks, one with shape-free readback).
 2. BUG-014 escalation candidates if triage pushes: enumerate internal HTTP surface via the readback (localhost:3000 unauth routes, other VPC services) — pace carefully.
 3. Watch: assistant attachment ingest dedup key (file_key-only) may enable cross-user attachment-content readback if file_keys enumerable — LEAD unproven.
+
+## Session 2026-11-11 (bb): 47.3.0-dev fresh deploy — full surface re-map + 2 CONFIRMED SSRF sinks (blind) + copy primitive; NO P1/P2 (honest)
+
+### Operator
+- "can you run multi agents okay you can login here" — re-entry on new deploy, continue hunting to P1/P2.
+
+### Deploy delta
+- app_version **47.3.0-dev**, last_deployed **2026-11-10T17:56:45Z** (prior worklog was 43.3). Whole surface churned; all prior shapes re-verified.
+- Login app is separate Ember bundle (`/login-app/assets/main-jYe2afWq.js`); auth = `POST /api/v1/users/login` `{credentials:{email,password}}`; session token in `localStorage['ember_simple_auth-session'].authenticated.token`, sent as `token:` header. Login-app throws a benign `SecurityError` on storage but renders fine.
+- New session: user **231**, role_id **5** = **"Owner"** (short_name owner, is_limited false) → full tenant admin. This caps severity on all tenant-scoped data reads (they are intended for Owner).
+
+### T-070 — surface extraction (scripts/t070_surface_diff.py, t070b_newfam.py; state/surface_47.json, state/js/*)
+- 34 bundles / 39MB pulled. **237 unique /api/v1,/api/v2 paths**; 96 families with paths not in prior worklog.
+- High-value new families: `webhook_urls/{id}/test|rotate_secret`, `table/export` + `_op/async_export`, `files/copy_files_to_fileable`, `attachments/html`, `ml-recommendations/*`, `evidence-search`, `document_intelligence/*`, `ticketing/*`, `regulatory-signals/*`, `permissions-insights-auditability/*`, `sigma_workbooks`, `ui-schema.json`.
+- **`GET /api/v1/ui-schema.json` → 200, 1.1MB, 135 resources + full actionPermissions map** (state/ui_schema.json). Unauthenticated-adjacent schema disclosure of the whole permission model.
+
+### T-071 — liveness probe (scripts/t071_probe_new.py; state/t071_probe.json)
+- LIVE: `processes/1`, `teams`, `amendments`, `ui-schema.json`, `regulatory-profiles/me`, `regulatory-signals/widget-metrics`, `ml-recommendations/init`, `files/copy_files_to_fileable`, `ticketing/ab_resource_types`.
+- GATED: evidence-search (422 FeatureNotEnabled — back after being removed in 43.3), webhook_urls (422 FeatureNotEnabled), tiering_rules (422), usage/* (403 Usage Dashboard), assistant_knowledge_files (403), ml_generative_* (422 settings.ux:AITile), regulatory-signals/scoring-status (403), regulatory-profiles/autofill (403 "not enabled").
+- REMOVED/GONE: sox_ai_review (404), mcp_tools (404), sigma/health_check (404), crosscomply (404), monitor-results insights (404).
+- 500s: `table/export`, `table/_op/async_export`, `ticketing/projects` (shape-dependent, not findings).
+
+### T-072/073 — table DSL v2 (scripts/t072b, t073_tablequery.py)
+- `POST /api/v1/table/count|ids` now **500** (old shape dead). New working shape: `POST /api/v1/table/query?entities=X` body `{"ab:query":{"entities":["X"],"filter":{}}}` + header `X-AuditBoard-Source: SchemaTable Rows`.
+- Returns `data[]` (id + relationship) and, with `"include":["X"]`, a full **`included[]` array carrying complete attributes**.
+- Enumerated: **796 files (ids 735-2691)**, 38 issues (121-336), 14 narratives, 354 users.
+
+### T-075/076/077/078 — 🔥 `files/copy_files_to_fileable` (server-side S3 copy) — CONFIRMED, content still blocked
+- Shape (from bundle): `{fileable_id, fileable_type, file_ids:[...]}` — UI "Save to Toolkit".
+- **Foreign file copy SUCCEEDS**: `file_ids:[735]` (key `demo-certs-dkim_demo/...`, foreign prefix) → **200, new file id 2692**, `meta.source_key` = foreign key, `meta.source_file_id`=735, size 407728 preserved.
+- **But bytes stay unreadable**: 2692's `url` is a raw unsigned `https://soxhub-dev.s3.amazonaws.com/demo-certs-dkim_demo%2F...` → **403 AccessDenied**. Control: own-prefix copy (2693) gets a full 1988-byte presigned URL → **200, 11313 bytes**. So the S3 role is prefix-scoped and the copy does NOT re-key into my prefix. **Bumped BUG-013 (cross-tenant file metadata IDOR) — content still NOT proven.**
+- Cross-tenant WRITE: `fileable_id` accepts arbitrary issue ids incl. **nonexistent 999999** (200, file created) → no existence/ownership check on the target. Low impact alone (orphan rows), noted not claimed.
+
+### T-090/091/092 — s3_upload_signature path traversal — NEGATIVE
+- `file_name` traversal (`../../demo-certs-dkim_demo/x.pdf`, encoded, `....//`) all sanitized: slashes stripped, key stays `bugbounty1120509_qa/undefined/null/<uuid>/....demo-certs...pdf`. No prefix escape. CLOSED.
+
+### T-080..089 — assistant plane on 47.3 (scripts/t080-t089)
+- `POST /api/v1/assistant/conversations` → `conversation::user:231`. Chat endpoint is **`assistant/chat/stream`** with `X-Conversation-Id`; body Zod requires `userMessage` (string) + `context.module.{name,route}` (strings) — **live Zod error leakage of the full schema**.
+- **SSRF CONFIRMED (blind)**: `context.fileAttachments[].url` → backend fetched `https://webhook.site/.../zx6549ce80.pdf` **twice, 2026-11-11 04:01:27/28 UTC**. Same sink as BUG-014 but on new deploy.
+- **Readback NOT achieved on 47.3**: backend now routes attachments through `search_knowledge_base` (vector index) instead of returning fetched content. Ingest never indexes (45s wait, two turns, "no indexed attachment content"). Internal targets (integrations.qa / localhost:3000 / 169.254.169.254) returned no content. → **blind SSRF = program-excluded** ("Blind SSRF without negative impact"). Not claimable as-is.
+
+### T-101..106 — 🔥 `attachments/html` headless-Chrome renderer — SSRF CONFIRMED (blind), no readback
+- `POST /api/v1/attachments/html` `{html, type:pdf|word, attachableType, attachableId, fileName}` → 200 `{attachmentId, fileName, type}`. attachableType enum leaked: ComplianceAssessmentItem|ControlsDataArchive|Narrative|Assessment|OpsAuditItem|AuditableEntity|Policy|Test|VendorSummaryReport|ImportSheetRecord|CrossAuditSum...
+- Flow to artifact: attachmentId → `GET /attachments/{id}` → `file_id` → `GET /files/{id}` → presigned URL → **downloadable PDF (200, 10631 bytes)**.
+- **SSRF CONFIRMED**: html with `<img src=webhook.site/...-img.png>` + `<iframe src=webhook.site/...-frame>` → **both fetched 2026-11-11 04:05:58 UTC** by the renderer.
+- **Readback NEGATIVE**: iframe to `http://integrations.qa.soxhubapp.com/version` rendered only a blank 900x700 placeholder (PDF content stream = `0 0 900 700 re f` + empty XObject, no text, no /Font glyphs for the response). `file:///etc/passwd` iframe → 200 but blank page. Headless Chrome does not embed cross-origin/`file://` body into the PDF. → blind only.
+
+### T-098/099/100 — table/query attribute exposure — REAL but INTENDED for this role
+- `include` returns: 354 users w/ **317 emails** (domains incl. soxhub.com, auditboard.com, auditboardapp.com, hdsupply.com, forliion.com, optum/optro.ai, gmail.com, bugcrowdninja.com), cellPhone, mfaEnabled, scimExternalId, apiUserLastLogin; 38 issues w/ full title+description+fieldData; narratives; files.
+- Control: direct `GET /api/v1/users`, `/users/1`, `/issues`, `/issues/121` also 200. **Role 5 = Owner** ⇒ tenant-wide read is intended. **NOT a finding.** (Would only matter if a lower-priv role could reach the same via table/query — untested, needs a non-Owner test account.)
+
+### Net
+- **No P1/P2.** Two independent SSRF sinks re-confirmed on 47.3 (assistant fileAttachments, attachments/html renderer) but **both blind** — program explicitly excludes blind SSRF without negative impact.
+- BUG-013 strengthened (copy primitive proves server-side cross-tenant object access) but **content readback still blocked by S3 prefix scoping** → stays P3 metadata.
+- New durable intel: 47.3 auth flow, table/query v2 shape + `include` attribute expansion, attachments/html render→download chain, ui-schema.json permission map, full 237-path surface.
+
+### State / cleanup
+- Token 231 live (state/env.sh). Created: files 2692 (foreign copy of 735), 2693 (own copy), 2694-2698 (cross-tenant write probes into issues 121/122/169/336/999999), 2699/2700 (renderer benign+LFI), 2701 (renderer internal iframe); attachments 11199/11200/11201. All inert test artifacts, disclosed.
+- No business objects modified. No destructive actions.
+
+### Next queue (cc)
+1. **Get a NON-Owner test account from program** — the single highest-value unlock: re-run table/query `include` as viewer/limited role. If it returns the same 354 users/317 emails, that is a **P1/P2 mass PII exposure** (permission bypass), not intended.
+2. Renderer readback: try `type:"word"` (different engine), `<object data=>`, `<embed>`, SVG `<use href>`, and a redirector that 302s to internal (Chrome follows redirects server-side) → if body lands in PDF/Word, blind SSRF becomes P2 internal read.
+3. `webhook_urls/{id}/test` if FeatureNotEnabled ever flips (server-side POST = SSRF + secret exposure via rotate_secret).
+4. `table/export` with correct `ab:export.header` column schema → mass CSV export (currently 500).

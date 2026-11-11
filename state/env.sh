@@ -1,0 +1,5 @@
+export H="https://bugbounty1.qe.optrostaging.ai"
+export T="231:57bfdc17fb9b63489423cf6c6b5165d92fc018fe"
+export BB="X-Optro-Bug-Bounty: zeno0"
+export OAST="jrb13rh3cjv7jhsplgfp8on25wzcro0pj.oast.site"
+export WH="https://webhook.site/d5ca52ae-fe37-478e-9d77-7501ac90b9b2"
