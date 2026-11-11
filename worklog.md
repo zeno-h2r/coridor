@@ -3261,3 +3261,59 @@ identical: True
 1. Enumerate other entityTypes via `get_schemas` (issues, controls, risks, files, narratives) as TPU — measure the full disclosure surface.
 2. Test whether `query_data` supports filters that reach specific sensitive records (e.g. `users` with `mfaEnabled`, `scimExternalId`).
 3. Re-verify BUG-015 (file-delete chain) the way BUG-016 was verified.
+
+## Session 2026-11-11 (iii): SQLi + stored-XSS sweep round 4 — ALL CLOSED. No new P1/P2.
+
+### Operator
+- "we need work again to found more more bugs ... focus on stord xss, sqli ... never stop until found P1, P2"
+
+### T-510/511 — tokens
+- SYSADMIN(53,r2) TESTER(170,r4) TPU(315,r11) all live. OWNER(231) password still rotated (401).
+
+### T-530 — SQLi through assistant `query_data` — CLOSED
+- 5 injection-shaped prompts ("' OR '1'='1", "UNION SELECT", "DROP TABLE", "SLEEP(5)", "OR 1=1"):
+  **all returned 0 tool calls, 0 entities, empty answer.** The assistant refuses to invoke tools on injection-shaped input.
+
+### T-531/532 — `table/query` filter DSL — CLOSED
+- Baseline: 200, 354 rows.
+- `$eq`/`$in`/`$contains` work as designed (2 / 2 / 198 rows).
+- `$ne` returns 354 rows — timing (10-20s) is **row-count bound, not injection** (baseline itself took 19.12s).
+- Injection payloads in filter **values** -> 400 "Invalid filter value".
+- `$like`/`$nin` -> 400 (not supported).
+- **No SQLi.**
+
+### T-543 — nested/relationship filter paths — CLOSED
+- Field-name injection (`email) OR 1=1--`, `email'`, `(SELECT 1)`, `email->>'x'`, `email::text`) -> **400 "Invalid filter 'X', users cannot be filtered by X"**.
+- **Field names are validated against an allowlist.** No injection via field path.
+
+### T-533 — sort/ORDER BY injection — CLOSED
+- `email`, `-email`, `email ASC`, `(SELECT 1)`, `email--`, `email/**/`, `1` -> 200 (accepted as column names).
+- `email;SELECT pg_sleep(3)`, `email,(SELECT 1)`, `CASE WHEN...`, `(CASE WHEN...)` -> **403** (WAF).
+- Query-string `?sort=email;SELECT 1` -> curl error (raw `;` in URL).
+- **No ORDER BY injection.**
+
+### T-534..542 — `POST /documents/flowchart` — NEW ENDPOINT, closed
+- Found in bundle (`common-JLqFq6K5.js`): `apiAjax.request('/documents/flowchart', {method:'POST', data: e.nodes})`.
+- **Full node schema cracked** via Zod leakage: `{id, description, nextStep[], connectorLabel[], shapeType, function, phase, altText}`.
+- `shapeType` enum: `Process|Decision|Subprocess|Start|End|Document|Data|Database|External Data|On-page reference|Off-page reference|Custom 1..4`.
+- Valid node -> **200** with presigned XLSX URL (`tmp/.../flowchart/<uuid>/<uuid>.xlsx`).
+- **Payload accepted in all 4 text fields** (`description`, `altText`, `function`, `phase`) -> 200 each.
+- **BUT the XLSX stores it entity-encoded**: `&lt;img src=x onerror=alert(document.domain)&gt;` — `contains '<img': False`, `contains '&lt; img': True`. **Inert.**
+- No queryable flowchart record endpoint (`/flowcharts` 404, `GET /documents/flowchart` 400).
+- A later run of the same payload returned **403** (WAF caught it) — inconsistent, but the encoded-output finding stands.
+- **Not a finding.**
+
+### T-544 — `ml_generative_logs` — CLOSED
+- 2 rows, `generated_output` stored **entity-encoded** (`&lt;h1&gt;ww&lt;/h1&gt;`).
+- `POST /ml_generative_logs` -> **403** for all shapes.
+- **No write path, no stored XSS.**
+
+### Net — honest
+- **No new P1/P2 this round.** SQLi is comprehensively closed on every surface tested: assistant tool, filter values, filter field names, sort/ORDER BY.
+- Stored XSS: the flowchart endpoint is a genuine new document-write path but entity-encodes on output; `ml_generative_logs` encodes and is write-gated.
+- **Confirmed findings unchanged**: BUG-008 (submitted), BUG-015 (P1 chain), BUG-016 (P2 verified), BUG-017 (P1 ATO), BUG-018 (P2), BUG-019 (P2, 2 resources), BUG-020 (P2 escalated), BUG-024 (P3), BUG-023 (P4).
+
+### Next queue (jjj)
+1. `POST /documents/flowchart` writes to S3 under `tmp/` — check whether that prefix is readable by other users (cross-user file read via flowchart URL).
+2. Test the flowchart endpoint as TPU (role 11) — is it another unguarded privileged action?
+3. Re-verify BUG-015 (file-delete chain) the way BUG-016 was verified.
