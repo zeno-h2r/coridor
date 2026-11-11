@@ -1704,3 +1704,44 @@ ATO-able by role: **role 1: 6, role 2: 8, role 3: 6, role 4: 4, role 5: 116, rol
 2. `ml_generative_prompts` is now readable with role 2 -> check for writable prompt bodies (stored-prompt / SSTI lead that was blocked in 43.3).
 3. `assistant_knowledge_files` 200 with role 2 -> enumerate; may expose org-wide RAG corpus.
 4. Report: reframe BUG-008 as **privilege escalation Owner->SystemAdmin with AI-plane capability gain**, with the t162 differential table as the impact proof.
+
+## Session 2026-11-11 (ee): role-2 capability differential BOUNDED — 3 endpoints, all empty/no-write. Honest downgrade.
+
+### Operator
+- "yes bro do it" — push into ml_generative_prompts and assistant_knowledge_files.
+
+### T-170 — re-entry
+- Owner 231 login 200; role-2 accounts 301/65/316 login 200 with `TesterZx2026!` (no re-escalation needed). Tokens cached /tmp/r2_*.
+
+### T-171/172 — exact shapes + write tests
+- `POST /api/v1/ml_generative_prompts/count` (note: **POST**, not GET) — Owner -> **422 `settings.ux:AITile:show`**, SysAdmin -> **200 {"count":0}**. Clean, reproducible permission differential.
+- `POST /api/v1/assistant_knowledge_files` body `{files:[{file_id}]}` (from admin bundle `registerFiles`) — Owner -> **403 "You do not have permission to manage Assistant knowledge files."**; SysAdmin -> **202** but every file returns `{"fileId":2691,"error":"... (Permission: file:action.edit)","errorCode":"Error"}`. So SysAdmin passes the collection gate but is still blocked per-file.
+- `GET /api/v1/ml_generative_prompts` -> 200 `[]` (empty). `GET /api/v1/assistant_knowledge_files` -> 200 `[]` (empty).
+
+### T-173 — broad capability diff (28 endpoints, Owner vs SysAdmin)
+- **Only 3 differentials exist**: `assistant_knowledge_files` (403->200), `ml_generative_prompts` (422->200), `ml_generative_logs` (422->200).
+- No differential on: settings, roles, teams, usage/totals, usage/top-users, webhook_urls, tiering_rules, imported_third_parties, threats, regulatory-signals/scoring-status, sigma/*, evidence-search, sox_ai_review, dip_configurations, api_access_logs, permissions-insights, role_permissions, global_permissions, brand_identities, score_types, weight_sets, automation_workflows. All identical 403/404/422 for both roles.
+
+### T-174 — cross-user data with role 2 — NEGATIVE
+- `GET /api/v1/assistant/conversations/conversation::user:{235,230,231,1}` -> **404 for BOTH Owner and SysAdmin**. No cross-user conversation read.
+- `ml_traces` -> 404 (route gone); `/api/v2/ml-trace/1` -> 403 for both.
+- `ml_generative_logs` pagination/filter (`page[size]=100`, `filter[source_user_id]`, `page[number]=2`) -> **0 rows**; only the 2 default rows are ever returned.
+
+### T-175/176/177 — write paths — CLOSED
+- `POST /api/v1/ml_generative_logs` -> **404** (no create route). Cannot inject into the log table -> **stored-XSS-via-AI-log CLOSED**.
+- `POST /api/v1/ml_generative_prompts` -> 400 requiring exactly one object + one string field. Tried `body`, `prompt`, `content`, `template`, `text`, `promptBody`, `promptText` (with `promptUri` + `promptAttributes`) -> **all 400**. Prompt-body write / SSTI lead **CLOSED** (cannot create a prompt row).
+
+### Net — HONEST DOWNGRADE of the (dd) claim
+- The Owner->SystemAdmin escalation is **real and reproducible** (6 accounts), and the permission differential is **real** (`prompts/count` 422 vs 200 is the cleanest single-request proof).
+- **But the capability gain carries no meaningful data on this environment**: both newly-reachable collections are **empty**, the log table has only **2 rows** (one user's narrative generations), no cross-user conversation access, and **no write path** on either plane.
+- So the honest impact statement is: *privilege escalation Owner -> System Admin, demonstrated by permission differential; data exposure limited to 2 AI-generation log rows from user 235.* Do **not** claim "AI admin plane compromise" or mass data exposure — that overstates it.
+- The P1/P2 value therefore rests on the **ATO + role escalation itself** (any login-enabled account -> any other login-enabled account incl. System Admin), not on the AI-plane data.
+
+### State / cleanup
+- No writes succeeded; nothing to revert on the AI plane. Role-2 accounts remain at `TesterZx2026!` (login 200), as documented in session (dd).
+- Owner token live.
+
+### Next queue (ff)
+1. Report BUG-008 as **ATO + vertical escalation to System Admin**, using `prompts/count` 422-vs-200 as the single cleanest escalation proof, and stating the AI-plane data limitation honestly.
+2. Remaining vertical step needs a **role-1 test account** from the program (all 6 login-enabled role-1 accounts are 422 as a class).
+3. If program enables AI features on a later deploy, re-run t171/t172 — the differential is already mapped and will immediately show whether real data appears.

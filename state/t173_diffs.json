@@ -1,0 +1,23 @@
+[
+ [
+  "GET",
+  "/api/v1/assistant_knowledge_files",
+  "403",
+  "200",
+  136
+ ],
+ [
+  "GET",
+  "/api/v1/ml_generative_prompts",
+  "422",
+  "200",
+  124
+ ],
+ [
+  "GET",
+  "/api/v1/ml_generative_logs",
+  "422",
+  "200",
+  40255
+ ]
+]
