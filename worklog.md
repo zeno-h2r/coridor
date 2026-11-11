@@ -2317,3 +2317,46 @@ Target user 230. Cell = observed state change after read-back.
 3. Method tampering: `PUT`/`PATCH`/`POST` on read-only routes; `X-HTTP-Method-Override`.
 4. Path normalisation: `/api/v1/users/230` vs `/api/v1/users/230/` vs `/api/v1//users/230` vs case variants.
 5. Bulk endpoints skipping per-object checks (`suggestions/bulk-accept`, `bulk_update`, `bulk_set_disabled`).
+
+### T-300..305 — BAC phase 2: EDIT sweep across 4 resource families x 6 roles
+- All 6 tokens live: OWNER(231,r5) SYSADMIN(53,r2) REVIEWER(171,r3) TESTER(170,r4) EXTAUD(172,r6) TPU(315,r11).
+- Enumerable object ids: issues 121/122/169, controls 1/65/66, risks 1/2/3, narratives 31/38/39. (auditable_entity, policy, test, ops_audit_item, esg_metric, exception_request, vendor, controls_datum, framework_item, assessment, audit_survey -> 400/404/empty.)
+
+**Edit matrix (PUT, read-back verified, unique value per attempt):**
+| role | risks/{id} | narratives/{id} | controls/{id} | issues/121 |
+| --- | --- | --- | --- | --- |
+| Owner (5) | **422 DENIED** | **422 DENIED** | 200 | 422 |
+| System Admin (2) | 200 | 200 | 200 | 422 |
+| Reviewer (3) | **200** | **200** | 200 | 422 |
+| Tester (4) | **200** | **200** | 200 | 422 |
+| Ext Auditor (6) | **422 DENIED** | **422 DENIED** | 200 | 422 |
+| TPU (11) | 422 | 422 | 422 | 422 |
+
+### 🔥 T-303/304/305 — NEW BUG-019 P2: PERMISSION INVERSION
+- Owner denied with `422 ModelActionPermissionDenied (Permission: risk:action.edit)` and `(Permission: narrative:action.edit)`.
+- **Tester (role 4) and Reviewer (role 3) succeed with 200 and the change persists.**
+- Reproduced on **6 independent objects**: risks 1/2/3, narratives 31/38/39 — Owner 422, Reviewer 200, Tester 200 every time.
+- Cross-checked against live RBAC data: `role5 risk:action.edit -> NOT PRESENT`, `role5 narrative:action.edit -> NOT PRESENT`.
+- `control:action.edit` is ALSO absent for role 5 yet Owner gets 200 on controls -> the two resources use a different enforcement path. Risks/narratives enforce the missing row as denial.
+- `DELETE` on risks/narratives -> **422 for all roles including Owner** — inversion is specific to the edit verb.
+- **Report: `reports/BUG-019-permission-inversion-owner-denied.md`** (160 lines, P2 rec).
+
+### Why this matters
+- Owner is the **default business role** — 116 of 145 login-enabled accounts. The inversion hits the majority of the tenant.
+- Risks and narratives are core audit artefacts; a lower role can alter content a higher role is denied.
+- This is a defect in the **shipped** role configuration — no permission sets were edited during testing (per operator instruction).
+
+### Test artifacts (disclosed)
+- risk names on ids 1, 2, 3 and narrative names on 31, 38, 39 changed to `ZX-<ROLE>-<hex>` values.
+- No deletes succeeded anywhere.
+
+### Net
+- **NEW P2: BUG-019** — permission inversion, Tester/Reviewer can edit risks+narratives that Owner is denied.
+- Edit side otherwise clean: issues 422 for all (Closed workflow), controls consistent 200 for roles 2-6, TPU denied everywhere.
+
+### Next queue (ss)
+1. Nested-object BOLA: child under a parent the caller cannot reach.
+2. Method tampering: `PATCH`/`POST` on read-only routes, `X-HTTP-Method-Override`.
+3. Path normalisation: trailing slash, double slash, case variants on denied routes (e.g. `/risks/1/` as Owner).
+4. Bulk endpoints: `suggestions/bulk-accept`, `bulk_update`, `bulk_set_disabled` — check per-object enforcement.
+5. Re-test Owner denial on risks/narratives via alternate verbs (PATCH) — the inversion may be bypassable in the other direction too.
