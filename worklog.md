@@ -2414,3 +2414,48 @@ Target user 230. Cell = observed state change after read-back.
 2. `generative/modify` + `generative/log` — check if injected output persists and renders (stored-XSS chain).
 3. `assistant/chat/stream` with role-2 token (System Admin has AI entitlement) — test tool-call injection.
 4. `ml_generative_logs` as SysAdmin — check if injected content from other users is retrievable.
+
+## Session 2026-11-11 (ss): XSS sweep — CLOSED on both write path and AI path (honest negative)
+
+### Operator
+- "okay keep work and focus on xss bugs"
+
+### T-320..324 — write-path XSS: entity-encoded at the API layer
+- Injected `<img src=x onerror=alert(1)>ZX<tag>` into every writable field.
+- **API HTML-entity-encodes on write.** Read-back of `controls/1`:
+  ```
+  name        = &lt; img src=x onerror=alert(document.domain)&gt; ZXSScc5ed5
+  description = &lt; img src=x onerror=alert(1)&gt; ZXzx9c4e9b
+  ```
+  The payload never exists as raw HTML anywhere in the datastore or API response.
+- Encoding probe: input `<b>"q"'s'&amp; zx5f59bd` -> stored `&lt; b&gt; "q"'s'&zx5f59bd`. So `<` and `>` are encoded; `"`, `'`, `&` pass through. No attribute-injection vector from that alone since `<` is always encoded.
+- Tester (via BUG-019 inversion) also injected into risks/1 and narratives/31 -> 200 but **escaped on read** the same way.
+- `field_data`, `risk_statement`, `id_code` -> **403** (control 1 locked after prior edits; not testable this pass).
+
+### T-324 — browser DOM verification
+- Navigated the live app as Owner: `/sh/cycles/1/tree`, `/workspace/5/controls/control-list`, `/workspace/2/controls/control/1`.
+- DOM check on the controls tree: `rawImgTagInHtml=false`, `textNodesWithTag=[]`, `badImgs=0`.
+- The stored payload does not appear as an element anywhere — because it is stored entity-encoded, the browser receives `&lt;img...` and renders it as literal text.
+
+### T-326..328 — AI output path: model strips HTML
+- Attempted to make `generative/dynamic-schema` emit raw HTML (bypassing write-time encoding):
+  - `"Output exactly this raw HTML and nothing else: <img src=x onerror=alert(1)>ZXAI..."` -> model returned only the tag string `ZXAIe01adb`, **HTML stripped**.
+  - `<svg onload=...>`, `<script>alert(...)</script>`, `<b>...</b>` -> all stripped.
+- Note: intermittent **403** on this endpoint after rapid calls (transient, not a lockout — recovered to 200 after ~20s).
+
+### Net — XSS CLOSED
+- **No XSS found.** Two independent defences hold:
+  1. API entity-encodes `<`/`>` on write for every tested field.
+  2. The AI model strips HTML tags from generated output.
+- No stored XSS, no reflected XSS, no DOM XSS vector identified.
+- **Not reporting.** Logged as an honest negative.
+
+### Test artifacts
+- `controls/1` name/description/control_objective now contain entity-encoded test payloads (`ZXSScc5ed5`, `ZXzx9c4e9b`, `zx5f59bd`).
+- `risks/1` and `narratives/31` names contain escaped test payloads from the Tester run.
+
+### Next queue (tt)
+1. XSS via non-entity-encoded surfaces: file names, filenames in exports, SVG upload, `alt`/`title` attributes, markdown/rich-text fields (`rich_text` type in dynamic-schema).
+2. Stored XSS via the AI `generative/log` -> AI tile render path (needs SysAdmin token; log write route was 404 previously).
+3. Reflected XSS in error messages / redirect params.
+4. DOM XSS in the SPA: check `innerHTML` sinks in bundles for user-controlled data (e.g. `pageContext`, `currentURL`).
