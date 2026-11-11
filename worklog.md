@@ -1945,3 +1945,50 @@ Method: renderer fetches `<img src=...>`; unreachable host blocks until timeout,
 1. Same cross-Owner test on **issues** (needs `issuesourceable_type: Test` + a Test id) — narratives are one resource; issues may differ.
 2. Test whether a **role-11 limited** token can read Owner content (that would be a real P2/P3, unlike Owner-to-Owner).
 3. Role-1 account from program for the last vertical step.
+
+## Session 2026-11-11 (kk): 🔥 NEW BUG-015 P2 — cross-user arbitrary file deletion (BOLA on DELETE /files/{id})
+
+### Operator
+- "use this two email to test BAC ... any bug found write the report and save it and move new bug okay i need you test (edit, delete)"
+
+### T-230 — tokens
+- A=231 `golden-snow-4771@bugcrowdninja.com` role 5; B=230 `golden-leaf-3068@bugcrowdninja.com` role 5. Both login 200.
+
+### T-231 — systematic edit/delete BAC sweep (17 resource types)
+| resource | GET | PUT | DELETE | note |
+| --- | --- | --- | --- | --- |
+| narrative 67 | 200 | 422 | 422 | `narrative:action.edit/delete` enforced |
+| issue 121 | 200 | **200** | 422 | Owner edits issues — intended |
+| control 1 | 200 | **200** | 422 | Owner-level intended |
+| risk 1 | 200 | 422 | 422 | enforced |
+| document 1 | 422 | 422 | 422 | enforced |
+| attachment 11208 | 200 | 200 | 200 | own artifact |
+| **file 2712** | 200 | 422 | **200** | 🔥 **CROSS-USER DELETE** |
+| auditee/auditable_entity/policy/esg_metric/vendor | 404 | — | — | wrong plural |
+| framework/test/ops_audit_item/exception_request | 410 | — | — | deleted/absent |
+
+### T-232..238 — BUG-015 CONFIRMED end-to-end
+- First hit: A(231) `DELETE /api/v1/files/2712` (file created by B/230) -> **200**; both A and B then get **410 "has already been deleted"**.
+- Clean reproducible PoC (t238): B creates file via `POST /attachments/html` (attachableType AuditableEntity id 96) -> attachmentId 11213 -> **file_id 2726**.
+  - B control `GET /files/2726` -> **200**
+  - A `DELETE /files/2726` -> **200** with `global_audit` object_id 2726
+  - B `GET /files/2726` -> **410 Gone**
+- **Root cause**: `DELETE /api/v1/files/{id}` authorizes the action but never the object. `PUT /files/{id}` on the same resource DOES enforce (422), and every sibling resource enforces on both verbs. The delete verb on `files` is the sole outlier.
+- Blast radius: file ids sequential (735–2726 observed, 813 files enumerable via `table/query?entities=file`). Mass deletion trivial. Files back audit evidence/narratives/policies.
+- **Report: `reports/BUG-015-cross-user-file-delete.md`** (188 lines, P2 rec, full copy-paste PoC, honest negatives table).
+
+### Test artifacts (disclosed)
+- **file 2726** deleted by A (unrecoverable) — the PoC victim.
+- file 2712 also deleted during the sweep.
+- issue 121 status `Inactive` -> `Closed` (prior session).
+- narrative 67 `ZX-B-NARRATIVE` created by 230, undeletable by either account.
+
+### Net
+- **NEW P2 FOUND.** Cross-user destructive BOLA on `DELETE /api/v1/files/{id}`.
+- Edit side: properly gated everywhere except issue/control where Owner legitimately edits.
+- Delete side: gated everywhere EXCEPT files.
+
+### Next queue (ll)
+1. Same delete-verb sweep on remaining resource families not yet covered (attachments, document_versions, timesheet_entries, markup_samples, esg_metric_values, webhook_urls, api tokens).
+2. Test whether a **role-11 limited** token can delete an Owner's file (would raise severity — lower-priv attacker).
+3. Check if `DELETE /files/{id}` accepts an id range/bulk endpoint for mass destruction.
