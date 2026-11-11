@@ -3166,3 +3166,35 @@ identical: True
 1. If the `suggestable[...]` handler bug is ever fixed, re-test BUG-024 — it becomes a working write primitive for role 11.
 2. Sweep `suggestions/query-matches` (needs `:id`) and `bulk-accept-with-control-implementation` with a `framework-items` model type (different code branch, may not crash).
 3. Re-verify BUG-015 (file-delete chain) the way BUG-016 was verified.
+
+## Session 2026-11-11 (ggg): BUG-024 report EDITED — real UI location + full HTTP requests added
+
+### Operator
+- "please bro i need you edit this steps in bug 024 bug and give me http request and tell me where is the section give me url"
+
+### What was added to the report
+- **§5 Where this lives in the app (UI location)** — NEW section:
+  - Page URL: `https://bugbounty1.qe.optrostaging.ai/sh/narratives/38`
+  - Nav path: left nav → Narratives → `ZX-TESTER-1a33b (Legal_NR)` (id 38)
+  - Panel entry: right-hand toolkit → button **`AI Suggested Controls`**
+  - Panel content: list of suggested controls each with **Accept** / **Reject**
+  - Network call fired by Accept: `POST /api/v1/suggestions/bulk-accept-with-control-implementation`
+- **§6 HTTP requests — copy-paste** — 7 sub-sections, all with full raw HTTP:
+  - 6.1 token acquisition
+  - 6.2 Control A: `GET /suggestions/41` -> 422 permission denied
+  - 6.3 Control B: `GET /narratives/38` -> 422 permission denied
+  - 6.4 Control C: `GET /suggestions` -> 200 with 0 rows (Owner sees 111)
+  - 6.5 THE FINDING: full POST with exact body + byte-identical processing response
+  - 6.6 Second unguarded action: `POST /users/export` -> 200
+  - 6.7 one-liner bash repro
+- Sections renumbered 7-10.
+
+### Verified live before writing
+- Narrative 38 = `ZX-TESTER-1a33b`, uid `Legal_NR`, docver 639.
+- 111 suggestions total; narrative 38 has **24** (ids 41-64).
+- Suggestion 41 -> `ControlsDatum#597`.
+- Browser confirmed the panel: "AI Suggested Controls" with per-control Accept/Reject buttons, first card = `ELC.FA.1.KR03 Accountant sends a list of all construction in process projects...`.
+- Re-ran the request across OWNER(5)/TESTER(4)/TPU(11) — all 422, all byte-identical processing bodies.
+
+### Report now
+- `reports/BUG-024-bfla-bulk-accept-control-implementation.md` -> **299 lines** (was 167).

