@@ -2831,3 +2831,54 @@ A real element with a live handler, not a text node.
 1. Find a role/path that CAN write a document body (import, template, AI scoping-memo) -> then `/documents/{id}/diff` becomes stored XSS.
 2. Verify BUG-022 cross-user firing (Owner 231 / Tester 170 opening the exception 33 thread).
 3. Check `message_html` in email notifications / digest where no client sanitizer runs.
+
+## Session 2026-11-11 (aaa): ⚠️ BUG-022 RETRACTED — verification FAILED. The alert was not reproducible; code + DOM prove no execution.
+
+### Operator
+- "okay verify it and keep work to found stored xss okay test every input i see"
+
+### T-420 — token refresh
+- OWNER(231,r5) SYSADMIN(53,r2) TESTER(170,r4) all login 200.
+
+### T-420b — cross-user verification of BUG-022 — **FAILED**
+- Comment 903 (owner 230) exists in the API: `message_raw='&lt;img src=x onerror=alert();&gt;'`, `message_html='<img />'`.
+- Swapped browser session to **user 53** (a different user from the poster 230), opened `/workspace/12/exceptions/33`, opened Comments.
+- **No alert fired.** DOM audit across all 19 rendered comment spans:
+  ```
+  totalCommentSpans: 19
+  spansWithOnerrorAttr: []          <- ZERO
+  totalImgs: 6
+  imgsWithOnerror: 0                <- ZERO
+  sampleSpan926: "<img>ZXL09125"    <- tag present, handler GONE
+  ```
+- Comment 903 is not rendered in the thread at all (thread shows 917-928; 903 is absent from both Open and Closed tabs).
+
+### T-421 — root cause of the false positive (bundle analysis)
+- The comment render path is `commentParagraphs`:
+  ```js
+  get commentParagraphs(){ return f(this,`args.comment.messageRaw`).split(` `).filter(e=>e.trim().length>0) }
+  ```
+  Each paragraph renders as `<p @tag="p" @color="gray-700">` with `@dataToLinkify` — a **linkifier that operates on text**, not an HTML parser.
+- **`message_raw` is rendered as TEXT**, not as HTML. The `&lt; img...&gt; ` entity-encoded string is displayed literally.
+- The `<img>` elements visible in the DOM come from the **allowlisted `message_html`** (`<img />`), which has no handler.
+- **There is no code path that renders `message_raw` as HTML.**
+
+### What actually happened earlier (session ww)
+- I typed the payload into the comment box and clicked Post; a dialog appeared with `bugbounty1.qe.optrostaging.ai`.
+- I attributed that alert to stored XSS. **That attribution was wrong.** Most likely causes: the client-side editor (rich-text/ProseMirror) executing the paste, or a transient dialog from the editor's own handling — not the stored comment rendering for another user.
+- I did not verify at the time that the alert came from the rendered comment. That was the error.
+
+### Verdict — BUG-022 is RETRACTED
+- **No stored XSS in comments.** `message_raw` renders as escaped text; `message_html` is sanitised server-side and allowlisted.
+- The report `reports/BUG-022-stored-xss-comments-message-raw.md` is **withdrawn** — do not submit it.
+- Comment 903 is inert; no cleanup urgency.
+
+### Net — honest
+- **Zero confirmed stored XSS on this target.** Every surface tested encodes or sanitises: text fields (entity-encode on write), comments (`message_html` allowlist + `message_raw` as text), AI output (entity-encoded), document body (not writable), upload paths (WAF + private bucket + forced extension).
+- Two latent sinks remain unfed: `/documents/{id}/diff` -> `setContent`, and `dtLinkifyTitleDescription` — both require write access I don't have.
+- **Lesson: an alert on screen is not proof of stored XSS. It must be reproduced from a second user's session against the stored record.** I skipped that step and it cost a false report.
+
+### Next queue (bbb)
+1. Re-audit the other reports for the same error class (claimed execution without second-user verification).
+2. If the operator wants to keep hunting XSS: the only remaining angle is the rich-text editor's own paste handling (client-side, not stored).
+3. Otherwise pivot to a bug class where impact is provable end-to-end.
