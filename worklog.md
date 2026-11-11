@@ -3118,3 +3118,51 @@ identical: True
 1. BUG-015 re-verify the same way (file-delete chain — does the victim really lose the file, and is the delete genuinely cross-user?).
 2. BUG-017 re-verify (email hijack — does login with the hijacked address work from a clean session?).
 3. Continue new-surface hunting.
+
+## Session 2026-11-11 (fff): 🔥 NEW BUG-024 P3 — BFLA: limited role (TPU/11) reaches privileged bulk-accept handler
+
+### Operator
+- "no i neeed now bug bro 024"
+
+### T-480 — tokens
+- OWNER(231,r5) SYSADMIN(53,r2) TESTER(170,r4) TPU(315,r11) all login 200.
+
+### T-481 — bulk endpoint sweep (15 endpoints x 4 roles)
+- 500 all roles: suggestions/bulk-accept, bulk-reject, esg_metric_values/bulk-delete.
+- 404 all roles: controls_datum_framework_items/bulk_set_disabled, risks|controls|issues/bulk_update.
+- 422 all roles: policy_*_mappings/bulk_accept, program_regulation_items/bulk_update, key_*_request_updates/bulk_upsert, auditable_entities/bulk_add_recurring_questionnaire.
+- 204 all roles: framework_items/bulk-complete-version-mapping (no-op).
+- **201 all roles: ticketing/tickets/bulk** -> traced to `{}` no-op (ticketing integration unconfigured; projects/types 500).
+
+### T-482..486 — export shape cracked
+- `POST /{model}/export` needs `exportColumns` as **array of objects with `path` + `label`**:
+  `[{"path":"id","label":"ID"},{"path":"email","label":"Email"}]` -> **200 {"status":"ok"}**.
+- `table/export` + `table/_op/async_export` still 500 on every header shape.
+- **Export produces NO artifact** — no file appears in `/files` or `/attachments` after queueing. `{"status":"ok"}` is an acknowledgement, not a completed export. Not a data-exfil primitive in this env.
+
+### 🔥 T-494..497 — BUG-024: BFLA on `suggestions/bulk-accept-with-control-implementation`
+- **New endpoint found in bundle** (`uncommon-OKmE_uUe.js`): `Yb={suggestions:'/suggestions/bulk-accept-with-control-implementation'}`.
+- Exact body shape from bundle: `{"data":{"suggestionIds":[...],"createControlImpls":bool,"programIds":[...],"entityIds":[...]}}`.
+- **TPU (role 11, is_limited:true) response is BYTE-IDENTICAL to Owner's**: `IDENTICAL RESPONSE: True`.
+- **The 422 is a PROCESSING failure, not authz**: keyword scan of TPU body — `permission: False, forbidden: False, denied: False, not authorized: False, modelactionpermissiondenied: False`.
+- Body is a processing summary: `{"status":"failed","summary":{"created":{"controls":{"count":0}},"failed":{"processes":{"count":1,"errors":[{"uid":"41","error":"Error processing suggestion 41: suggestable[...] is not a function"}]}}}}`.
+- **Control proves TPU is genuinely limited**: `GET /suggestions` -> 0 rows (Owner 111); `GET /suggestions/41` -> 422 permission; `GET /narratives/38` -> 422 permission; `GET /users/1` -> 403; `GET /timesheet_entries/43` -> 422.
+- **Second unguarded action**: TPU `POST /users/export` -> 200 and `POST /users/_op/async_export` -> 200 (full user-table export queued for a limited role; no artifact produced).
+
+### Honest ceiling
+- **No successful mutation demonstrated.** All 111 suggestions are `suggestable_type: Narrative` and every one crashes the handler with the same internal JS error — including for Owner. The write impact is unproven.
+- Severity **P3**: authorization gap proven by control-vs-finding differential; write primitive not proven.
+
+### Report
+- **`reports/BUG-024-bfla-bulk-accept-control-implementation.md`** (167 lines, P3 rec).
+- Contents: TPU restriction control table, byte-identical response proof, authz-keyword scan, processing-summary body, export-plane second action, copy-paste repro, 12-row honest-negatives table, impact with explicit ceiling, remediation.
+
+### Net
+- **NEW P3: BUG-024** — BFLA on a privileged bulk-accept handler, reachable by the lowest role, no authorization check.
+- Export shape cracked but produces no artifact (not a finding).
+- Ticketing bulk is a no-op (integration unconfigured).
+
+### Next queue (ggg)
+1. If the `suggestable[...]` handler bug is ever fixed, re-test BUG-024 — it becomes a working write primitive for role 11.
+2. Sweep `suggestions/query-matches` (needs `:id`) and `bulk-accept-with-control-implementation` with a `framework-items` model type (different code branch, may not crash).
+3. Re-verify BUG-015 (file-delete chain) the way BUG-016 was verified.
