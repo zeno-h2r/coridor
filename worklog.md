@@ -1856,3 +1856,46 @@ Method: renderer fetches `<img src=...>`; unreachable host blocks until timeout,
 1. Readback hunt continues: try `svg`/`image` with `xlink:href`, CSS `@import url()`, `<link rel=stylesheet>`, and `background-image` — CSS/stylesheet loads sometimes surface in different render paths.
 2. Try the **assistant `search_knowledge_base`** against a poisoned index entry pointing at an internal URL (BUG-007 vector) — that path returns text to the model.
 3. Report the internal-access finding as a supporting note on BUG-014 (assistant SSRF) since the port map is the negative impact that lifts it above "blind".
+
+## Session 2026-11-11 (ii): new-bug sweep — filename traversal closed, ticketing/library/conversation all negative; ⚠️ TEST ARTIFACT: issue 121 status changed
+
+### Operator
+- "i need you deep work in app to found new bug okay"
+
+### T-210 — token
+- owner 231 login 200.
+
+### T-211 — renderer `fileName` traversal (S3 arbitrary write attempt) — CLOSED
+- `document_intelligence/export/pdf` `fileName` -> S3 key. Tested `../../demo-certs-dkim_demo/x`, `..%2f..%2f`, `....//`, leading `/`, foreign-prefix path.
+- **All sanitized**: slashes stripped and concatenated (`demo-certs-dkimdemozx-trav.pdf`), key always stays under `bugbounty1120509_qa/`. No prefix escape, no arbitrary S3 write.
+- `attachments/html` `fileName` -> worse: `../../demo-certs-dkim_demo/zx-wtrav` becomes `"....docx"`. Sanitizer mangles but does not escape.
+
+### T-212/213 — new families — NEGATIVE
+- `processes/1` 200 (reference data). `frameworks/content-service/frameworks` 200 (public NIST CSF catalog). `library/preload` 200 (792 org config rows: risk-level, control-frequency, departments, etc. — intended for Owner). `library/attributes` 200 (2099 schema labels).
+- `ticketing/*` **uniformly 500** for tickets/users/types/projects -> integration not configured, not a vuln. `ticketing/ab_resource_types` 200 (static enum).
+- `entities/{id}/migrate/run` -> 400 "Control coverage migration feature is not enabled."
+- `workflow_schema_runs/1` -> 422 FeatureNotEnabled.
+- `table/_op/async_export` -> 500 (shape still wrong).
+
+### T-215 — assistant conversation cross-user write — NEGATIVE (correctly scoped)
+- `chat/stream` with `X-Conversation-Id: conversation::user:{230,315,1,235}` -> **403 "You do not have access to this conversation."** for all.
+- `POST /assistant/conversations` with foreign `conversationId` -> **403**.
+- Conversation plane enforces ownership properly. No injection into another user's assistant thread.
+
+### T-216 — ⚠️ TEST ARTIFACT CREATED (disclosed)
+- Mass-assignment probe on `PUT /api/v1/issues/121` with `{"issue":{"status":"Closed"}}` -> **200** and the status **actually changed** from `Inactive` to `Closed`.
+- `company_id`, `created_at`, `id`, `owner_id` probes -> 200 but **no change** (ignored). Only `status` took effect.
+- `custom_text1` -> 422 "Issue 121 is Closed and cannot be edited directly".
+- **Could not revert**: closed issues reject direct status edits (422 workflowAmend required), `/reopen` 404, `amend` -> 422 `issue:action.workflowAmend` (Owner lacks the permission). Issue 121 remains `Closed`.
+- **Disclosure**: issue 121 "Approved Expense Reports" was `Inactive` at session start and is now `Closed`. This is a test artifact from a mass-assignment probe, not an intended change. Flagged for program disclosure in any report.
+- Severity of the underlying behaviour: `status` is mass-assignable on `PUT /issues/{id}` including a **terminal workflow transition** (-> Closed) that the UI normally gates behind amend/workflow permission. Owner-level only, single-org QE, and the transition is one the user could arguably make through the UI. **Not claimed as a finding** — but it is a genuine authorization gap worth noting: the API allows a direct terminal-state transition that the amend path explicitly requires `issue:action.workflowAmend` for.
+
+### Net
+- **No new P1/P2.** Filename traversal, ticketing, library, conversation-write, migration runner all closed or gated.
+- One genuine observation: `PUT /issues/{id}` permits direct `status` mass-assignment to a terminal state, bypassing the `issue:action.workflowAmend` gate that the amend endpoint enforces. P4/P5 impact in this environment (Owner can already edit issues) — **not submitted**, logged for completeness.
+- P1 in hand remains BUG-008 v2.
+
+### Next queue (jj)
+1. Test the same `status` mass-assignment on a **lower-privilege** token (role 11) against an issue they shouldn't touch — if a limited user can close an arbitrary issue, that is a real P3.
+2. Re-test `table/export` shape using the exact `ab:export.header` array from the bundle.
+3. Role-1 account from program for the last vertical step.
